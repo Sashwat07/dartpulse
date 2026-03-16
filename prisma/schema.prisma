@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URL")
+}
+
+// Phase 2: full domain schema per entity-model.md. camelCase throughout.
+// Auth.js (NextAuth) models for sessions and Google OAuth.
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  matches  Match[]
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Dart domain models
+
+model Player {
+  playerId    String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  avatarColor String?
+  avatarUrl   String?
+  status      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  matchPlayers  MatchPlayer[]
+  throwEvents   ThrowEvent[]
+  achievements  Achievement[]
+}
+
+model Match {
+  matchId               String    @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String
+  mode                  String
+  totalRounds           Int
+  status                String
+  shotsPerRound         Int       @default(1)
+  playoffShotsPerRound  Int?
+  basePlayerOrder       Json?     // playerId[] for turn order
+  createdAt             DateTime  @default(now())
+  startedAt             DateTime?
+  completedAt           DateTime?
+
+  createdByUserId String? @db.ObjectId
+  createdByUser   User?   @relation(fields: [createdByUserId], references: [id])
+
+  matchPlayers   MatchPlayer[]
+  rounds         Round[]
+  throwEvents    ThrowEvent[]
+  playoffMatches PlayoffMatch[]
+}
+
+model MatchPlayer {
+  matchPlayerId         String   @id @default(auto()) @map("_id") @db.ObjectId
+  matchId               String   @db.ObjectId
+  playerId              String   @db.ObjectId
+  seedRank              Int?
+  finalRank             Int?
+  isQualifiedForPlayoffs Boolean @default(false)
+  createdAt             DateTime @default(now())
+
+  match  Match  @relation(fields: [matchId], references: [matchId])
+  player Player @relation(fields: [playerId], references: [playerId])
+}
+
+model Round {
+  roundId     String    @id @default(auto()) @map("_id") @db.ObjectId
+  matchId     String    @db.ObjectId
+  roundNumber Int
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  match       Match       @relation(fields: [matchId], references: [matchId])
+  throwEvents ThrowEvent[]
+}
+
+model ThrowEvent {
+  throwEventId   String   @id @default(auto()) @map("_id") @db.ObjectId
+  matchId       String   @db.ObjectId
+  roundId       String?  @db.ObjectId
+  roundNumber   Int
+  playerId      String   @db.ObjectId
+  turnIndex     Int
+  score         Int
+  isBullseye    Boolean  @default(false)
+  eventType     String
+  playoffMatchId String? @db.ObjectId
+  createdAt     DateTime @default(now())
+
+  match Match  @relation(fields: [matchId], references: [matchId])
+  round Round? @relation(fields: [roundId], references: [roundId])
+  player Player @relation(fields: [playerId], references: [playerId])
+}
+
+model PlayoffMatch {
+  playoffMatchId     String    @id @default(auto()) @map("_id") @db.ObjectId
+  parentMatchId      String    @db.ObjectId
+  stage              String
+  player1Id          String    @db.ObjectId
+  player2Id          String    @db.ObjectId
+  startingPlayerId   String?   @db.ObjectId
+  decidedByPlayerId  String?   @db.ObjectId
+  player1Score       Int?
+  player2Score       Int?
+  winnerId           String?   @db.ObjectId
+  loserId            String?   @db.ObjectId
+  status             String
+  resolvedBy         String?
+  createdAt          DateTime  @default(now())
+  completedAt        DateTime?
+
+  parentMatch Match @relation(fields: [parentMatchId], references: [matchId])
+}
+
+model Achievement {
+  achievementId  String   @id @default(auto()) @map("_id") @db.ObjectId
+  playerId       String   @db.ObjectId
+  type           String
+  sourceMatchId  String?  @db.ObjectId
+  awardedAt      DateTime @default(now())
+
+  player Player @relation(fields: [playerId], references: [playerId])
+}

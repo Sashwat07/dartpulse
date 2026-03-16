@@ -1,0 +1,68 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e6]: DP
+          - generic [ref=e7]: DartPulse
+        - generic [ref=e8]:
+          - link "Sign in" [ref=e9] [cursor=pointer]:
+            - /url: /login
+          - link "Get started" [ref=e10] [cursor=pointer]:
+            - /url: /login
+    - main [ref=e11]:
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e14]:
+            - heading "Track every throw. Own every match." [level=1] [ref=e15]
+            - paragraph [ref=e16]: DartPulse turns casual games into a competitive arena-grade experience. Live scoring, playoff brackets, and analytics in one neon-lit dashboard.
+            - generic [ref=e17]:
+              - link "Get started" [ref=e18] [cursor=pointer]:
+                - /url: /login
+              - link "Sign in to your dashboard →" [ref=e19] [cursor=pointer]:
+                - /url: /login
+          - generic [ref=e20]:
+            - paragraph [ref=e21]: Live match snapshot
+            - paragraph [ref=e22]: See who’s leading, who’s on a streak, and who’s one round away from the playoffs.
+            - generic [ref=e23]:
+              - generic [ref=e24]:
+                - generic [ref=e25]: Live scoring
+                - generic [ref=e26]: Instant updates
+              - generic [ref=e27]:
+                - generic [ref=e28]: Playoff-ready
+                - generic [ref=e29]: Top 4 bracket
+              - generic [ref=e30]:
+                - generic [ref=e31]: Analytics
+                - generic [ref=e32]: Momentum & trends
+            - button "G Continue with Google" [ref=e34]:
+              - generic [ref=e35]: G
+              - generic [ref=e36]: Continue with Google
+        - generic [ref=e37]:
+          - heading "Built for serious darts nights" [level=2] [ref=e38]
+          - generic [ref=e39]:
+            - generic [ref=e40]:
+              - heading "Live Scoring" [level=3] [ref=e41]
+              - paragraph [ref=e42]: Fast dart-style score input with rotating turn order so recording never slows down the match.
+            - generic [ref=e43]:
+              - heading "Tournament Brackets" [level=3] [ref=e44]
+              - paragraph [ref=e45]: Auto-generated playoffs for top four players with qualifier, eliminator, and final flows.
+            - generic [ref=e46]:
+              - heading "Advanced Analytics" [level=3] [ref=e47]
+              - paragraph [ref=e48]: Momentum, heatmaps, and player profiles help you understand who really dominated the night.
+    - contentinfo [ref=e49]:
+      - generic [ref=e50]:
+        - generic [ref=e51]: © 2026 DartPulse
+        - generic [ref=e52]:
+          - link "Privacy" [ref=e53] [cursor=pointer]:
+            - /url: "#"
+          - link "Terms" [ref=e54] [cursor=pointer]:
+            - /url: "#"
+          - link "Support" [ref=e55] [cursor=pointer]:
+            - /url: "#"
+  - button "Open Next.js Dev Tools" [ref=e61] [cursor=pointer]:
+    - img [ref=e62]
+  - alert [ref=e65]
+```

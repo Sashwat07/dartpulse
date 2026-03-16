@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Light mode (default when .dark is not set on html)
+   ========================================================================== */
+:root {
+  --background: #f1f3f5;
+  --foreground: #1a1d23;
+  --mutedForeground: rgba(26, 29, 35, 0.7);
+
+  --primaryNeon: #0096b3;
+  --championGold: #c9a600;
+  --primaryForeground: #000000;
+
+  --glassBackground: rgba(255, 255, 255, 0.85);
+  --glassBorder: rgba(0, 0, 0, 0.12);
+
+  --surfaceSubtle: rgba(0, 0, 0, 0.04);
+  --surfaceHover: rgba(0, 0, 0, 0.08);
+  --surfaceMuted: rgba(0, 0, 0, 0.02);
+
+  --overlay: rgba(0, 0, 0, 0.5);
+  --panelShadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  --glowShadow: 0 0 15px rgba(0, 150, 179, 0.35);
+
+  --destructive: #dc2626;
+  --focusRing: var(--primaryNeon);
+  --focusRingOffset: var(--background);
+  --inputBorderHover: rgba(0, 0, 0, 0.2);
+  --inputInsetHighlight: transparent;
+}
+
+/* ==========================================================================
+   Dark mode (when .dark is set on html by next-themes)
+   ========================================================================== */
+.dark {
+  --background: #0b0f1a;
+  --foreground: #ededed;
+  --mutedForeground: rgba(237, 237, 237, 0.72);
+
+  --primaryNeon: #00e5ff;
+  --championGold: #ffd700;
+  --primaryForeground: #000000;
+
+  --glassBackground: rgba(255, 255, 255, 0.05);
+  --glassBorder: rgba(255, 255, 255, 0.15);
+
+  --surfaceSubtle: rgba(255, 255, 255, 0.05);
+  --surfaceHover: rgba(255, 255, 255, 0.08);
+  --surfaceMuted: rgba(255, 255, 255, 0.03);
+
+  --overlay: rgba(0, 0, 0, 0.6);
+  --panelShadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  --glowShadow: 0 0 15px rgba(0, 229, 255, 0.6);
+
+  --destructive: #ef4444;
+  --inputBorderHover: rgba(255, 255, 255, 0.2);
+  --inputInsetHighlight: rgba(255, 255, 255, 0.06);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-mutedForeground: var(--mutedForeground);
+  --color-primaryNeon: var(--primaryNeon);
+  --color-championGold: var(--championGold);
+  --color-primaryForeground: var(--primaryForeground);
+  --color-glassBackground: var(--glassBackground);
+  --color-glassBorder: var(--glassBorder);
+  --color-surfaceSubtle: var(--surfaceSubtle);
+  --color-surfaceHover: var(--surfaceHover);
+  --color-surfaceMuted: var(--surfaceMuted);
+  --color-destructive: var(--destructive);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+* {
+  border-color: var(--glassBorder);
+}
