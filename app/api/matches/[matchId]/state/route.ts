@@ -106,7 +106,7 @@ export async function GET(_req: Request, context: RouteContext) {
   if (match.status === "matchFinished") {
     const playoffMatches = await listPlayoffMatchesByParentMatch(matchId);
     const finalMatch = playoffMatches.find((m) => m.stage === "final");
-    undoLocked = finalMatch?.status === "completed" ?? false;
+    undoLocked = finalMatch?.status === "completed";
   }
 
   const body: MatchStateResponse = {
