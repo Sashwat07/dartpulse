@@ -27,45 +27,46 @@ export default async function PlayersPage() {
           title="Players"
           description="View profiles, stats, and achievements."
         />
-        <div className="mt-6">
-        {players.length === 0 ? (
-          <EmptyState
-            title="No players yet"
-            description="Create players when you start a new match, or add them from match setup."
-          />
-        ) : (
-          <ul className="space-y-3">
-            {players.map((player) => (
-              <li key={player.playerId}>
-                <Link href={`/players/${player.playerId}`} className="block">
-                  <GlassCard className="group flex items-center justify-between gap-4 p-4 transition-colors hover:border-primaryNeon/40 hover:bg-surfaceSubtle">
-                    <div className="flex min-w-0 flex-1 items-center gap-3">
+        <div className="mt-8">
+          {players.length === 0 ? (
+            <EmptyState
+              title="No players yet"
+              description="Create players when you start a new match, or add them from match setup."
+            />
+          ) : (
+            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {players.map((player) => (
+                <li key={player.playerId}>
+                  <Link href={`/players/${player.playerId}`} className="block">
+                    <GlassCard className="group flex items-center gap-4 p-4 transition-all hover:border-primaryNeon/30 hover:bg-surfaceSubtle hover:shadow-glowShadow">
                       <div
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold tabular-nums text-foreground"
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl font-display text-sm font-bold tabular-nums transition-all"
                         style={{
                           backgroundColor: player.avatarColor
-                            ? `${player.avatarColor}30`
-                            : "var(--primaryNeon)20",
+                            ? `${player.avatarColor}25`
+                            : "var(--primaryNeon)15",
                           color: player.avatarColor ?? "var(--primaryNeon)",
+                          boxShadow: player.avatarColor
+                            ? `0 0 0 1px ${player.avatarColor}30`
+                            : "0 0 0 1px rgba(0,229,255,0.2)",
                         }}
                         aria-hidden
                       >
                         {getInitials(player.name)}
                       </div>
-                      <span className="truncate font-medium text-foreground">
+                      <span className="flex-1 truncate font-semibold text-foreground text-sm">
                         {player.name}
                       </span>
-                    </div>
-                    <span className="flex shrink-0 items-center gap-2 text-sm font-medium text-mutedForeground group-hover:text-primaryNeon">
-                      View profile
-                      <ArrowRight size={14} aria-hidden />
-                    </span>
-                  </GlassCard>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+                      <span className="flex shrink-0 items-center gap-1.5 text-xs font-medium text-mutedForeground group-hover:text-primaryNeon transition-colors">
+                        Profile
+                        <ArrowRight size={13} aria-hidden />
+                      </span>
+                    </GlassCard>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </PageTransition>
     </AppShell>

@@ -21,13 +21,13 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <GlassCard className={cn("p-6", className)}>
-      <div className="flex flex-col gap-2">
+    <GlassCard className={cn("p-8", className)}>
+      <div className="flex flex-col items-center gap-2 text-center">
         {title ? (
-          <p className="text-sm font-medium text-mutedForeground">{title}</p>
+          <p className="text-sm font-semibold text-foreground/70">{title}</p>
         ) : null}
-        <p className="text-sm text-mutedForeground">{description}</p>
-        {action ? <div className="mt-2">{action}</div> : null}
+        <p className="text-sm text-mutedForeground max-w-xs leading-relaxed">{description}</p>
+        {action ? <div className="mt-3">{action}</div> : null}
       </div>
     </GlassCard>
   );

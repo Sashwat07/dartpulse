@@ -29,14 +29,19 @@ export function ChartContainer({
   children,
 }: ChartContainerProps) {
   return (
-    <GlassCard className={cn("min-w-0 p-4", className)}>
+    <GlassCard className={cn("min-w-0 p-5", className)}>
       <div className="space-y-3">
         {title != null && (
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground">
-            {title}
-          </h2>
+          <div>
+            <h2 className="font-display text-base font-semibold tracking-tight text-foreground">
+              {title}
+            </h2>
+            {description != null && (
+              <p className="mt-0.5 text-xs text-mutedForeground break-words">{description}</p>
+            )}
+          </div>
         )}
-        {description != null && (
+        {title == null && description != null && (
           <p className="text-xs text-mutedForeground break-words">{description}</p>
         )}
         <div className="h-[260px] w-full min-w-0">

@@ -11,9 +11,9 @@ type StatChipProps = {
 
 function StatChip({ label, value }: StatChipProps) {
   return (
-    <span className="rounded-full border border-glassBorder bg-surfaceSubtle px-2.5 py-1 text-xs font-medium">
-      <span className="text-mutedForeground">{label}</span>{" "}
-      <span className="text-foreground">{value}</span>
+    <span className="inline-flex items-center gap-1.5 rounded-lg border border-glassBorder bg-surfaceSubtle px-3 py-1.5 text-xs font-medium">
+      <span className="text-mutedForeground">{label}</span>
+      <span className="font-semibold text-foreground tabular-nums">{value}</span>
     </span>
   );
 }
@@ -35,21 +35,21 @@ export function MatchInfoCard() {
   const shotsPerRound = activeMatch.shotsPerRound ?? 1;
 
   return (
-    <GlassCard className="p-4">
-      <h2 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-3">
+    <GlassCard className="p-5">
+      <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-3">
         Match setup
       </h2>
-      <div className="flex flex-wrap gap-2 mb-3">
+      <div className="flex flex-wrap gap-2 mb-4">
         <StatChip label="Players" value={matchPlayers.length} />
         <StatChip label="Rounds" value={activeMatch.totalRounds} />
-        <StatChip label="Shots/Round" value={shotsPerRound} />
+        <StatChip label="Shots / Round" value={shotsPerRound} />
         <StatChip label="Playoff Shots" value={playoffShotsValue} />
       </div>
       <div>
-        <p className="text-xs font-medium text-mutedForeground mb-1">
+        <p className="text-xs font-medium text-mutedForeground mb-1.5">
           Starting order
         </p>
-        <p className="text-sm">
+        <p className="text-sm font-medium text-foreground">
           {matchPlayers.map((p) => playerDisplayName(p)).join(" → ")}
         </p>
       </div>

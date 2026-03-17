@@ -32,32 +32,38 @@ export function CurrentPlayerPanel() {
       : 1;
   const roundLabel = activeMatch
     ? inSuddenDeath
-      ? `Sudden death (round ${sdRoundDisplay})`
+      ? `Sudden death · round ${sdRoundDisplay}`
       : `Round ${activeMatch.currentRound} / ${activeMatch.totalRounds}`
     : null;
 
   return (
-    <GlassCard className="p-4">
-      <h2 className="text-xs font-medium uppercase tracking-wider text-mutedForeground">
-        Current turn
-      </h2>
+    <GlassCard className={`p-5 ${inSuddenDeath ? "border-amber-400/40 bg-gradient-to-br from-amber-400/5 to-transparent" : "border-primaryNeon/25 bg-gradient-to-br from-primaryNeon/5 to-transparent"}`}>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">
+          Current turn
+        </p>
+        {roundLabel && (
+          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${inSuddenDeath ? "border border-amber-400/30 bg-amber-400/10 text-amber-400" : "border border-primaryNeon/25 bg-primaryNeon/8 text-primaryNeon"}`}>
+            {roundLabel}
+          </span>
+        )}
+      </div>
+
       {matchComplete ? (
-        <p className="mt-2 text-lg font-semibold">Match complete</p>
+        <p className="font-display text-2xl font-bold text-foreground">Match complete</p>
       ) : inSuddenDeath ? (
-        <div className="mt-2 space-y-0.5">
-          <p className="text-lg font-semibold text-amber-400">Sudden death</p>
+        <div className="space-y-0.5">
+          <p className="font-display text-2xl font-bold text-amber-400">
+            {currentPlayer?.name ?? "—"}
+          </p>
           {tiedNames && (
-            <p className="text-sm text-mutedForeground">Tied: {tiedNames}</p>
+            <p className="text-xs text-mutedForeground">Tied: {tiedNames}</p>
           )}
-          <p className="text-sm font-medium">{currentPlayer?.name ?? "—"}</p>
         </div>
       ) : (
-        <div className="mt-2 space-y-0.5">
-          <p className="text-lg font-semibold">{currentPlayer?.name ?? "—"}</p>
-          {roundLabel && (
-            <p className="text-sm text-mutedForeground">{roundLabel}</p>
-          )}
-        </div>
+        <p className="font-display text-2xl font-bold text-foreground leading-tight">
+          {currentPlayer?.name ?? "—"}
+        </p>
       )}
 
       <div className="mt-5 space-y-3">
@@ -76,7 +82,7 @@ export function CurrentPlayerPanel() {
           type="button"
           onClick={() => undoLastThrow()}
           disabled={!canUndo}
-          className="rounded-lg border border-glassBorder bg-glassBackground px-3 py-2 text-sm font-medium hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-button border border-glassBorder bg-glassBackground px-3 py-2 text-sm font-medium text-mutedForeground hover:border-primaryNeon/30 hover:bg-surfaceSubtle hover:text-foreground transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Undo last throw
         </button>

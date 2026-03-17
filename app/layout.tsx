@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Barlow_Semi_Condensed } from "next/font/google";
 import Script from "next/script";
 
 import { Providers } from "@/components/Providers";
@@ -9,6 +9,14 @@ import "./globals.css";
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const barlowSemiCondensed = Barlow_Semi_Condensed({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -31,7 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} min-h-dvh bg-background text-foreground antialiased`}>
+      <body className={`${inter.variable} ${barlowSemiCondensed.variable} min-h-dvh bg-background text-foreground antialiased`}>
         <Script id="theme-init" strategy="beforeInteractive">
           {themeScript}
         </Script>

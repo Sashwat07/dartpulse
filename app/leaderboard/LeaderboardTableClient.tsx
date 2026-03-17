@@ -114,22 +114,22 @@ export function LeaderboardTableClient({ entries }: Props) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <GlassCard className="overflow-x-auto p-0">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
-            <tr className="border-b border-glassBorder text-mutedForeground">
-              <th className="w-12 px-3 py-3 text-center font-semibold tabular-nums">#</th>
-              <th className="px-3 py-3 font-medium">Player</th>
+            <tr className="border-b border-glassBorder">
+              <th className="w-12 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider tabular-nums text-mutedForeground">#</th>
+              <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-mutedForeground">Player</th>
               {SORTABLE_COLUMNS.map(({ key, label }) => {
                 const active = sortKey === key;
                 return (
                   <th
                     key={key}
                     className={cn(
-                      "px-3 py-3 text-right font-medium tabular-nums",
-                      "cursor-pointer select-none hover:text-foreground",
-                      active && "text-foreground",
+                      "px-3 py-3 text-right text-xs font-semibold uppercase tracking-wider tabular-nums",
+                      "cursor-pointer select-none transition-colors hover:text-foreground",
+                      active ? "text-primaryNeon" : "text-mutedForeground",
                     )}
                     onClick={() => handleSort(key)}
                     scope="col"
@@ -139,7 +139,7 @@ export function LeaderboardTableClient({ entries }: Props) {
                       {label}
                       <span
                         className={cn(
-                          "text-xs opacity-70",
+                          "opacity-50",
                           active && "opacity-100",
                         )}
                         aria-hidden
@@ -159,13 +159,13 @@ export function LeaderboardTableClient({ entries }: Props) {
                 transition={MOTION_SPRING_SUBTLE}
                 key={row.playerId}
                 className={cn(
-                  "border-b border-glassBorder/60 last:border-0",
+                  "border-b border-glassBorder/50 last:border-0 transition-colors hover:bg-surfaceSubtle",
                   getRankRowStyle(i),
                 )}
               >
                 <td
                   className={cn(
-                    "px-3 py-2.5 text-center text-base font-semibold tabular-nums",
+                    "px-4 py-3 text-center text-sm font-bold tabular-nums",
                     i < 3
                       ? i === 0
                         ? "text-championGold"
@@ -177,7 +177,7 @@ export function LeaderboardTableClient({ entries }: Props) {
                 >
                   {i + 1}
                 </td>
-                <td className="max-w-[12rem] truncate px-3 py-2.5 font-medium">
+                <td className="max-w-[12rem] truncate px-4 py-3 font-semibold">
                   <Link
                     href={`/players/${row.playerId}`}
                     className="text-foreground hover:text-primaryNeon focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded"
@@ -185,29 +185,29 @@ export function LeaderboardTableClient({ entries }: Props) {
                     {row.playerName}
                   </Link>
                 </td>
-                <td className="px-3 py-2.5 text-right tabular-nums">
+                <td className="px-3 py-3 text-right tabular-nums text-foreground/75">
                   {row.matchesPlayed}
                 </td>
-                <td className="px-3 py-2.5 text-right tabular-nums">
+                <td className="px-3 py-3 text-right tabular-nums font-bold text-foreground">
                   {row.wins}
                 </td>
-                <td className="px-3 py-2.5 text-right tabular-nums">
+                <td className="px-3 py-3 text-right tabular-nums text-foreground/75">
                   {row.podiums}
                 </td>
-                <td className="px-3 py-2.5 text-right tabular-nums">
+                <td className="px-3 py-3 text-right tabular-nums text-foreground/75">
                   {formatScore(row.averageFinish)}
                 </td>
-                <td className="px-3 py-2.5 text-right tabular-nums">
+                <td className="px-3 py-3 text-right tabular-nums text-foreground/75">
                   {row.averageRoundScore.toLocaleString(undefined, {
                     maximumFractionDigits: 1,
                   })}
                 </td>
-                <td className="px-3 py-2.5 text-right tabular-nums">
+                <td className="px-3 py-3 text-right tabular-nums font-semibold text-primaryNeon">
                   {row.bestThrow.toLocaleString(undefined, {
                     maximumFractionDigits: 0,
                   })}
                 </td>
-                <td className="px-3 py-2.5 text-right tabular-nums">
+                <td className="px-3 py-3 text-right tabular-nums text-foreground/75">
                   {row.totalPoints.toLocaleString(undefined, {
                     maximumFractionDigits: 0,
                   })}
@@ -217,7 +217,7 @@ export function LeaderboardTableClient({ entries }: Props) {
           </tbody>
         </table>
       </GlassCard>
-      <p className="text-xs text-mutedForeground">
+      <p className="text-xs text-mutedForeground leading-relaxed">
         Rankings use final match placement (incl. playoffs). Click a column
         header to sort; click again to toggle order. Same throw scope as
         Analytics (regular match + sudden death; no playoff throws).

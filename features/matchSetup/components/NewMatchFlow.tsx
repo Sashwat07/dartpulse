@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { X } from "lucide-react";
 import type { ListPlayersResponse } from "@/types/dto";
+import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/GlassCard";
 import { LoadingCard } from "@/components/ui/LoadingCard";
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -53,6 +54,12 @@ type NewMatchFlowProps = {
   /** Players from the current user's most recent completed match (not preselected). */
   recentPlayers?: PlayerOption[];
 };
+
+const inputCls =
+  "w-full rounded-button border border-glassBorder bg-glassBackground px-3 py-2.5 text-sm text-foreground placeholder:text-mutedForeground transition-colors focus:border-primaryNeon/60 focus:outline-none focus:ring-2 focus:ring-primaryNeon/20";
+
+const inputNarrowCls =
+  "rounded-button border border-glassBorder bg-glassBackground px-3 py-2.5 text-sm text-foreground tabular-nums transition-colors focus:border-primaryNeon/60 focus:outline-none focus:ring-2 focus:ring-primaryNeon/20 w-24";
 
 export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchFlowProps) {
   const router = useRouter();
@@ -176,12 +183,13 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
   }
 
   return (
-    <div className="mt-6 space-y-6">
-      <GlassCard className="p-4">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-2">
-          Select players (order = turn order)
+    <div className="mt-6 space-y-5">
+      {/* Player selection */}
+      <GlassCard className="p-5">
+        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-4">
+          Select players <span className="text-mutedForeground/60 normal-case">(order = turn order)</span>
         </h3>
-        <div className="mb-3">
+        <div className="mb-4">
           <label htmlFor="player-search" className="sr-only">
             Search players
           </label>
@@ -191,10 +199,10 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search to add players…"
-            className="w-full rounded-md border border-glassBorder bg-glassBackground px-3 py-2 text-sm"
+            className={inputCls}
             aria-describedby="player-search-hint"
           />
-          <p id="player-search-hint" className="mt-1 text-xs text-mutedForeground">
+          <p id="player-search-hint" className="mt-1.5 text-xs text-mutedForeground">
             {searchTrimmed.length === 0
               ? "Recent players from your last match are below. Search to find more."
               : `${searchResults.length} player${searchResults.length !== 1 ? "s" : ""}`}
@@ -204,7 +212,7 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
           <>
             {recentPlayers.length > 0 && (
               <>
-                <p className="text-xs font-medium text-mutedForeground mb-1.5">
+                <p className="text-xs font-semibold text-mutedForeground mb-2">
                   Recent players
                 </p>
                 <div className="flex flex-wrap gap-2" role="group" aria-label="Recent players">
@@ -215,16 +223,16 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
                         key={p.playerId}
                         type="button"
                         onClick={() => togglePlayer(p.playerId)}
-                        className={`inline-flex items-center gap-2 rounded-button border px-3 py-2 text-sm font-medium transition-colors shrink-0 ${
+                        className={`inline-flex items-center gap-2 rounded-button border px-3 py-2 text-sm font-medium transition-all shrink-0 active:scale-[0.97] ${
                           selected
-                            ? "border-primaryNeon bg-primaryNeon/10 text-foreground"
+                            ? "border-primaryNeon/40 bg-primaryNeon/10 text-primaryNeon"
                             : "border-glassBorder bg-glassBackground text-mutedForeground hover:border-glassBorder/80 hover:text-foreground"
                         }`}
                         aria-pressed={selected}
                       >
                         {p.avatarColor && (
                           <span
-                            className="h-2.5 w-2.5 rounded-full shrink-0"
+                            className="h-2 w-2 rounded-full shrink-0"
                             style={{ backgroundColor: p.avatarColor }}
                             aria-hidden
                           />
@@ -244,7 +252,7 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
           </>
         ) : (
           <>
-            <p className="text-xs font-medium text-mutedForeground mb-1.5">
+            <p className="text-xs font-semibold text-mutedForeground mb-2">
               Search results
             </p>
             {searchResults.length === 0 ? (
@@ -253,21 +261,21 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
               <ul className="space-y-1">
                 {searchResults.map((p) => (
                   <li key={p.playerId}>
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex items-center gap-2.5 cursor-pointer rounded-button px-2 py-1.5 hover:bg-surfaceSubtle transition-colors">
                       <input
                         type="checkbox"
                         checked={selectedIds.includes(p.playerId)}
                         onChange={() => togglePlayer(p.playerId)}
-                        className="rounded border-glassBorder"
+                        className="rounded border-glassBorder accent-primaryNeon"
                       />
-                      <span>{p.name}</span>
                       {p.avatarColor && (
                         <span
-                          className="w-3 h-3 rounded-full shrink-0"
+                          className="w-2.5 h-2.5 rounded-full shrink-0"
                           style={{ backgroundColor: p.avatarColor }}
                           aria-hidden
                         />
                       )}
+                      <span className="text-sm font-medium text-foreground">{p.name}</span>
                     </label>
                   </li>
                 ))}
@@ -275,16 +283,21 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
             )}
           </>
         )}
-        <div className="mt-4 pt-3 border-t border-glassBorder">
-          <p className="text-xs font-medium text-mutedForeground mb-2">
-            Selected players (turn order)
+
+        {/* Selected players */}
+        <div className="mt-4 pt-4 border-t border-glassBorder">
+          <p className="text-xs font-semibold text-mutedForeground mb-2.5">
+            Selected players <span className="text-mutedForeground/60 normal-case font-normal">(turn order)</span>
           </p>
           {selectedOrder.length === 0 ? (
             <p className="text-sm text-mutedForeground">No players selected.</p>
           ) : (
-            <ol className="list-decimal list-inside space-y-1.5 text-sm">
-              {selectedOrder.map((p) => (
-                <li key={p.playerId} className="flex items-center gap-2 group">
+            <ol className="space-y-1.5">
+              {selectedOrder.map((p, idx) => (
+                <li key={p.playerId} className="flex items-center gap-2.5 text-sm">
+                  <span className="w-5 shrink-0 text-right text-xs font-semibold tabular-nums text-mutedForeground">
+                    {idx + 1}.
+                  </span>
                   {p.avatarColor && (
                     <span
                       className="h-2.5 w-2.5 rounded-full shrink-0"
@@ -292,14 +305,14 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
                       aria-hidden
                     />
                   )}
-                  <span className="font-medium flex-1 min-w-0">{p.name}</span>
+                  <span className="font-medium flex-1 min-w-0 text-foreground">{p.name}</span>
                   <button
                     type="button"
                     onClick={() => togglePlayer(p.playerId)}
-                    className="shrink-0 rounded p-1 text-mutedForeground hover:text-foreground hover:bg-surfaceSubtle focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon"
+                    className="shrink-0 rounded-button p-1 text-mutedForeground hover:text-foreground hover:bg-surfaceSubtle focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon transition-colors"
                     aria-label={`Remove ${p.name} from selection`}
                   >
-                    <X size={14} aria-hidden />
+                    <X size={13} aria-hidden />
                   </button>
                 </li>
               ))}
@@ -308,13 +321,14 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
         </div>
       </GlassCard>
 
-      <GlassCard className="p-4">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-2">
-          Add player
+      {/* Add player */}
+      <GlassCard className="p-5">
+        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-4">
+          Add new player
         </h3>
-        <form onSubmit={handleAddPlayer} className="flex flex-wrap gap-2 items-end">
-          <div>
-            <label htmlFor="new-player-name" className="sr-only">
+        <form onSubmit={handleAddPlayer} className="flex flex-wrap gap-3 items-end">
+          <div className="flex-1 min-w-[160px]">
+            <label htmlFor="new-player-name" className="block text-xs font-medium text-mutedForeground mb-1.5">
               Name
             </label>
             <input
@@ -322,12 +336,12 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
               type="text"
               value={newPlayerName}
               onChange={(e) => setNewPlayerName(e.target.value)}
-              placeholder="Name"
-              className="rounded-md border border-glassBorder bg-glassBackground px-3 py-2 text-sm"
+              placeholder="Player name"
+              className={inputCls}
             />
           </div>
           <div>
-            <label htmlFor="new-player-color" className="block text-xs text-mutedForeground mb-1.5">
+            <label htmlFor="new-player-color" className="block text-xs font-medium text-mutedForeground mb-1.5">
               Color (required)
             </label>
             <div className="flex items-center gap-2">
@@ -336,21 +350,22 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
                 type="color"
                 value={newPlayerColor || "#888888"}
                 onChange={(e) => setNewPlayerColor(e.target.value)}
-                className="h-9 w-14 cursor-pointer rounded border border-glassBorder bg-glassBackground p-0.5 [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-0 [&::-webkit-color-swatch]:rounded"
+                className="h-10 w-14 cursor-pointer rounded-button border border-glassBorder bg-glassBackground p-0.5 [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-0 [&::-webkit-color-swatch]:rounded"
                 aria-required="true"
               />
               <span className="text-xs text-mutedForeground tabular-nums min-w-[4rem]">
-                {newPlayerColor ? newPlayerColor : "Pick a color"}
+                {newPlayerColor ? newPlayerColor : "Pick"}
               </span>
             </div>
           </div>
-          <button
+          <Button
             type="submit"
+            variant="secondary"
+            size="md"
             disabled={!canAddPlayer}
-            className="rounded-button border border-glassBorder bg-glassBackground px-3 py-2 text-sm font-medium hover:opacity-90 disabled:opacity-50"
           >
             {createPlayerMutation.isPending ? "Adding…" : "Add player"}
-          </button>
+          </Button>
         </form>
         {createPlayerMutation.isError && (
           <p className="mt-2 text-sm text-destructive">
@@ -361,13 +376,14 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
         )}
       </GlassCard>
 
-      <GlassCard className="p-4">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-3">
+      {/* Match settings */}
+      <GlassCard className="p-5">
+        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-4">
           Match settings
         </h3>
         <form onSubmit={handleCreateMatch} className="space-y-4">
           <div>
-            <label htmlFor="match-name" className="text-sm font-medium text-mutedForeground">
+            <label htmlFor="match-name" className="block text-xs font-medium text-mutedForeground mb-1.5">
               Match name
             </label>
             <input
@@ -376,79 +392,86 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
               value={matchName}
               onChange={(e) => setMatchName(e.target.value)}
               placeholder={defaultMatchName}
-              className="mt-1 block w-full rounded-md border border-glassBorder bg-glassBackground px-3 py-2 text-sm"
+              className={inputCls}
             />
           </div>
-          <div>
-            <label htmlFor="total-rounds" className="text-sm font-medium text-mutedForeground">
-              Total rounds
-            </label>
-            <input
-              id="total-rounds"
-              type="number"
-              min={1}
-              value={totalRounds}
-              onChange={(e) => setTotalRounds(Number(e.target.value) || 1)}
-              className="mt-1 block rounded-md border border-glassBorder bg-glassBackground px-3 py-2 text-sm w-24"
-            />
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div>
+              <label htmlFor="total-rounds" className="block text-xs font-medium text-mutedForeground mb-1.5">
+                Total rounds
+              </label>
+              <input
+                id="total-rounds"
+                type="number"
+                min={1}
+                value={totalRounds}
+                onChange={(e) => setTotalRounds(Number(e.target.value) || 1)}
+                className={inputNarrowCls}
+              />
+            </div>
+            <div>
+              <label htmlFor="shots-per-round" className="block text-xs font-medium text-mutedForeground mb-1.5">
+                Shots per round
+              </label>
+              <input
+                id="shots-per-round"
+                type="number"
+                min={1}
+                value={shotsPerRound}
+                onChange={(e) => setShotsPerRound(Math.max(1, Number(e.target.value) || 1))}
+                className={inputNarrowCls}
+              />
+            </div>
+            <div>
+              <label htmlFor="playoff-shots" className="block text-xs font-medium text-mutedForeground mb-1.5">
+                Playoff shots <span className="opacity-60">(optional)</span>
+              </label>
+              <input
+                id="playoff-shots"
+                type="number"
+                min={1}
+                value={playoffShotsPerRound === "" ? "" : playoffShotsPerRound}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setPlayoffShotsPerRound(v === "" ? "" : Math.max(1, Number(v) || 0));
+                }}
+                placeholder="Same as above"
+                className={inputNarrowCls}
+              />
+            </div>
           </div>
-          <div>
-            <label htmlFor="shots-per-round" className="text-sm font-medium text-mutedForeground">
-              Shots per round
-            </label>
-            <input
-              id="shots-per-round"
-              type="number"
-              min={1}
-              value={shotsPerRound}
-              onChange={(e) => setShotsPerRound(Math.max(1, Number(e.target.value) || 1))}
-              className="mt-1 block rounded-md border border-glassBorder bg-glassBackground px-3 py-2 text-sm w-24"
-            />
-          </div>
-          <div>
-            <label htmlFor="playoff-shots" className="text-sm font-medium text-mutedForeground">
-              Playoff shots per round (optional)
-            </label>
-            <input
-              id="playoff-shots"
-              type="number"
-              min={1}
-              value={playoffShotsPerRound === "" ? "" : playoffShotsPerRound}
-              onChange={(e) => {
-                const v = e.target.value;
-                setPlayoffShotsPerRound(v === "" ? "" : Math.max(1, Number(v) || 0));
-              }}
-              placeholder="Same as above"
-              className="mt-1 block rounded-md border border-glassBorder bg-glassBackground px-3 py-2 text-sm w-24"
-            />
-          </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <input
               id="shuffle-order"
               type="checkbox"
               checked={shuffle}
               onChange={(e) => setShuffle(e.target.checked)}
-              className="rounded border-glassBorder"
+              className="rounded border-glassBorder accent-primaryNeon w-4 h-4 cursor-pointer"
             />
-            <label htmlFor="shuffle-order" className="text-sm font-medium text-mutedForeground">
+            <label htmlFor="shuffle-order" className="text-sm font-medium text-mutedForeground cursor-pointer">
               Shuffle turn order before start
             </label>
           </div>
-          <button
-            type="submit"
-            disabled={!canCreate || createMatchMutation.isPending}
-            className="rounded-button border border-glassBorder bg-glassBackground px-4 py-2 text-sm font-medium hover:opacity-90 disabled:opacity-50"
-          >
-            {createMatchMutation.isPending ? "Creating…" : "Create match"}
-          </button>
-          {!canCreate && selectedOrder.length > 0 && selectedOrder.length < 2 && (
-            <p className="text-sm text-mutedForeground">
-              Select at least 2 players.
-            </p>
-          )}
-          {createError && (
-            <p className="text-sm text-destructive">{createError}</p>
-          )}
+
+          <div className="pt-2">
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              disabled={!canCreate || createMatchMutation.isPending}
+              className="w-full sm:w-auto"
+            >
+              {createMatchMutation.isPending ? "Creating…" : "Create match"}
+            </Button>
+            {!canCreate && selectedOrder.length > 0 && selectedOrder.length < 2 && (
+              <p className="mt-2 text-sm text-mutedForeground">
+                Select at least 2 players.
+              </p>
+            )}
+            {createError && (
+              <p className="mt-2 text-sm text-destructive">{createError}</p>
+            )}
+          </div>
         </form>
       </GlassCard>
     </div>

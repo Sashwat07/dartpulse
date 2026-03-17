@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Trophy } from "lucide-react";
 import type { CompletedMatchListItem } from "@/types/match";
 import { GlassCard } from "@/components/GlassCard";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -22,7 +22,7 @@ export function HistoryCardList({ items }: HistoryCardListProps) {
   }
 
   return (
-    <StaggerChildren className="space-y-3" staggerDelay={0.04}>
+    <StaggerChildren className="space-y-2" staggerDelay={0.04}>
       {items.map((item) => {
         const date = item.completedAt ?? item.createdAt;
         const dateLabel = date
@@ -34,28 +34,29 @@ export function HistoryCardList({ items }: HistoryCardListProps) {
         return (
           <StaggerChild key={item.matchId}>
             <Link href={`/history/${item.matchId}`} className="block">
-              <GlassCard className="group p-4 transition-colors hover:border-primaryNeon/40 hover:bg-surfaceSubtle">
-                <div className="flex items-start justify-between gap-3">
+              <GlassCard className="group p-4 transition-all hover:border-primaryNeon/30 hover:bg-surfaceSubtle">
+                <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-base font-semibold text-foreground truncate">
+                    <h3 className="text-sm font-semibold text-foreground truncate">
                       {item.matchName}
                     </h3>
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-mutedForeground">
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-mutedForeground">
                       <span>{dateLabel}</span>
                       {timeLabel != null && (
                         <span className="tabular-nums">{timeLabel}</span>
                       )}
                       <span>{item.playerCount} players</span>
                       {item.hasPlayoffs && (
-                        <span className="rounded-full border border-primaryNeon/40 bg-primaryNeon/10 px-2.5 py-1 text-xs font-medium text-primaryNeon">
+                        <span className="inline-flex items-center gap-1 rounded-full border border-primaryNeon/30 bg-primaryNeon/8 px-2 py-0.5 text-xs font-semibold text-primaryNeon">
+                          <Trophy size={10} aria-hidden />
                           Playoffs
                         </span>
                       )}
                     </div>
                   </div>
-                  <span className="flex shrink-0 items-center gap-2 text-sm font-medium text-mutedForeground group-hover:text-primaryNeon">
+                  <span className="flex shrink-0 items-center gap-1.5 text-xs font-medium text-mutedForeground group-hover:text-primaryNeon transition-colors">
                     View
-                    <ChevronRight size={14} className="shrink-0" aria-hidden />
+                    <ChevronRight size={13} className="shrink-0" aria-hidden />
                   </span>
                 </div>
               </GlassCard>

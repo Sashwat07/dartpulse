@@ -29,33 +29,35 @@ export function ScoreTable() {
 
   if (table.rows.length === 0) {
     return (
-      <GlassCard className="p-4">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-3">Scoreboard</h2>
+      <GlassCard className="p-5">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-3">Scoreboard</h2>
         <p className="text-sm text-mutedForeground">No players in match.</p>
       </GlassCard>
     );
   }
 
   return (
-    <GlassCard className="p-4 overflow-x-auto">
-      <h2 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-3">Scoreboard</h2>
+    <GlassCard className="overflow-x-auto p-0">
+      <div className="px-5 pt-4 pb-3 border-b border-glassBorder">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">Scoreboard</h2>
+      </div>
       <table className="w-full min-w-[320px] border-collapse">
         <thead>
-          <tr className="border-b border-glassBorder text-left text-sm text-mutedForeground">
-            <th className="px-3 py-2 font-medium">Player</th>
+          <tr className="border-b border-glassBorder text-left text-xs text-mutedForeground">
+            <th className="px-4 py-2.5 font-semibold">Player</th>
             {table.roundNumbers.map((r) => (
               <th
                 key={r}
                 className={
                   r === currentRound
-                    ? "px-3 py-2 text-right font-semibold bg-primaryNeon/10 text-primaryNeon/90"
-                    : "px-3 py-2 text-right font-medium"
+                    ? "px-3 py-2.5 text-right font-bold bg-primaryNeon/8 text-primaryNeon"
+                    : "px-3 py-2.5 text-right font-medium"
                 }
               >
                 R{r}
               </th>
             ))}
-            <th className="px-3 py-2 text-right font-semibold">Total</th>
+            <th className="px-4 py-2.5 text-right font-bold text-foreground/70">Total</th>
           </tr>
         </thead>
         <tbody>
@@ -93,7 +95,7 @@ export function ScoreTable() {
                     <td
                       colSpan={colSpan}
                       id={detailId}
-                      className="px-3 py-2 bg-muted/20 align-top"
+                      className="px-4 py-3 bg-surfaceSubtle align-top"
                     >
                       <PlayerShotHistoryContent
                         playerId={row.playerId}

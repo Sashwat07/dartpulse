@@ -4,58 +4,70 @@
    Light mode (default when .dark is not set on html)
    ========================================================================== */
 :root {
-  --background: #f1f3f5;
-  --foreground: #1a1d23;
-  --mutedForeground: rgba(26, 29, 35, 0.7);
+  --background: #f0f2f5;
+  --foreground: #141720;
+  --mutedForeground: rgba(20, 23, 32, 0.55);
 
   --primaryNeon: #0096b3;
   --championGold: #c9a600;
-  --primaryForeground: #000000;
+  --primaryForeground: #ffffff;
 
-  --glassBackground: rgba(255, 255, 255, 0.85);
-  --glassBorder: rgba(0, 0, 0, 0.12);
+  --glassBackground: rgba(255, 255, 255, 0.88);
+  --glassBorder: rgba(0, 0, 0, 0.09);
 
-  --surfaceSubtle: rgba(0, 0, 0, 0.04);
-  --surfaceHover: rgba(0, 0, 0, 0.08);
+  --surface1: rgba(255, 255, 255, 0.96);
+  --surface2: rgba(248, 249, 252, 0.8);
+
+  --surfaceSubtle: rgba(0, 0, 0, 0.03);
+  --surfaceHover: rgba(0, 0, 0, 0.055);
   --surfaceMuted: rgba(0, 0, 0, 0.02);
 
   --overlay: rgba(0, 0, 0, 0.5);
-  --panelShadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-  --glowShadow: 0 0 15px rgba(0, 150, 179, 0.35);
+  --panelShadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.05);
+  --glowShadow: 0 0 18px rgba(0, 150, 179, 0.3);
 
   --destructive: #dc2626;
   --focusRing: var(--primaryNeon);
   --focusRingOffset: var(--background);
-  --inputBorderHover: rgba(0, 0, 0, 0.2);
+  --inputBorderHover: rgba(0, 0, 0, 0.18);
   --inputInsetHighlight: transparent;
+
+  --sidebarBg: rgba(255, 255, 255, 0.92);
+  --sidebarBorder: rgba(0, 0, 0, 0.08);
 }
 
 /* ==========================================================================
    Dark mode (when .dark is set on html by next-themes)
    ========================================================================== */
 .dark {
-  --background: #0b0f1a;
-  --foreground: #ededed;
-  --mutedForeground: rgba(237, 237, 237, 0.72);
+  --background: #080c15;
+  --foreground: #e6e9f2;
+  --mutedForeground: rgba(230, 233, 242, 0.5);
 
   --primaryNeon: #00e5ff;
   --championGold: #ffd700;
   --primaryForeground: #000000;
 
-  --glassBackground: rgba(255, 255, 255, 0.05);
-  --glassBorder: rgba(255, 255, 255, 0.15);
+  --glassBackground: rgba(255, 255, 255, 0.04);
+  --glassBorder: rgba(255, 255, 255, 0.09);
 
-  --surfaceSubtle: rgba(255, 255, 255, 0.05);
-  --surfaceHover: rgba(255, 255, 255, 0.08);
-  --surfaceMuted: rgba(255, 255, 255, 0.03);
+  --surface1: rgba(255, 255, 255, 0.06);
+  --surface2: rgba(255, 255, 255, 0.04);
 
-  --overlay: rgba(0, 0, 0, 0.6);
-  --panelShadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-  --glowShadow: 0 0 15px rgba(0, 229, 255, 0.6);
+  --surfaceSubtle: rgba(255, 255, 255, 0.04);
+  --surfaceHover: rgba(255, 255, 255, 0.065);
+  --surfaceMuted: rgba(255, 255, 255, 0.025);
+
+  --overlay: rgba(0, 0, 0, 0.65);
+  --panelShadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  --glowShadow: 0 0 20px rgba(0, 229, 255, 0.45);
 
   --destructive: #ef4444;
   --inputBorderHover: rgba(255, 255, 255, 0.2);
-  --inputInsetHighlight: rgba(255, 255, 255, 0.06);
+  --inputInsetHighlight: rgba(255, 255, 255, 0.04);
+
+  --sidebarBg: rgba(4, 7, 14, 0.9);
+  --sidebarBorder: rgba(255, 255, 255, 0.07);
 }
 
 @theme inline {
@@ -67,10 +79,14 @@
   --color-primaryForeground: var(--primaryForeground);
   --color-glassBackground: var(--glassBackground);
   --color-glassBorder: var(--glassBorder);
+  --color-surface1: var(--surface1);
+  --color-surface2: var(--surface2);
   --color-surfaceSubtle: var(--surfaceSubtle);
   --color-surfaceHover: var(--surfaceHover);
   --color-surfaceMuted: var(--surfaceMuted);
   --color-destructive: var(--destructive);
+  --color-sidebarBg: var(--sidebarBg);
+  --color-sidebarBorder: var(--sidebarBorder);
 }
 
 body {
@@ -81,4 +97,27 @@ body {
 
 * {
   border-color: var(--glassBorder);
+}
+
+/* Display font utility */
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  }
+}
+
+/* Premium scrollbar for dark mode */
+.dark ::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.dark ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
 }

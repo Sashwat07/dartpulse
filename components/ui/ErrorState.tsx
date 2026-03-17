@@ -21,10 +21,10 @@ export function ErrorState({
   className,
 }: ErrorStateProps) {
   return (
-    <GlassCard className={cn("p-6 border-glassBorder", className)}>
-      <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium text-mutedForeground">{title}</p>
-        <p className="text-sm text-mutedForeground">{description}</p>
+    <GlassCard className={cn("p-6 border-destructive/20", className)}>
+      <div className="flex flex-col gap-1.5">
+        <p className="text-sm font-semibold text-foreground/80">{title}</p>
+        <p className="text-sm text-mutedForeground leading-relaxed">{description}</p>
         {action ? <div className="mt-3">{action}</div> : null}
       </div>
     </GlassCard>

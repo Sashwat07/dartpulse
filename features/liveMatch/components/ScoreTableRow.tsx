@@ -58,25 +58,25 @@ export function ScoreTableRow({
           : undefined
       }
       className={cn(
-        "border-b border-glassBorder",
+        "border-b border-glassBorder/60 transition-colors",
         isCurrentPlayer &&
-          "border-l-2 border-l-primaryNeon/70 bg-primaryNeon/5",
-        isExpandable && "cursor-pointer hover:bg-surfaceSubtle/50",
+          "border-l-2 border-l-primaryNeon bg-primaryNeon/5",
+        isExpandable && "cursor-pointer hover:bg-surfaceSubtle",
       )}
     >
-      <td className="px-3 py-2 text-left text-sm">
+      <td className="px-4 py-3 text-left text-sm">
         <div className="flex flex-col gap-0.5 min-w-0">
-            <span
-              className={cn(
-                "font-medium",
-                isCurrentPlayer && "font-semibold text-foreground",
-              )}
-            >
-              {row.playerName}
-            </span>
-            {showDots && (
-              <ShotDots shotsTaken={shotsTaken} shotsPerRound={shotsPerRound} />
+          <span
+            className={cn(
+              "font-medium truncate",
+              isCurrentPlayer && "font-semibold text-foreground",
             )}
+          >
+            {row.playerName}
+          </span>
+          {showDots && (
+            <ShotDots shotsTaken={shotsTaken} shotsPerRound={shotsPerRound} />
+          )}
         </div>
       </td>
       {roundNumbers.map((r) => {
@@ -87,8 +87,8 @@ export function ScoreTableRow({
           <td
             key={r}
             className={cn(
-              "px-3 py-2 text-right text-sm tabular-nums",
-              isCurrentCol && "bg-primaryNeon/10",
+              "px-3 py-3 text-right text-sm tabular-nums",
+              isCurrentCol ? "bg-primaryNeon/8 font-semibold text-foreground" : "text-foreground/75",
             )}
           >
             {isCurrentCol && score > 0 ? (
@@ -99,7 +99,7 @@ export function ScoreTableRow({
           </td>
         );
       })}
-      <td className="px-3 py-2 text-right text-sm font-semibold tabular-nums">
+      <td className="px-4 py-3 text-right text-sm font-bold tabular-nums text-foreground">
         {row.totalScore}
       </td>
     </tr>

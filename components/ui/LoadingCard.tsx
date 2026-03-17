@@ -22,7 +22,7 @@ export function LoadingCard({
           className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-glassBorder border-t-primaryNeon"
           aria-hidden
         />
-        <p className="text-sm text-mutedForeground">{message}</p>
+        <p className="text-sm font-medium text-mutedForeground">{message}</p>
       </div>
     </GlassCard>
   );

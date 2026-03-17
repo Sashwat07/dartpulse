@@ -11,6 +11,8 @@ export default {
         primaryForeground: "var(--primaryForeground)",
         glassBackground: "var(--glassBackground)",
         glassBorder: "var(--glassBorder)",
+        surface1: "var(--surface1)",
+        surface2: "var(--surface2)",
         background: "var(--background)",
         foreground: "var(--foreground)",
         mutedForeground: "var(--mutedForeground)",
@@ -18,14 +20,20 @@ export default {
         surfaceHover: "var(--surfaceHover)",
         surfaceMuted: "var(--surfaceMuted)",
         destructive: "var(--destructive)",
+        sidebarBg: "var(--sidebarBg)",
+        sidebarBorder: "var(--sidebarBorder)",
+      },
+      fontFamily: {
+        display: ["var(--font-display)", "var(--font-sans)", "system-ui", "sans-serif"],
       },
       boxShadow: {
         panelShadow: "var(--panelShadow)",
         glowShadow: "var(--glowShadow)",
+        glowStrong: "0 0 30px rgba(0, 229, 255, 0.35)",
       },
       borderRadius: {
         card: "16px",
-        button: "12px",
+        button: "10px",
       },
       maxWidth: {
         mainContent: "1440px",
@@ -34,4 +42,3 @@ export default {
   },
   plugins: [],
 } satisfies Config;
-
