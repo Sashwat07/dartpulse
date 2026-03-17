@@ -33,7 +33,7 @@ export function MatchOutcomeSummary({ summary }: MatchOutcomeSummaryProps) {
 
       {/* A. Final Ranking */}
       <section>
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+        <p className="text-xs font-medium text-mutedForeground uppercase tracking-wide mb-2">
           Final ranking
         </p>
         <ul className="space-y-1">
@@ -48,7 +48,7 @@ export function MatchOutcomeSummary({ summary }: MatchOutcomeSummaryProps) {
 
       {/* B. Outcome */}
       <section>
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+        <p className="text-xs font-medium text-mutedForeground uppercase tracking-wide mb-1">
           Outcome
         </p>
         <p className="text-sm font-medium">
@@ -62,25 +62,25 @@ export function MatchOutcomeSummary({ summary }: MatchOutcomeSummaryProps) {
       {/* C. Pairing preview */}
       {(summary.finalPairing || summary.qualifier1Pairing || summary.qualifier2Pairing) && (
         <section>
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+          <p className="text-xs font-medium text-mutedForeground uppercase tracking-wide mb-2">
             Pairing preview
           </p>
           <ul className="space-y-1.5 text-sm">
             {summary.finalPairing && (
               <li>
-                <span className="text-muted-foreground">Final:</span>{" "}
+                <span className="text-mutedForeground">Final:</span>{" "}
                 {summary.finalPairing.player1Name} vs {summary.finalPairing.player2Name}
               </li>
             )}
             {summary.qualifier1Pairing && (
               <li>
-                <span className="text-muted-foreground">Qualifier 1:</span>{" "}
+                <span className="text-mutedForeground">Qualifier 1:</span>{" "}
                 {summary.qualifier1Pairing.player1Name} vs {summary.qualifier1Pairing.player2Name}
               </li>
             )}
             {summary.qualifier2Pairing && (
               <li>
-                <span className="text-muted-foreground">Qualifier 2:</span>{" "}
+                <span className="text-mutedForeground">Qualifier 2:</span>{" "}
                 {summary.qualifier2Pairing.player1Name} vs {summary.qualifier2Pairing.player2Name}
               </li>
             )}
@@ -91,10 +91,10 @@ export function MatchOutcomeSummary({ summary }: MatchOutcomeSummaryProps) {
       {/* D. Decision-right text */}
       {(decisionRights.final || decisionRights.qualifier1 || decisionRights.qualifier2) && (
         <section>
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
+          <p className="text-xs font-medium text-mutedForeground uppercase tracking-wide mb-1.5">
             First throw
           </p>
-          <ul className="space-y-1 text-sm text-muted-foreground">
+          <ul className="space-y-1 text-sm text-mutedForeground">
             {decisionRights.final && (
               <li>
                 {decisionRights.final.playerName} decides first throw for the final.

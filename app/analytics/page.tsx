@@ -24,13 +24,11 @@ export default async function AnalyticsPage() {
           title="Analytics"
           description="Completed matches only. Regular-match throws (excludes playoff; includes sudden death)."
         />
-        <div className="mt-8 min-w-0 space-y-10">
+        <div className="mt-8 min-w-0 space-y-8">
 
           {/* Overview stat cards */}
           <section className="space-y-3">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">
-              Overview
-            </h2>
+            <h2 className="section-heading">Overview</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
               {[
                 { label: "Completed matches", value: overview.totalCompletedMatches, accent: false },
@@ -40,11 +38,9 @@ export default async function AnalyticsPage() {
                 { label: "Highest match score", value: formatScore(overview.highestCompletedMatchScore), accent: false },
                 { label: "Total points", value: formatScore(overview.totalPoints), accent: false },
               ].map((stat) => (
-                <GlassCard key={stat.label} className="flex min-h-[96px] flex-col justify-between p-4">
-                  <p className="text-xs font-medium uppercase tracking-wider text-mutedForeground leading-tight">
-                    {stat.label}
-                  </p>
-                  <p className={`mt-2 font-display text-3xl font-bold tabular-nums leading-none ${stat.accent ? "text-primaryNeon" : "text-foreground"}`}>
+                <GlassCard key={stat.label} className="flex min-h-[90px] flex-col justify-between p-4">
+                  <p className="stat-label leading-tight">{stat.label}</p>
+                  <p className={`stat-value mt-2 ${stat.accent ? "text-primaryNeon" : "text-foreground"}`}>
                     {stat.value}
                   </p>
                 </GlassCard>
@@ -54,9 +50,7 @@ export default async function AnalyticsPage() {
 
           {/* Top by wins */}
           <section className="space-y-3">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">
-              Top by wins
-            </h2>
+            <h2 className="section-heading">Top by wins</h2>
             {overview.topPlayersByWins.length === 0 ? (
               <GlassCard className="p-4">
                 <p className="text-sm text-mutedForeground">
@@ -71,7 +65,7 @@ export default async function AnalyticsPage() {
                       key={p.playerId}
                       className="flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-surfaceSubtle"
                     >
-                      <span className={`w-5 shrink-0 text-center text-sm font-bold tabular-nums ${i === 0 ? "text-championGold" : i === 1 ? "text-[#C0C0C0]" : i === 2 ? "text-[#CD7F32]" : "text-mutedForeground"}`}>
+                      <span className={`w-5 shrink-0 text-center text-sm font-bold tabular-nums ${i === 0 ? "text-championGold" : i === 1 ? "text-rankSilver" : i === 2 ? "text-rankBronze" : "text-mutedForeground"}`}>
                         {i + 1}
                       </span>
                       <Link
@@ -93,9 +87,7 @@ export default async function AnalyticsPage() {
 
           {/* Top by total points */}
           <section className="space-y-3">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">
-              Top by total points
-            </h2>
+            <h2 className="section-heading">Top by total points</h2>
             {overview.topPlayersByTotalPoints.length === 0 ? (
               <GlassCard className="p-4">
                 <p className="text-sm text-mutedForeground">
@@ -110,7 +102,7 @@ export default async function AnalyticsPage() {
                       key={p.playerId}
                       className="flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-surfaceSubtle"
                     >
-                      <span className={`w-5 shrink-0 text-center text-sm font-bold tabular-nums ${i === 0 ? "text-championGold" : i === 1 ? "text-[#C0C0C0]" : i === 2 ? "text-[#CD7F32]" : "text-mutedForeground"}`}>
+                      <span className={`w-5 shrink-0 text-center text-sm font-bold tabular-nums ${i === 0 ? "text-championGold" : i === 1 ? "text-rankSilver" : i === 2 ? "text-rankBronze" : "text-mutedForeground"}`}>
                         {i + 1}
                       </span>
                       <Link
@@ -142,9 +134,7 @@ export default async function AnalyticsPage() {
 
           {/* Player analytics table */}
           <section className="space-y-3">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">
-              Player analytics
-            </h2>
+            <h2 className="section-heading">Player analytics</h2>
             {players.length === 0 ? (
               <GlassCard className="p-6">
                 <p className="text-sm text-mutedForeground">
@@ -157,25 +147,15 @@ export default async function AnalyticsPage() {
                   <table className="w-full min-w-[640px] text-left text-sm">
                     <thead>
                       <tr className="border-b border-glassBorder">
-                        <th className="px-4 py-3 font-semibold text-foreground/80">Player</th>
-                        <th className="px-3 py-3 text-right font-medium tabular-nums text-mutedForeground">
+                        <th className="table-th text-left font-semibold text-foreground">Player</th>
+                        <th className="table-th text-right tabular-nums">
                           Matches
                         </th>
-                        <th className="px-3 py-3 text-right font-medium tabular-nums text-mutedForeground">
-                          Wins
-                        </th>
-                        <th className="px-3 py-3 text-right font-medium tabular-nums text-mutedForeground">
-                          Total pts
-                        </th>
-                        <th className="px-3 py-3 text-right font-medium tabular-nums text-mutedForeground">
-                          Best throw
-                        </th>
-                        <th className="px-3 py-3 text-right font-medium tabular-nums text-mutedForeground">
-                          Avg / round
-                        </th>
-                        <th className="px-3 py-3 text-right font-medium tabular-nums text-mutedForeground">
-                          Throws
-                        </th>
+                        <th className="table-th text-right tabular-nums">Wins</th>
+                        <th className="table-th text-right tabular-nums">Total pts</th>
+                        <th className="table-th text-right tabular-nums">Best throw</th>
+                        <th className="table-th text-right tabular-nums">Avg / round</th>
+                        <th className="table-th text-right tabular-nums">Throws</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -184,30 +164,30 @@ export default async function AnalyticsPage() {
                           key={p.playerId}
                           className="border-b border-glassBorder/50 last:border-0 transition-colors hover:bg-surfaceSubtle"
                         >
-                          <td className="max-w-[12rem] truncate px-4 py-3 font-medium">
+                          <td className="table-td max-w-[12rem] truncate font-medium">
                             <Link
                               href={`/players/${p.playerId}`}
-                              className="text-foreground hover:text-primaryNeon focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded transition-colors"
+                              className="text-foreground hover:text-primaryNeon focus-ring rounded"
                             >
                               {p.playerName}
                             </Link>
                           </td>
-                          <td className="px-3 py-3 text-right tabular-nums text-foreground/80">
+                          <td className="table-td text-right tabular-nums text-foreground/80">
                             {p.matchesPlayed}
                           </td>
-                          <td className="px-3 py-3 text-right tabular-nums font-semibold text-foreground">
+                          <td className="table-td text-right tabular-nums font-semibold text-foreground">
                             {p.wins}
                           </td>
-                          <td className="px-3 py-3 text-right tabular-nums text-foreground/80">
+                          <td className="table-td text-right tabular-nums text-foreground/80">
                             {formatScore(p.totalPoints)}
                           </td>
-                          <td className="px-3 py-3 text-right tabular-nums text-primaryNeon font-semibold">
+                          <td className="table-td text-right tabular-nums text-primaryNeon font-semibold">
                             {formatScore(p.bestThrow)}
                           </td>
-                          <td className="px-3 py-3 text-right tabular-nums text-foreground/80">
+                          <td className="table-td text-right tabular-nums text-foreground/80">
                             {formatScore(p.averageRoundScore)}
                           </td>
-                          <td className="px-3 py-3 text-right tabular-nums text-foreground/80">
+                          <td className="table-td text-right tabular-nums text-foreground/80">
                             {p.totalThrows}
                           </td>
                         </tr>

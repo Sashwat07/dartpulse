@@ -22,7 +22,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             type="button"
             onClick={onMenuClick}
             aria-label="Open menu"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-button border border-glassBorder text-mutedForeground hover:border-primaryNeon/40 hover:bg-surfaceSubtle hover:text-primaryNeon focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-colors lg:hidden"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-button border border-glassBorder text-mutedForeground hover:border-primaryNeon/40 hover:bg-surfaceSubtle hover:text-primaryNeon focus-ring transition-colors lg:hidden"
           >
             <Menu size={18} />
           </button>
@@ -67,7 +67,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             <button
               type="button"
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="flex items-center gap-1.5 rounded-button border border-glassBorder bg-glassBackground px-2.5 py-1.5 text-xs font-medium text-mutedForeground hover:border-primaryNeon/30 hover:bg-surfaceSubtle hover:text-primaryNeon focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-colors"
+              className="flex items-center gap-1.5 rounded-button border border-glassBorder bg-glassBackground px-2.5 py-1.5 text-xs font-medium text-mutedForeground hover:border-primaryNeon/30 hover:bg-surfaceSubtle hover:text-primaryNeon focus-ring transition-colors"
               aria-label="Sign out"
             >
               <LogOut size={13} />
@@ -77,7 +77,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
         ) : (
           <Link
             href="/login"
-            className="rounded-button border border-primaryNeon/40 bg-primaryNeon/10 px-3 py-1.5 text-sm font-semibold text-primaryNeon transition-colors hover:bg-primaryNeon/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+            className="btn-outline-primary focus-ring px-3 py-1.5 text-sm"
           >
             Sign in
           </Link>

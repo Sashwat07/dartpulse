@@ -119,16 +119,15 @@ export function LeaderboardTableClient({ entries }: Props) {
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
             <tr className="border-b border-glassBorder">
-              <th className="w-12 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider tabular-nums text-mutedForeground">#</th>
-              <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-mutedForeground">Player</th>
+              <th className="table-th w-12 text-center tabular-nums">#</th>
+              <th className="table-th">Player</th>
               {SORTABLE_COLUMNS.map(({ key, label }) => {
                 const active = sortKey === key;
                 return (
                   <th
                     key={key}
                     className={cn(
-                      "px-3 py-3 text-right text-xs font-semibold uppercase tracking-wider tabular-nums",
-                      "cursor-pointer select-none transition-colors hover:text-foreground",
+                      "table-th text-right tabular-nums cursor-pointer select-none transition-colors hover:text-foreground",
                       active ? "text-primaryNeon" : "text-mutedForeground",
                     )}
                     onClick={() => handleSort(key)}
@@ -165,49 +164,49 @@ export function LeaderboardTableClient({ entries }: Props) {
               >
                 <td
                   className={cn(
-                    "px-4 py-3 text-center text-sm font-bold tabular-nums",
+                    "table-td text-center font-bold tabular-nums",
                     i < 3
                       ? i === 0
                         ? "text-championGold"
                         : i === 1
-                          ? "text-[#C0C0C0]"
-                          : "text-[#CD7F32]"
+                          ? "text-rankSilver"
+                          : "text-rankBronze"
                       : "text-mutedForeground",
                   )}
                 >
                   {i + 1}
                 </td>
-                <td className="max-w-[12rem] truncate px-4 py-3 font-semibold">
+                <td className="table-td max-w-[12rem] truncate font-semibold">
                   <Link
                     href={`/players/${row.playerId}`}
-                    className="text-foreground hover:text-primaryNeon focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded"
+                    className="text-foreground hover:text-primaryNeon focus-ring rounded"
                   >
                     {row.playerName}
                   </Link>
                 </td>
-                <td className="px-3 py-3 text-right tabular-nums text-foreground/75">
+                <td className="table-td text-right tabular-nums text-foreground/75">
                   {row.matchesPlayed}
                 </td>
-                <td className="px-3 py-3 text-right tabular-nums font-bold text-foreground">
+                <td className="table-td text-right tabular-nums font-bold text-foreground">
                   {row.wins}
                 </td>
-                <td className="px-3 py-3 text-right tabular-nums text-foreground/75">
+                <td className="table-td text-right tabular-nums text-foreground/75">
                   {row.podiums}
                 </td>
-                <td className="px-3 py-3 text-right tabular-nums text-foreground/75">
+                <td className="table-td text-right tabular-nums text-foreground/75">
                   {formatScore(row.averageFinish)}
                 </td>
-                <td className="px-3 py-3 text-right tabular-nums text-foreground/75">
+                <td className="table-td text-right tabular-nums text-foreground/75">
                   {row.averageRoundScore.toLocaleString(undefined, {
                     maximumFractionDigits: 1,
                   })}
                 </td>
-                <td className="px-3 py-3 text-right tabular-nums font-semibold text-primaryNeon">
+                <td className="table-td text-right tabular-nums font-semibold text-primaryNeon">
                   {row.bestThrow.toLocaleString(undefined, {
                     maximumFractionDigits: 0,
                   })}
                 </td>
-                <td className="px-3 py-3 text-right tabular-nums text-foreground/75">
+                <td className="table-td text-right tabular-nums text-foreground/75">
                   {row.totalPoints.toLocaleString(undefined, {
                     maximumFractionDigits: 0,
                   })}

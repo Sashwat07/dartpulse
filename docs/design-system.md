@@ -114,7 +114,7 @@ The layout provides structured, predictable spacing.
 - **Grid spacing:** Built on an 8px base unit.
 - **Common paddings:** 16px, 24px, 32px.
 
-### Spacing Tokens
+### Spacing Tokens & Conventions
 Consistent spacing limits arbitrary bounds:
 - `space1` = 8px
 - `space2` = 16px
@@ -122,12 +122,30 @@ Consistent spacing limits arbitrary bounds:
 - `space4` = 32px
 - `space5` = 48px
 
+**Page & section rhythm (unified):**
+- Main content below page header: `mt-8`
+- Between major sections: `space-y-8`
+- Within a section (heading + content): `space-y-3`
+- Card padding: `p-5` for content cards, `p-4` for stat/compact cards, `p-0` for table wrappers
+- Stat card min-height: `min-h-[90px]` for consistency
+
 ### Border Radius System
 Standardized radius tokens used consistently across UI elements:
 - `cardRadius` = 16px (Used for GlassCards)
 - `panelRadius` = 20px (Used for main layout panels)
-- `buttonRadius` = 12px
+- `buttonRadius` = 10px (`--radius-button` in globals.css)
 - `pillRadius` = 999px (Used for fully continuous round elements)
+
+### Consistency utility classes (globals.css)
+Use these for unified hierarchy, buttons, and tables:
+- **`.section-heading`** — Section h2: uppercase, tracking, muted color
+- **`.stat-label`** — Stat card label (uppercase, muted)
+- **`.stat-value`** — Stat value (display font, bold, tabular-nums; add color separately)
+- **`.focus-ring`** — Visible focus ring (2px offset + primaryNeon ring) for links/buttons
+- **`.btn-outline-primary`** — Teal CTA link/button (theme-aware)
+- **`.btn-secondary`** — Glass/secondary link/button
+- **`.table-th`** / **`.table-td`** — Table cell padding and base typography
+- **`.disabled-state`** — Disabled opacity + cursor (use with `disabled` attribute)
 
 ---
 

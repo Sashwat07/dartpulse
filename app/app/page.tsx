@@ -39,13 +39,13 @@ export default async function AppHomePage() {
           description="Track every throw. Own every match."
           rightSlot={
             <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
-              <Link
-                href="/match/new"
-                className="inline-flex items-center gap-2 rounded-button border border-primaryNeon/40 bg-primaryNeon/10 px-4 py-2.5 text-sm font-semibold text-primaryNeon shadow-[0_0_16px_rgba(0,229,255,0.15)] transition-all hover:bg-primaryNeon/20 hover:shadow-[0_0_20px_rgba(0,229,255,0.25)] active:scale-[0.97]"
-              >
-                <span aria-hidden>＋</span>
-                <span>New Match</span>
-              </Link>
+                <Link
+                  href="/match/new"
+                  className="btn-outline-primary focus-ring"
+                >
+                  <span aria-hidden>＋</span>
+                  <span>New Match</span>
+                </Link>
               {resumable.length > 0 && (
                 <Link
                   href={
@@ -53,14 +53,14 @@ export default async function AppHomePage() {
                       ? `/playoffs/${resumable[0].matchId}`
                       : `/match/${resumable[0].matchId}`
                   }
-                  className="inline-flex items-center gap-2 rounded-button border border-glassBorder bg-surfaceSubtle px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-surfaceHover"
+                  className="btn-secondary focus-ring"
                 >
                   Resume
                 </Link>
               )}
               <Link
                 href="/leaderboard"
-                className="inline-flex items-center gap-2 rounded-button border border-glassBorder bg-surfaceSubtle px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-surfaceHover"
+                className="btn-secondary focus-ring"
               >
                 Leaderboard
               </Link>
@@ -68,42 +68,32 @@ export default async function AppHomePage() {
           }
         />
 
-        <div className="mt-8 min-w-0 space-y-10">
+        <div className="mt-8 min-w-0 space-y-8">
           {/* Overview stat cards */}
           <section className="space-y-3">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">
-              Overview
-            </h2>
-            <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-              <GlassCard className="flex min-h-[88px] flex-col justify-between p-4">
-                <p className="text-xs font-medium uppercase tracking-wider text-mutedForeground">
-                  Completed
-                </p>
-                <p className="mt-2 font-display text-3xl font-bold tabular-nums text-foreground leading-none">
+            <h2 className="section-heading">Overview</h2>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              <GlassCard className="flex min-h-[90px] flex-col justify-between p-4">
+                <p className="stat-label">Completed</p>
+                <p className="stat-value mt-2 text-foreground">
                   {overview.totalCompletedMatches}
                 </p>
               </GlassCard>
-              <GlassCard className="flex min-h-[88px] flex-col justify-between p-4">
-                <p className="text-xs font-medium uppercase tracking-wider text-mutedForeground">
-                  Players
-                </p>
-                <p className="mt-2 font-display text-3xl font-bold tabular-nums text-foreground leading-none">
+              <GlassCard className="flex min-h-[90px] flex-col justify-between p-4">
+                <p className="stat-label">Players</p>
+                <p className="stat-value mt-2 text-foreground">
                   {overview.totalRegisteredPlayers}
                 </p>
               </GlassCard>
-              <GlassCard className="flex min-h-[88px] flex-col justify-between p-4">
-                <p className="text-xs font-medium uppercase tracking-wider text-mutedForeground">
-                  Best throw
-                </p>
-                <p className="mt-2 font-display text-3xl font-bold tabular-nums text-primaryNeon leading-none">
+              <GlassCard className="flex min-h-[90px] flex-col justify-between p-4">
+                <p className="stat-label">Best throw</p>
+                <p className="stat-value mt-2 text-primaryNeon">
                   {formatScore(overview.bestThrow)}
                 </p>
               </GlassCard>
               {topByWins && (
-                <GlassCard className="flex min-h-[88px] flex-col justify-between p-4">
-                  <p className="text-xs font-medium uppercase tracking-wider text-mutedForeground">
-                    Top by wins
-                  </p>
+                <GlassCard className="flex min-h-[90px] flex-col justify-between p-4">
+                  <p className="stat-label">Top by wins</p>
                   <Link
                     href={`/players/${topByWins.playerId}`}
                     className="mt-2 truncate font-display text-xl font-bold text-foreground hover:text-primaryNeon transition-colors leading-tight"
@@ -118,9 +108,7 @@ export default async function AppHomePage() {
           {/* Resume */}
           <section className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">
-                In progress
-              </h2>
+              <h2 className="section-heading">In progress</h2>
               {resumable.length > 3 && (
                 <Link
                   href="/resume"
@@ -137,7 +125,7 @@ export default async function AppHomePage() {
                 action={
                   <Link
                     href="/match/new"
-                    className="inline-flex items-center gap-2 rounded-button border border-primaryNeon/40 bg-primaryNeon/10 px-3 py-2 text-sm font-semibold text-primaryNeon hover:bg-primaryNeon/20 transition-colors"
+                    className="btn-outline-primary focus-ring"
                   >
                     New Match
                   </Link>
@@ -160,9 +148,7 @@ export default async function AppHomePage() {
           {/* Recent completed */}
           <section className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">
-                Recent matches
-              </h2>
+              <h2 className="section-heading">Recent matches</h2>
               {completed.length > 5 && (
                 <Link
                   href="/history"
@@ -196,9 +182,7 @@ export default async function AppHomePage() {
             {/* Leaderboard preview */}
             <section className="space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">
-                  Leaderboard
-                </h2>
+                <h2 className="section-heading">Leaderboard</h2>
                 <Link
                   href="/leaderboard"
                   className="text-xs font-medium text-mutedForeground hover:text-primaryNeon transition-colors"
@@ -226,9 +210,9 @@ export default async function AppHomePage() {
                               i === 0
                                 ? "text-championGold"
                                 : i === 1
-                                  ? "text-[#C0C0C0]"
+                                  ? "text-rankSilver"
                                   : i === 2
-                                    ? "text-[#CD7F32]"
+                                    ? "text-rankBronze"
                                     : "text-mutedForeground"
                             }`}
                           >
@@ -251,9 +235,7 @@ export default async function AppHomePage() {
             {/* Analytics preview */}
             <section className="space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">
-                  Analytics
-                </h2>
+                <h2 className="section-heading">Analytics</h2>
                 <Link
                   href="/analytics"
                   className="text-xs font-medium text-mutedForeground hover:text-primaryNeon transition-colors"
@@ -262,35 +244,29 @@ export default async function AppHomePage() {
                 </Link>
               </div>
               <GlassCard className="p-5">
-                <div className="grid gap-5 grid-cols-3">
+                <div className="grid grid-cols-3 gap-5">
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-wider text-mutedForeground">
-                      Avg / round
-                    </p>
-                    <p className="mt-1.5 font-display text-2xl font-bold tabular-nums text-foreground leading-none">
+                    <p className="stat-label">Avg / round</p>
+                    <p className="stat-value mt-1.5 text-foreground text-2xl">
                       {formatScore(overview.averageRoundScore)}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-wider text-mutedForeground">
-                      Total pts
-                    </p>
-                    <p className="mt-1.5 font-display text-2xl font-bold tabular-nums text-foreground leading-none">
+                    <p className="stat-label">Total pts</p>
+                    <p className="stat-value mt-1.5 text-foreground text-2xl">
                       {formatScore(overview.totalPoints)}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-wider text-mutedForeground">
-                      High match
-                    </p>
-                    <p className="mt-1.5 font-display text-2xl font-bold tabular-nums text-foreground leading-none">
+                    <p className="stat-label">High match</p>
+                    <p className="stat-value mt-1.5 text-foreground text-2xl">
                       {formatScore(overview.highestCompletedMatchScore)}
                     </p>
                   </div>
                 </div>
                 <Link
                   href="/analytics"
-                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primaryNeon hover:underline"
+                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primaryNeon hover:underline focus-ring rounded"
                 >
                   Open analytics →
                 </Link>

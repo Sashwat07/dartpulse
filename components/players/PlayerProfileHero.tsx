@@ -29,7 +29,7 @@ export function PlayerProfileHero({
   const ringColor = player.avatarColor ?? "var(--primaryNeon)";
 
   return (
-    <GlassCard className="overflow-hidden border-glassBorder bg-gradient-to-br from-white/[0.05] to-transparent p-6 md:p-8">
+    <GlassCard className="overflow-hidden bg-gradient-to-br from-primaryNeon/[0.07] dark:from-white/[0.07] to-transparent p-6 md:p-8">
       <div className="flex flex-col items-center gap-5 text-center md:flex-row md:items-center md:gap-7 md:text-left">
         <div
           className="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl font-display text-2xl font-bold md:h-24 md:w-24 md:text-3xl"

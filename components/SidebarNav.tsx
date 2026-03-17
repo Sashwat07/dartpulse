@@ -72,7 +72,7 @@ export function SidebarNav() {
                   "flex items-center gap-3 rounded-button px-3 py-2.5 text-sm font-medium transition-all duration-150",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
                   active
-                    ? "bg-primaryNeon/10 text-primaryNeon shadow-[inset_0_0_0_1px_rgba(0,229,255,0.2)]"
+                    ? "bg-primaryNeon/10 text-primaryNeon ring-1 ring-inset ring-primaryNeon/25"
                     : "text-mutedForeground hover:bg-surfaceHover hover:text-foreground"
                 )}
                 aria-current={active ? "page" : undefined}

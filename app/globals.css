@@ -4,36 +4,66 @@
    Light mode (default when .dark is not set on html)
    ========================================================================== */
 :root {
-  --background: #f0f2f5;
-  --foreground: #141720;
-  --mutedForeground: rgba(20, 23, 32, 0.55);
+  /* Base reference — used by ring offsets and other utilities.
+     Slightly cooler tone so cards and sidebar read as distinct layers. */
+  --background: #e8eef6;
+  --foreground: #0d1117;
 
-  --primaryNeon: #0096b3;
-  --championGold: #c9a600;
+  /* Page gradient for AppShell/body — soft cool gradient for depth */
+  --backgroundGradientLight: radial-gradient(ellipse at top right, #f0f6ff 0%, #e8eef6 35%, #dce4f2 100%);
+
+  /* ── Contrast-audited values ──────────────────────────────────────────────
+     All text tokens verified ≥ 4.5:1 against the near-white card surface.
+     ──────────────────────────────────────────────────────────────────────── */
+
+  /* 0.76 → final contrast audit: headings, labels, stat labels, tables; ≥4.5:1 on white. */
+  --mutedForeground: rgba(13, 17, 23, 0.76);
+
+  /* #006a82 → 6.3:1 on white, 4.8:1 on sidebar. */
+  --primaryNeon: #006a82;
+
+  /* #8a6800 → 4.75:1 on white. */
+  --championGold: #8a6800;
   --primaryForeground: #ffffff;
 
-  --glassBackground: rgba(255, 255, 255, 0.88);
-  --glassBorder: rgba(0, 0, 0, 0.09);
+  /* Rank medal colors — theme-aware. */
+  --rankSilver: #5f6872;
+  --rankBronze: #8c5e28;
 
-  --surface1: rgba(255, 255, 255, 0.96);
-  --surface2: rgba(248, 249, 252, 0.8);
+  /* Premium frosted glass: readable on gradient; blur still visible; clearer border. */
+  --glassBackground: rgba(255, 255, 255, 0.86);
+  --glassBorder: rgba(0, 0, 0, 0.14);
 
-  --surfaceSubtle: rgba(0, 0, 0, 0.03);
-  --surfaceHover: rgba(0, 0, 0, 0.055);
-  --surfaceMuted: rgba(0, 0, 0, 0.02);
+  --surface1: rgba(255, 255, 255, 0.95);
+  --surface2: rgba(248, 250, 254, 0.92);
 
-  --overlay: rgba(0, 0, 0, 0.5);
-  --panelShadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.05);
-  --glowShadow: 0 0 18px rgba(0, 150, 179, 0.3);
+  /* Stronger surface hierarchy so cards/hovers read clearly against page. */
+  --surfaceSubtle: rgba(0, 0, 0, 0.06);
+  --surfaceHover: rgba(0, 0, 0, 0.10);
+  --surfaceMuted: rgba(0, 0, 0, 0.05);
+
+  --overlay: rgba(15, 23, 42, 0.5);
+
+  /* Stronger elevation: clear edge + deeper shadow = premium layered glass. */
+  --panelShadow:
+    0 0 0 1px rgba(0, 0, 0, 0.10),
+    0 2px 6px rgba(0, 0, 0, 0.06),
+    0 12px 40px rgba(0, 0, 0, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  --glowShadow: 0 0 24px rgba(0, 106, 130, 0.35);
 
   --destructive: #dc2626;
   --focusRing: var(--primaryNeon);
   --focusRingOffset: var(--background);
-  --inputBorderHover: rgba(0, 0, 0, 0.18);
-  --inputInsetHighlight: transparent;
+  --inputBorderHover: rgba(0, 0, 0, 0.22);
+  --inputInsetHighlight: rgba(0, 0, 0, 0.03);
 
-  --sidebarBg: rgba(255, 255, 255, 0.92);
-  --sidebarBorder: rgba(0, 0, 0, 0.08);
+  /* Sidebar: distinct from content; teal text keeps contrast. */
+  --sidebarBg: rgba(220, 230, 248, 0.92);
+  --sidebarBorder: rgba(0, 0, 0, 0.12);
+
+  --radius-button: 10px;
+  --radius-card: 16px;
 }
 
 /* ==========================================================================
@@ -68,6 +98,13 @@
 
   --sidebarBg: rgba(4, 7, 14, 0.9);
   --sidebarBorder: rgba(255, 255, 255, 0.07);
+
+  /* Classic vivid medal colors work fine on the dark card surface */
+  --rankSilver: #C0C0C0;
+  --rankBronze: #CD7F32;
+
+  --radius-button: 10px;
+  --radius-card: 16px;
 }
 
 @theme inline {
@@ -87,6 +124,8 @@
   --color-destructive: var(--destructive);
   --color-sidebarBg: var(--sidebarBg);
   --color-sidebarBorder: var(--sidebarBorder);
+  --color-rankSilver: var(--rankSilver);
+  --color-rankBronze: var(--rankBronze);
 }
 
 body {
@@ -99,14 +138,124 @@ body {
   border-color: var(--glassBorder);
 }
 
-/* Display font utility */
+/* Display font utility + consistency utilities */
 @layer utilities {
   .font-display {
     font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
   }
+
+  /* Section heading (h2) — unified hierarchy */
+  .section-heading {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mutedForeground);
+  }
+
+  /* Stat card label and value — unified card hierarchy */
+  .stat-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--mutedForeground);
+  }
+  .stat-value {
+    font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+    font-size: 1.875rem;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Focus ring — unified interactive states (both themes) */
+  .focus-ring {
+    outline: none;
+    transition: box-shadow 0.15s ease;
+  }
+  .focus-ring:focus-visible {
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--primaryNeon);
+  }
+
+  /* Disabled state — unified */
+  .disabled-state:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Button-style links: outline primary (teal CTA) — theme-aware */
+  .btn-outline-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--primaryNeon) 40%, transparent);
+    background-color: color-mix(in srgb, var(--primaryNeon) 10%, transparent);
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primaryNeon);
+    transition: background-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    box-shadow: var(--glowShadow);
+  }
+  .btn-outline-primary:hover {
+    background-color: color-mix(in srgb, var(--primaryNeon) 20%, transparent);
+    box-shadow: var(--glowShadow);
+  }
+  .btn-outline-primary:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--primaryNeon);
+  }
+  .btn-outline-primary:active {
+    transform: scale(0.97);
+  }
+
+  /* Button-style links: secondary (glass) */
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-button, 10px);
+    border: 1px solid var(--glassBorder);
+    background-color: var(--surfaceSubtle);
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--foreground);
+    transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+  }
+  .btn-secondary:hover {
+    background-color: var(--surfaceHover);
+  }
+  .btn-secondary:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--primaryNeon);
+  }
+  .btn-secondary:active {
+    transform: scale(0.97);
+  }
+  .btn-secondary.disabled-state:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Table cell padding — unified table polish */
+  .table-th {
+    padding: 0.75rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--mutedForeground);
+  }
+  .table-td {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
 }
 
-/* Premium scrollbar for dark mode */
+/* Scrollbar — dark mode */
 .dark ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -120,4 +269,58 @@ body {
 }
 .dark ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.22);
+}
+
+/* Scrollbar — light mode */
+html:not(.dark) ::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+html:not(.dark) ::-webkit-scrollbar-track {
+  background: transparent;
+}
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.14);
+  border-radius: 4px;
+}
+html:not(.dark) ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.24);
+}
+
+/* ==========================================================================
+   Light mode — additional refinements
+   ========================================================================== */
+
+/* Body gradient extends AppShell gradient to areas outside max-width container
+   (overscroll, wide viewports beyond 1440px, loading states, etc.) */
+html:not(.dark) body {
+  background-image: var(--backgroundGradientLight);
+}
+
+/* App shell root background — single source for light/dark gradients */
+.app-shell-bg {
+  background-color: var(--background);
+  background-image: var(--backgroundGradientLight);
+}
+.dark .app-shell-bg {
+  background-image: radial-gradient(ellipse at top left, #0d1525 0%, #080c15 55%, #060a12 100%);
+}
+
+/* Inputs: tinted off-white background so they read as editable fields
+   against the pure white card surface. bg-glassBackground on inputs
+   blends into the card — this overrides that for text inputs only. */
+html:not(.dark) input:not([type="color"]):not([type="checkbox"]):not([type="radio"]),
+html:not(.dark) textarea {
+  background-color: rgba(238, 243, 252, 0.9) !important;
+}
+
+/* Checkboxes and toggles — keep native styling, accent with brand color */
+html:not(.dark) input[type="checkbox"],
+html:not(.dark) input[type="radio"] {
+  accent-color: var(--primaryNeon);
+}
+
+/* Table surfaces: thead distinct from tbody so headers don’t blend (light mode only) */
+html:not(.dark) thead th {
+  background-color: var(--surfaceMuted);
 }

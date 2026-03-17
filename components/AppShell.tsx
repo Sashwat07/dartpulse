@@ -19,7 +19,7 @@ export function AppShell({ children }: AppShellProps) {
   }, [pathname]);
 
   return (
-    <div className="min-h-dvh bg-background dark:bg-[radial-gradient(ellipse_at_top_left,#0d1525_0%,#080c15_55%,#060a12_100%)]">
+    <div className="min-h-dvh app-shell-bg">
       <div className="mx-auto grid w-full max-w-mainContent grid-cols-1 lg:grid-cols-[260px_1fr]">
         {/* Desktop sidebar */}
         <aside className="hidden border-r border-sidebarBorder bg-sidebarBg backdrop-blur-[20px] lg:block">
