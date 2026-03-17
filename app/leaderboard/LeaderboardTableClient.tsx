@@ -2,11 +2,15 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { Search } from "lucide-react";
 import * as React from "react";
 import type { GlobalLeaderboardEntry } from "@/lib/leaderboard/types";
 import { GlassCard } from "@/components/GlassCard";
 import { MOTION_SPRING_SUBTLE } from "@/lib/motionConstants";
 import { cn } from "@/utils/cn";
+
+const PAGE_SIZE = 10;
+const PAGINATION_MIN = 10;
 
 type SortKey =
   | "matchesPlayed"
@@ -86,22 +90,44 @@ type Props = { entries: GlobalLeaderboardEntry[] };
 export function LeaderboardTableClient({ entries }: Props) {
   const [sortKey, setSortKey] = React.useState<SortKey>("wins");
   const [sortDir, setSortDir] = React.useState<SortDir>("desc");
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [page, setPage] = React.useState(0);
 
   const handleSort = React.useCallback((key: SortKey) => {
-    if (sortKey === key) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    } else {
-      const col = SORTABLE_COLUMNS.find((c) => c.key === key);
-      setSortDir(col?.defaultDir ?? "desc");
-      setSortKey(key);
-    }
-  }, [sortKey]);
+    setSortKey((k) => {
+      if (k === key) {
+        setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+      } else {
+        const col = SORTABLE_COLUMNS.find((c) => c.key === key);
+        setSortDir(col?.defaultDir ?? "desc");
+      }
+      return key;
+    });
+    setPage(0);
+  }, []);
 
   const sorted = React.useMemo(() => {
     const copy = [...entries];
     copy.sort((a, b) => compareBy(a, b, sortKey, sortDir));
     return copy;
   }, [entries, sortKey, sortDir]);
+
+  const filtered = React.useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return sorted;
+    return sorted.filter((e) => e.playerName.toLowerCase().includes(q));
+  }, [sorted, searchQuery]);
+
+  const totalFiltered = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(totalFiltered / PAGE_SIZE));
+  const showPagination = totalFiltered >= PAGINATION_MIN;
+  const paginated = React.useMemo(() => {
+    if (!showPagination) return filtered;
+    const start = page * PAGE_SIZE;
+    return filtered.slice(start, start + PAGE_SIZE);
+  }, [filtered, page, showPagination]);
+
+  const displayRows = showPagination ? paginated : filtered;
 
   if (entries.length === 0) {
     return (
@@ -115,6 +141,51 @@ export function LeaderboardTableClient({ entries }: Props) {
 
   return (
     <div className="space-y-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative">
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mutedForeground"
+            aria-hidden
+          />
+          <input
+            type="search"
+            placeholder="Search by player name"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(0);
+            }}
+            className="w-full rounded-button border border-glassBorder bg-glassBackground py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-mutedForeground focus:border-primaryNeon/60 focus:outline-none focus:ring-2 focus:ring-primaryNeon/20 sm:w-64"
+            aria-label="Search leaderboard by player name"
+          />
+        </div>
+        {showPagination && (
+          <nav
+            className="flex items-center gap-2"
+            aria-label="Leaderboard pagination"
+          >
+            <button
+              type="button"
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              disabled={page === 0}
+              className="rounded-button border border-glassBorder bg-surfaceSubtle px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-surfaceHover disabled:opacity-50 disabled:cursor-not-allowed focus-ring"
+            >
+              Previous
+            </button>
+            <span className="text-sm text-mutedForeground tabular-nums">
+              {page + 1} / {totalPages}
+            </span>
+            <button
+              type="button"
+              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              disabled={page >= totalPages - 1}
+              className="rounded-button border border-glassBorder bg-surfaceSubtle px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-surfaceHover disabled:opacity-50 disabled:cursor-not-allowed focus-ring"
+            >
+              Next
+            </button>
+          </nav>
+        )}
+      </div>
       <GlassCard className="overflow-x-auto p-0">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
@@ -152,29 +223,31 @@ export function LeaderboardTableClient({ entries }: Props) {
             </tr>
           </thead>
           <tbody>
-            {sorted.map((row, i) => (
+            {displayRows.map((row, idx) => {
+              const globalIndex = showPagination ? page * PAGE_SIZE + idx : idx;
+              return (
               <motion.tr
                 layout
                 transition={MOTION_SPRING_SUBTLE}
                 key={row.playerId}
                 className={cn(
                   "border-b border-glassBorder/50 last:border-0 transition-colors hover:bg-surfaceSubtle",
-                  getRankRowStyle(i),
+                  getRankRowStyle(globalIndex),
                 )}
               >
                 <td
                   className={cn(
                     "table-td text-center font-bold tabular-nums",
-                    i < 3
-                      ? i === 0
+                    globalIndex < 3
+                      ? globalIndex === 0
                         ? "text-championGold"
-                        : i === 1
+                        : globalIndex === 1
                           ? "text-rankSilver"
                           : "text-rankBronze"
                       : "text-mutedForeground",
                   )}
                 >
-                  {i + 1}
+                  {globalIndex + 1}
                 </td>
                 <td className="table-td max-w-[12rem] truncate font-semibold">
                   <Link
@@ -212,7 +285,8 @@ export function LeaderboardTableClient({ entries }: Props) {
                   })}
                 </td>
               </motion.tr>
-            ))}
+            );
+            })}
           </tbody>
         </table>
       </GlassCard>

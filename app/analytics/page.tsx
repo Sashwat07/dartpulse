@@ -10,6 +10,7 @@ import {
   getPerPlayerAnalytics,
 } from "@/lib/analytics";
 import { formatScore } from "@/lib/utils/dartScore";
+import { AnalyticsPlayerTableClient } from "./AnalyticsPlayerTableClient";
 
 export default async function AnalyticsPage() {
   const [overview, players] = await Promise.all([
@@ -135,72 +136,7 @@ export default async function AnalyticsPage() {
           {/* Player analytics table */}
           <section className="space-y-3">
             <h2 className="section-heading">Player analytics</h2>
-            {players.length === 0 ? (
-              <GlassCard className="p-6">
-                <p className="text-sm text-mutedForeground">
-                  No player participation in completed matches yet.
-                </p>
-              </GlassCard>
-            ) : (
-              <div className="space-y-2">
-                <GlassCard className="overflow-x-auto p-0">
-                  <table className="w-full min-w-[640px] text-left text-sm">
-                    <thead>
-                      <tr className="border-b border-glassBorder">
-                        <th className="table-th text-left font-semibold text-foreground">Player</th>
-                        <th className="table-th text-right tabular-nums">
-                          Matches
-                        </th>
-                        <th className="table-th text-right tabular-nums">Wins</th>
-                        <th className="table-th text-right tabular-nums">Total pts</th>
-                        <th className="table-th text-right tabular-nums">Best throw</th>
-                        <th className="table-th text-right tabular-nums">Avg / round</th>
-                        <th className="table-th text-right tabular-nums">Throws</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {players.map((p) => (
-                        <tr
-                          key={p.playerId}
-                          className="border-b border-glassBorder/50 last:border-0 transition-colors hover:bg-surfaceSubtle"
-                        >
-                          <td className="table-td max-w-[12rem] truncate font-medium">
-                            <Link
-                              href={`/players/${p.playerId}`}
-                              className="text-foreground hover:text-primaryNeon focus-ring rounded"
-                            >
-                              {p.playerName}
-                            </Link>
-                          </td>
-                          <td className="table-td text-right tabular-nums text-foreground/80">
-                            {p.matchesPlayed}
-                          </td>
-                          <td className="table-td text-right tabular-nums font-semibold text-foreground">
-                            {p.wins}
-                          </td>
-                          <td className="table-td text-right tabular-nums text-foreground/80">
-                            {formatScore(p.totalPoints)}
-                          </td>
-                          <td className="table-td text-right tabular-nums text-primaryNeon font-semibold">
-                            {formatScore(p.bestThrow)}
-                          </td>
-                          <td className="table-td text-right tabular-nums text-foreground/80">
-                            {formatScore(p.averageRoundScore)}
-                          </td>
-                          <td className="table-td text-right tabular-nums text-foreground/80">
-                            {p.totalThrows}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </GlassCard>
-                <p className="text-xs text-mutedForeground">
-                  Same throw scope as Leaderboard (regular match + sudden death; no
-                  playoff throws).
-                </p>
-              </div>
-            )}
+            <AnalyticsPlayerTableClient players={players} />
           </section>
         </div>
       </PageTransition>

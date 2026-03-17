@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 
+import { evaluateMatchAchievements } from "@/lib/achievements/evaluator";
 import { getOwnedMatchForApi } from "@/lib/auth/ownership";
-import { getPlayoffMatchById, updatePlayoffMatchStatus } from "@/lib/repositories";
+import {
+  getPlayoffMatchById,
+  updateMatchToFinished,
+  updatePlayoffMatchStatus,
+} from "@/lib/repositories";
 import { undoPlayoffThrowPayloadSchema } from "@/lib/validators/playoff";
 
 type RouteContext = { params: Promise<{ matchId: string }> };
@@ -56,6 +61,8 @@ export async function POST(req: Request, context: RouteContext) {
   }
 
   await updatePlayoffMatchStatus(playoffMatchId, "completed");
+  await updateMatchToFinished(parentMatchId);
+  await evaluateMatchAchievements(parentMatchId);
 
   return NextResponse.json({ success: true });
 }

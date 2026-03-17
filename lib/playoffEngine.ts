@@ -2,6 +2,7 @@ import type { PlayoffMatch } from "@/types/playoff";
 import type { MatchPlayerWithDisplay, ThrowEvent } from "@/types/match";
 import { getEffectiveBaseOrder, sortMatchPlayersByBaseOrder } from "@/lib/regularMatchTurn";
 import { deriveSuddenDeath } from "@/lib/suddenDeath";
+import { isRegularRoundsComplete } from "@/lib/suddenDeath";
 import { deriveLeaderboardFromThrowEvents } from "@/lib/leaderboard";
 import { deriveMatchOutcome } from "@/lib/progression";
 import {
@@ -11,10 +12,28 @@ import {
 } from "@/lib/repositories";
 
 /**
- * Bootstrap playoff matches when the regular match is finished.
+ * True when the match is eligible for playoff bootstrap / "Go to playoffs".
+ * Aligns with match state API: matchFinished, or regular rounds complete with 3+ players
+ * (match record may still be roundActive; we derive from throw data).
+ */
+export function isPlayoffBootstrapEligible(
+  matchStatus: string,
+  totalRounds: number,
+  throwEvents: ThrowEvent[],
+  matchPlayerCount: number,
+  shotsPerRound: number,
+): boolean {
+  if (matchStatus === "matchFinished") return true;
+  return (
+    matchPlayerCount >= 3 &&
+    isRegularRoundsComplete(throwEvents, totalRounds, matchPlayerCount, shotsPerRound)
+  );
+}
+
+/**
+ * Bootstrap playoff matches when the regular match is finished (matchFinished)
+ * or when regular rounds are complete and 3+ players (before final confirmation).
  * Idempotent: if any playoff match exists for this parent, returns existing list.
- * Uses canonical effective player order (same as match state) so ranking and seeding
- * stay consistent regardless of which route invokes it.
  * - 2 players: no playoffs.
  * - 3 players: one final (rank 1 vs rank 2).
  * - 4+ players: qualifier1 (rank 1 vs 2), qualifier2 (rank 3 vs 4).
@@ -25,8 +44,10 @@ export async function bootstrapPlayoffs(
   totalRounds: number,
   throwEvents: ThrowEvent[],
   matchPlayers: MatchPlayerWithDisplay[],
+  shotsPerRound: number = 1,
 ): Promise<PlayoffMatch[]> {
-  if (matchStatus !== "matchFinished") return [];
+  if (!isPlayoffBootstrapEligible(matchStatus, totalRounds, throwEvents, matchPlayers.length, shotsPerRound))
+    return [];
 
   const existing = await listPlayoffMatchesByParentMatch(matchId);
   if (existing.length > 0) return existing;
@@ -43,6 +64,7 @@ export async function bootstrapPlayoffs(
     orderedMatchPlayers,
     totalRounds,
     matchStatus,
+    shotsPerRound,
   );
   const leaderboard = deriveLeaderboardFromThrowEvents(
     throwEvents,

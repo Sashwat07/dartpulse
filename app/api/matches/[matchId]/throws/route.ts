@@ -199,7 +199,7 @@ export async function POST(req: Request, context: RouteContext) {
   if (roundComplete && roundNumber === totalRounds) {
     const afterThrows = await listThrowEventsByMatch(matchId);
     const tiedGroup = getActiveTieGroup(afterThrows, matchPlayers);
-    if (tiedGroup === null) {
+    if (tiedGroup === null && matchPlayers.length === 2) {
       await updateMatchToFinished(matchId);
       await evaluateMatchAchievements(matchId);
     }

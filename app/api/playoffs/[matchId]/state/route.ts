@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { PlayoffMatch } from "@/types/playoff";
 import type { ThrowEvent } from "@/types/match";
 import { getOwnedMatchForApi } from "@/lib/auth/ownership";
-import { bootstrapPlayoffs, deriveNextPlayoffMatchIfNeeded } from "@/lib/playoffEngine";
+import { bootstrapPlayoffs, deriveNextPlayoffMatchIfNeeded, isPlayoffBootstrapEligible } from "@/lib/playoffEngine";
 import {
   listMatchPlayersWithDisplayByMatchId,
   listPlayoffMatchesByParentMatch,
@@ -36,14 +36,25 @@ export async function GET(_req: Request, context: RouteContext) {
     listThrowEventsByMatch(matchId),
   ]);
 
+  const shotsPerRound = match.shotsPerRound ?? 1;
   let playoffMatches = await listPlayoffMatchesByParentMatch(matchId);
-  if (playoffMatches.length === 0 && match.status === "matchFinished") {
+  const canBootstrap =
+    playoffMatches.length === 0 &&
+    isPlayoffBootstrapEligible(
+      match.status,
+      match.totalRounds,
+      throwEvents,
+      matchPlayers.length,
+      shotsPerRound,
+    );
+  if (canBootstrap) {
     playoffMatches = await bootstrapPlayoffs(
       matchId,
       match.status,
       match.totalRounds,
       throwEvents,
       matchPlayers,
+      shotsPerRound,
     );
   }
 

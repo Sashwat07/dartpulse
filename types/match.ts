@@ -47,6 +47,15 @@ export type CompletedMatchListItem = {
   championPlayerName?: string;
 };
 
+/** Display status for history list: fully complete vs playoffs pending. */
+export type HistoryDisplayStatus = "complete" | "playoffsPending";
+
+/** History list item: completed or playoff-pending; winner only when complete. */
+export type HistoryListItem = CompletedMatchListItem & {
+  displayStatus: HistoryDisplayStatus;
+  isFullyComplete: boolean;
+};
+
 /** List-item for resumable (in-progress) matches. resumeTo is server-derived for routing. */
 export type ResumableMatchListItem = {
   matchId: string;

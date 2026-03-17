@@ -85,6 +85,14 @@ export async function GET(_req: Request, context: RouteContext) {
     resolvedTieOrders = result.resolvedTieOrders;
     currentTurn = result.currentTurn;
     currentRound = match.totalRounds;
+    if (matchPlayers.length >= 3 && !suddenDeathState) {
+      const leaderboard = deriveLeaderboardFromThrowEvents(
+        throwEvents,
+        matchPlayers,
+        resolvedTieOrders,
+      );
+      matchOutcomeSummary = buildMatchOutcomeSummary(leaderboard, matchPlayers.length);
+    }
   } else {
     const derived = deriveRegularRoundAndTurn(
       regularThrows,

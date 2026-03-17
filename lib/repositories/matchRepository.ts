@@ -1,6 +1,10 @@
 import type { CreateMatchPayload } from "@/types/dto";
 import type { Match } from "@/types/match";
-import type { CompletedMatchListItem, ResumableMatchListItem } from "@/types/match";
+import type {
+  CompletedMatchListItem,
+  HistoryListItem,
+  ResumableMatchListItem,
+} from "@/types/match";
 
 import { db } from "@/lib/db";
 
@@ -184,13 +188,74 @@ export async function listOwnedResumableMatches(
 }
 
 const IN_PROGRESS_STATUSES = ["matchStarted", "roundActive", "roundComplete"] as const;
-const PLAYOFF_STATUSES = [
+export const PLAYOFF_STATUSES = [
   "playoffPhase",
   "qualifier1Active",
   "qualifier2Active",
   "eliminatorActive",
   "finalActive",
 ] as const;
+
+/**
+ * List matches that belong in History: fully complete (matchFinished) or playoff-pending.
+ * Ordered by completedAt desc for finished, createdAt desc for pending; finished first.
+ */
+export async function listOwnedHistoryMatches(
+  userId: string,
+): Promise<HistoryListItem[]> {
+  const [completed, pending] = await Promise.all([
+    db.match.findMany({
+      where: {
+        createdByUserId: userId,
+        status: "matchFinished",
+      },
+      include: {
+        _count: {
+          select: { matchPlayers: true, playoffMatches: true },
+        },
+      },
+      orderBy: [{ completedAt: "desc" }, { createdAt: "desc" }],
+    }),
+    db.match.findMany({
+      where: {
+        createdByUserId: userId,
+        status: { in: ["roundComplete", ...PLAYOFF_STATUSES] },
+      },
+      include: {
+        _count: {
+          select: { matchPlayers: true, playoffMatches: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
+
+  const completedItems: HistoryListItem[] = completed.map((m) => ({
+    matchId: m.matchId,
+    matchName: m.name,
+    status: m.status as Match["status"],
+    createdAt: m.createdAt.toISOString(),
+    completedAt: m.completedAt?.toISOString() ?? null,
+    playerCount: m._count.matchPlayers,
+    hasPlayoffs: m._count.playoffMatches > 0,
+    displayStatus: "complete" as const,
+    isFullyComplete: true,
+  }));
+
+  const pendingItems: HistoryListItem[] = pending.map((m) => ({
+    matchId: m.matchId,
+    matchName: m.name,
+    status: m.status as Match["status"],
+    createdAt: m.createdAt.toISOString(),
+    completedAt: null,
+    playerCount: m._count.matchPlayers,
+    hasPlayoffs: m._count.playoffMatches > 0,
+    displayStatus: "playoffsPending" as const,
+    isFullyComplete: false,
+  }));
+
+  return [...completedItems, ...pendingItems];
+}
 
 /**
  * List matches for history with optional status filter. Returns list-item shape; supports all statuses.

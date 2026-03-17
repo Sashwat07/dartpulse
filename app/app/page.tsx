@@ -26,7 +26,11 @@ export default async function AppHomePage() {
     getGlobalLeaderboardStandings(),
   ]);
 
-  const recentCompleted = completed.slice(0, 5);
+  const recentCompleted = completed.slice(0, 5).map((m) => ({
+    ...m,
+    displayStatus: "complete" as const,
+    isFullyComplete: true,
+  }));
   const resumePreview = resumable.slice(0, 3);
   const topThree = leaderboard.slice(0, 3);
   const topByWins = overview.topPlayersByWins?.[0];

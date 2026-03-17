@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Trophy } from "lucide-react";
 
 import { MatchEnergyMeter } from "@/components/analytics/MatchEnergyMeter";
 import { MomentumTimeline } from "@/components/analytics/MomentumTimeline";
@@ -21,7 +23,9 @@ import {
 } from "@/lib/analytics";
 import { getOwnedMatchOrThrow } from "@/lib/auth/ownership";
 import { getMatchHistoryPayload } from "@/lib/matchHistory";
+import { getMatchById } from "@/lib/repositories";
 import { requireUser } from "@/lib/requireUser";
+import { PLAYOFF_STATUSES } from "@/lib/repositories/matchRepository";
 
 const BRACKET_STAGE_ORDER: PlayoffStage[] = [
   "qualifier1",
@@ -42,6 +46,42 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
 
   const payload = await getMatchHistoryPayload(matchId);
   if (payload === null) {
+    const match = await getMatchById(matchId);
+    const isPlayoffPending =
+      match &&
+      (match.status === "roundComplete" ||
+        (PLAYOFF_STATUSES as readonly string[]).includes(match.status));
+    if (isPlayoffPending) {
+      return (
+        <AppShell>
+          <PageTransition>
+            <PageHeader
+              title={match.name}
+              description="Playoffs in progress. Complete the final and confirm to mark this match complete."
+            />
+            <div className="mt-6">
+              <GlassCard className="p-6">
+                <div className="flex flex-col items-center gap-4 text-center">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm font-semibold text-amber-600 dark:text-amber-400">
+                    <Trophy size={18} aria-hidden />
+                    Playoffs pending
+                  </span>
+                  <p className="text-sm text-mutedForeground">
+                    This match is not fully complete until you confirm the final result.
+                  </p>
+                  <Link
+                    href={`/playoffs/${matchId}`}
+                    className="btn-outline-primary focus-ring"
+                  >
+                    Continue playoffs
+                  </Link>
+                </div>
+              </GlassCard>
+            </div>
+          </PageTransition>
+        </AppShell>
+      );
+    }
     notFound();
   }
 

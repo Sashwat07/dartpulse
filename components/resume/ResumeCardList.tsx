@@ -1,12 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Play } from "lucide-react";
+import * as React from "react";
+import { Play, Search } from "lucide-react";
 import type { MatchStatus } from "@/types/match";
 import type { ResumableMatchListItem } from "@/types/match";
 import { GlassCard } from "@/components/GlassCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { StaggerChild, StaggerChildren } from "@/components/motion/StaggerChildren";
+import { useInfiniteReveal } from "@/hooks/useInfiniteReveal";
+
+const CHUNK_SIZE = 10;
 
 function matchStatusLabel(status: MatchStatus): string {
   const labels: Record<MatchStatus, string> = {
@@ -36,6 +40,24 @@ type ResumeCardListProps = {
 };
 
 export function ResumeCardList({ items }: ResumeCardListProps) {
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [visibleCount, setVisibleCount] = React.useState(CHUNK_SIZE);
+
+  const filtered = React.useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter((i) => i.matchName.toLowerCase().includes(q));
+  }, [items, searchQuery]);
+
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
+
+  const loadMore = React.useCallback(() => {
+    setVisibleCount((n) => Math.min(filtered.length, n + CHUNK_SIZE));
+  }, [filtered.length]);
+
+  const sentinelRef = useInfiniteReveal(hasMore, loadMore);
+
   if (items.length === 0) {
     return (
       <EmptyState
@@ -46,8 +68,26 @@ export function ResumeCardList({ items }: ResumeCardListProps) {
   }
 
   return (
-    <StaggerChildren className="space-y-2" staggerDelay={0.04}>
-      {items.map((item) => {
+    <div className="space-y-3">
+      <div className="relative">
+        <Search
+          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mutedForeground"
+          aria-hidden
+        />
+        <input
+          type="search"
+          placeholder="Search by match name"
+          value={searchQuery}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setVisibleCount(CHUNK_SIZE);
+          }}
+          className="w-full rounded-button border border-glassBorder bg-glassBackground py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-mutedForeground focus:border-primaryNeon/60 focus:outline-none focus:ring-2 focus:ring-primaryNeon/20 sm:max-w-xs"
+          aria-label="Search resume by match name"
+        />
+      </div>
+      <StaggerChildren className="space-y-2" staggerDelay={0.04}>
+      {visible.map((item) => {
         const href =
           item.resumeTo === "playoffs"
             ? `/playoffs/${item.matchId}`
@@ -84,6 +124,16 @@ export function ResumeCardList({ items }: ResumeCardListProps) {
           </StaggerChild>
         );
       })}
-    </StaggerChildren>
+      </StaggerChildren>
+      {hasMore && (
+        <div
+          ref={sentinelRef}
+          className="flex min-h-[24px] items-center justify-center py-3"
+          aria-hidden
+        >
+          <span className="text-xs text-mutedForeground">Loading more…</span>
+        </div>
+      )}
+    </div>
   );
 }

@@ -14,6 +14,7 @@ export {
   listMatches,
   listMatchesForHistory,
   listOwnedCompletedMatches,
+  listOwnedHistoryMatches,
   listOwnedResumableMatches,
   listResumableMatches,
   revertMatchFromFinished,
