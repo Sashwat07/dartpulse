@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { X, Target, Zap, Trophy, Swords, CircleDot, Star } from "lucide-react";
+import { X, BookOpen, Zap, Trophy, Swords, CircleDot, Star } from "lucide-react";
 import { cn } from "@/utils/cn";
 
 type RulebookModalProps = {
@@ -136,7 +136,7 @@ export function RulebookModal({ open, onClose }: RulebookModalProps) {
         <div className="flex shrink-0 items-center justify-between gap-4 px-6 py-4 border-b border-glassBorder">
           <div className="flex items-center gap-3">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primaryNeon/12 border border-primaryNeon/25">
-              <Target size={16} className="text-primaryNeon" aria-hidden />
+              <BookOpen size={16} className="text-primaryNeon" aria-hidden />
             </span>
             <div>
               <h2 className="text-base font-black tracking-tight text-foreground">Rulebook</h2>

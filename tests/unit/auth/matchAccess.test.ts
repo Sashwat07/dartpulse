@@ -70,10 +70,92 @@ describe("getMatchWriteAccessForApi", () => {
     expect(r).toBeInstanceOf(Response);
     expect((r as Response).status).toBe(401);
   });
+
+  it("returns 404 for non-owner signed-in participant (no write)", async () => {
+    mockGetCurrentUser.mockResolvedValue({
+      id: "participant",
+      name: "P",
+      email: null,
+      image: null,
+    });
+    mockGetMatchById.mockResolvedValue(
+      makeMatch({ matchId: "m1", createdByUserId: "owner" }),
+    );
+
+    const r = await getMatchWriteAccessForApi("m1");
+    expect(r).toBeInstanceOf(Response);
+    expect((r as Response).status).toBe(404);
+  });
 });
 
 describe("getMatchReadAccessForApi", () => {
   beforeEach(() => vi.clearAllMocks());
+
+  it("allows unauthenticated read of unowned match with writes enabled", async () => {
+    mockGetCurrentUser.mockResolvedValue(null);
+    const match = makeMatch({ matchId: "m1" });
+    delete (match as Partial<Match>).createdByUserId;
+    mockGetMatchById.mockResolvedValue(match);
+
+    const r = await getMatchReadAccessForApi("m1");
+    expect(r).not.toBeInstanceOf(Response);
+    if (r instanceof Response) return;
+    expect(r.sessionWriteEnabled).toBe(true);
+    expect(r.user).toBeNull();
+  });
+
+  it("returns 401 for owned match when not signed in", async () => {
+    mockGetCurrentUser.mockResolvedValue(null);
+    mockGetMatchById.mockResolvedValue(
+      makeMatch({ matchId: "m1", createdByUserId: "owner" }),
+    );
+
+    const r = await getMatchReadAccessForApi("m1");
+    expect(r).toBeInstanceOf(Response);
+    expect((r as Response).status).toBe(401);
+  });
+
+  it("returns 404 when signed in but neither owner nor participant", async () => {
+    mockGetCurrentUser.mockResolvedValue({
+      id: "u1",
+      name: "X",
+      email: null,
+      image: null,
+    });
+    mockGetMatchById.mockResolvedValue(
+      makeMatch({ matchId: "m1", createdByUserId: "owner" }),
+    );
+    mockGetLinkedPlayerByUserId.mockResolvedValue({
+      playerId: "pl1",
+      name: "Linked",
+      createdAt: "2025-01-01T00:00:00.000Z",
+      updatedAt: "2025-01-01T00:00:00.000Z",
+      userId: "u1",
+      profileCompleted: true,
+    });
+    mockIsPlayerInMatch.mockResolvedValue(false);
+
+    const r = await getMatchReadAccessForApi("m1");
+    expect(r).toBeInstanceOf(Response);
+    expect((r as Response).status).toBe(404);
+  });
+
+  it("allows owner read with sessionWriteEnabled true", async () => {
+    mockGetCurrentUser.mockResolvedValue({
+      id: "owner",
+      name: "O",
+      email: null,
+      image: null,
+    });
+    mockGetMatchById.mockResolvedValue(
+      makeMatch({ matchId: "m1", createdByUserId: "owner" }),
+    );
+
+    const r = await getMatchReadAccessForApi("m1");
+    expect(r).not.toBeInstanceOf(Response);
+    if (r instanceof Response) return;
+    expect(r.sessionWriteEnabled).toBe(true);
+  });
 
   it("allows participant read with sessionWriteEnabled false", async () => {
     mockGetCurrentUser.mockResolvedValue({

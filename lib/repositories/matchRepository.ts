@@ -138,7 +138,8 @@ export async function listResumableMatches(): Promise<ResumableMatchListItem[]> 
   }));
 }
 
-function matchVisibilityWhere(
+/** Owner-only, or owner OR linked participant (for list queries). Exported for regression tests. */
+export function matchVisibilityWhere(
   userId: string,
   linkedPlayerId: string | null,
 ): { OR: object[] } | { createdByUserId: string } {

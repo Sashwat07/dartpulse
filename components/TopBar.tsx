@@ -48,7 +48,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
     <>
       {/* TopBar */}
       <div
-        className="relative flex h-14 items-center justify-between px-4 backdrop-blur-[24px]"
+        className="relative z-30 flex h-14 items-center justify-between px-4 backdrop-blur-[24px]"
         style={{
           background: "var(--glassBackground)",
           borderBottom: "1px solid var(--glassBorder)",
@@ -180,11 +180,11 @@ export function TopBar({ onMenuClick }: TopBarProps) {
               {/* Dropdown panel */}
               {userMenuOpen && (
                 <div
-                  className="absolute right-0 top-[calc(100%+8px)] z-50 w-52 rounded-xl border border-glassBorder overflow-hidden"
+                  className="absolute right-0 top-[calc(100%+8px)] z-[200] w-52 rounded-xl border border-glassBorder overflow-hidden"
                   style={{
-                    background: "var(--glassBackground)",
+                    background: "color-mix(in srgb, var(--background) 92%, transparent)",
                     backdropFilter: "blur(24px)",
-                    boxShadow: "0 8px 32px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.05) inset",
+                    boxShadow: "0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08) inset",
                   }}
                 >
                   {/* User info header */}

@@ -9,11 +9,21 @@ import { getCurrentUser } from "@/lib/getCurrentUser";
 
 const PROFILE_PATH = "/complete-profile";
 
-function isLinkedProfileIncomplete(player: {
-  userId?: string;
-  profileCompleted?: boolean;
-}): boolean {
+/** Linked stub players must finish setup; manual players are never incomplete here. */
+export function linkedPlayerNeedsProfileCompletion(
+  player: { userId?: string; profileCompleted?: boolean } | null,
+): boolean {
+  if (!player) return false;
   return Boolean(player.userId) && player.profileCompleted === false;
+}
+
+/** Paths where incomplete profiles may proceed without redirect (avoid loops). */
+export function shouldSkipProfileCompletionGate(pathname: string): boolean {
+  return (
+    pathname.startsWith(PROFILE_PATH) ||
+    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/login")
+  );
 }
 
 /**
@@ -23,11 +33,7 @@ function isLinkedProfileIncomplete(player: {
 export async function enforceProfileCompleteForShell(): Promise<void> {
   const h = await headers();
   const pathname = h.get("x-pathname") ?? "";
-  if (
-    pathname.startsWith(PROFILE_PATH) ||
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/login")
-  ) {
+  if (shouldSkipProfileCompletionGate(pathname)) {
     return;
   }
 
@@ -42,7 +48,7 @@ export async function enforceProfileCompleteForShell(): Promise<void> {
   });
 
   const player = await getLinkedPlayerByUserId(user.id);
-  if (player && isLinkedProfileIncomplete(player)) {
+  if (linkedPlayerNeedsProfileCompletion(player)) {
     redirect(PROFILE_PATH);
   }
 }
