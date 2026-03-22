@@ -3,8 +3,8 @@
 import { cn } from "@/utils/cn";
 
 const QUICK_SCORES = [
-  { label: "T20", score: 60 },
-  { label: "D20", score: 40 },
+  { label: "0", score: 0 },
+  { label: "25", score: 25 },
   { label: "Bull", score: 50 },
 ] as const;
 

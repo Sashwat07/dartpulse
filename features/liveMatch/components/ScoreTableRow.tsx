@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import { ShotDots } from "@/components/ShotDots";
 import { ScorePulse } from "@/components/motion/ScorePulse";
 import type { RoundScoreRow } from "@/store/selectors";
@@ -16,6 +17,8 @@ type ScoreTableRowProps = {
   isExpanded?: boolean;
   onToggle?: () => void;
   ariaControlsId?: string;
+  /** Normalized 0–1 intensity per completed round (1 = highest score, 0 = lowest). */
+  roundHeatIntensities?: Record<number, number>;
 };
 
 export function ScoreTableRow({
@@ -28,6 +31,7 @@ export function ScoreTableRow({
   isExpanded,
   onToggle,
   ariaControlsId,
+  roundHeatIntensities,
 }: ScoreTableRowProps) {
   const showDots =
     shotsPerRound != null && shotsTaken != null && shotsPerRound > 0;
@@ -83,9 +87,24 @@ export function ScoreTableRow({
         const score = row.roundScores[r - 1] ?? 0;
         const isCurrentCol = r === currentRound;
         const cellContent = score > 0 ? score : "—";
+
+        const intensity = !isCurrentCol ? roundHeatIntensities?.[r] : undefined;
+        const heatStyle: React.CSSProperties | undefined =
+          intensity !== undefined
+            ? {
+                backgroundColor:
+                  intensity > 0.6
+                    ? `rgba(0,229,255,${((intensity - 0.6) / 0.4 * 0.22).toFixed(3)})`
+                    : intensity < 0.35
+                      ? `rgba(239,68,68,${((0.35 - intensity) / 0.35 * 0.15).toFixed(3)})`
+                      : undefined,
+              }
+            : undefined;
+
         return (
           <td
             key={r}
+            style={heatStyle}
             className={cn(
               "px-3 py-3 text-right text-sm tabular-nums",
               isCurrentCol ? "bg-primaryNeon/8 font-semibold text-foreground" : "text-foreground/75",

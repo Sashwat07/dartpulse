@@ -47,9 +47,6 @@ export function DartScoreInput({
     [multiplier, onScore],
   );
 
-  const handleBullClick = useCallback(() => {
-    onScore(50);
-  }, [onScore]);
 
   return (
     <div className={cn("space-y-2", className)} role="group" aria-label="Score entry">
@@ -74,17 +71,30 @@ export function DartScoreInput({
         ))}
       </div>
 
-      {/* Number grid (1–20) or Bull */}
+      {/* Number grid (1–20) or Bull options */}
       {multiplier === "bull" ? (
-        <button
-          type="button"
-          onClick={handleBullClick}
-          disabled={disabled}
-          className={cn(btnBase, btnDefault, "w-full px-3 py-2 text-sm")}
-          aria-label="Score: Bull (50 points)"
-        >
-          50 (BULL)
-        </button>
+        <div className="grid grid-cols-2 gap-1.5">
+          <button
+            type="button"
+            onClick={() => onScore(25)}
+            disabled={disabled}
+            className={cn(btnBase, btnDefault, "px-3 py-2 text-sm")}
+            aria-label="Score: 25 (Outer Bull)"
+          >
+            <span className="block text-xs font-bold">25</span>
+            <span className="block text-[9px] text-mutedForeground/60 font-normal">Outer Bull</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => onScore(50)}
+            disabled={disabled}
+            className={cn(btnBase, btnDefault, "px-3 py-2 text-sm")}
+            aria-label="Score: 50 (Bullseye)"
+          >
+            <span className="block text-xs font-bold">50</span>
+            <span className="block text-[9px] text-mutedForeground/60 font-normal">Bullseye</span>
+          </button>
+        </div>
       ) : (
         <div className="grid grid-cols-5 gap-1.5">
           {NUMBERS.map((n) => (
@@ -102,7 +112,7 @@ export function DartScoreInput({
         </div>
       )}
 
-      {/* Quick score actions */}
+      {/* Quick: 0, 25 (outer bull), 50 (bull) */}
       <div>
         <p className="mb-1 text-[9px] font-semibold uppercase tracking-wider text-mutedForeground/70">
           Quick

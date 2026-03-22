@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect, useMemo } from "react";
 
 import { PlayerShotHistoryContent } from "@/components/history/PlayerShotHistoryContent";
 import { GlassCard } from "@/components/GlassCard";
@@ -20,12 +20,57 @@ export function ScoreTable() {
   const shotHistoryDisplay = useMatchStore(selectShotHistoryDisplay);
   const currentPlayerId = useMatchStore((s) => s.currentTurn?.playerId ?? null);
 
-  const [expandedPlayerId, setExpandedPlayerId] = useState<string | null>(null);
-
   const currentRound = activeMatch?.currentRound ?? 1;
   const shotsPerRound = activeMatch?.shotsPerRound ?? 1;
   const totalRounds = activeMatch?.totalRounds ?? 1;
   const colSpan = table.roundNumbers.length + 2;
+
+  /**
+   * Expansion state:
+   * - Current player is always expanded unless they manually collapsed it.
+   * - Other players can be freely toggled without affecting the current player.
+   */
+  const [manualExpandedIds, setManualExpandedIds] = useState<Set<string>>(new Set());
+  const [currentPlayerCollapsed, setCurrentPlayerCollapsed] = useState(false);
+
+  // When the active player changes, reset their collapsed state so they auto-expand.
+  useEffect(() => {
+    setCurrentPlayerCollapsed(false);
+  }, [currentPlayerId]);
+
+  const isExpanded = (playerId: string) =>
+    manualExpandedIds.has(playerId) ||
+    (playerId === currentPlayerId && !currentPlayerCollapsed);
+
+  const handleToggle = (playerId: string) => {
+    if (playerId === currentPlayerId) {
+      setCurrentPlayerCollapsed((prev) => !prev);
+      return;
+    }
+    setManualExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(playerId)) next.delete(playerId);
+      else next.add(playerId);
+      return next;
+    });
+  };
+
+  /**
+   * Per-round heatmap: compute min/max score across all players for each
+   * completed round, so cells can be tinted high (neon) → low (red).
+   * Only applied to past rounds (r < currentRound).
+   */
+  const roundHeatmap = useMemo(() => {
+    const map = new Map<number, { min: number; max: number }>();
+    for (const r of table.roundNumbers) {
+      if (r >= currentRound) continue; // only completed rounds
+      const scores = table.rows.map((row) => row.roundScores[r - 1] ?? 0);
+      const max = Math.max(...scores);
+      if (max === 0) continue;
+      map.set(r, { min: Math.min(...scores), max });
+    }
+    return map;
+  }, [table, currentRound]);
 
   if (table.rows.length === 0) {
     return (
@@ -72,11 +117,18 @@ export function ScoreTable() {
                   e.playerId === row.playerId,
               ).length,
             );
-            const isExpanded = expandedPlayerId === row.playerId;
+
+            // Build per-round heatmap intensities for this player
+            const roundHeatIntensities: Record<number, number> = {};
+            for (const [r, { min, max }] of roundHeatmap) {
+              const score = row.roundScores[r - 1] ?? 0;
+              roundHeatIntensities[r] =
+                max === min ? 1 : (score - min) / (max - min);
+            }
+
+            const expanded = isExpanded(row.playerId);
             const detailId = `scoreboard-shot-history-${row.playerId}`;
-            const handleToggle = () => {
-              setExpandedPlayerId(isExpanded ? null : row.playerId);
-            };
+
             return (
               <Fragment key={row.playerId}>
                 <ScoreTableRow
@@ -86,11 +138,12 @@ export function ScoreTable() {
                   isCurrentPlayer={row.playerId === currentPlayerId}
                   shotsTaken={shotsTaken}
                   shotsPerRound={shotsPerRound}
-                  isExpanded={isExpanded}
-                  onToggle={handleToggle}
+                  isExpanded={expanded}
+                  onToggle={() => handleToggle(row.playerId)}
                   ariaControlsId={detailId}
+                  roundHeatIntensities={roundHeatIntensities}
                 />
-                {isExpanded && (
+                {expanded && (
                   <tr key={`${row.playerId}-detail`} className="border-b border-glassBorder">
                     <td
                       colSpan={colSpan}
