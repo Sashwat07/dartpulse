@@ -6,6 +6,7 @@ import {
   getActiveTieGroup,
   deriveResolvedTieOrdersFromThrowEvents,
   deriveSuddenDeath,
+  shouldMarkMatchFinishedAfterRegularPhaseComplete,
 } from "@/lib/suddenDeath";
 import {
   twoPlayerNormalFinishScenario,
@@ -104,6 +105,14 @@ describe("deriveResolvedTieOrdersFromThrowEvents", () => {
     expect(resolved[0][0]).toBe(players[0].playerId);
     expect(resolved[0][1]).toBe(players[1].playerId);
     expect(resolved[0][2]).toBe(players[2].playerId);
+  });
+});
+
+describe("shouldMarkMatchFinishedAfterRegularPhaseComplete", () => {
+  it("is true only for two-player matches (no playoffs)", () => {
+    expect(shouldMarkMatchFinishedAfterRegularPhaseComplete(2)).toBe(true);
+    expect(shouldMarkMatchFinishedAfterRegularPhaseComplete(3)).toBe(false);
+    expect(shouldMarkMatchFinishedAfterRegularPhaseComplete(4)).toBe(false);
   });
 });
 

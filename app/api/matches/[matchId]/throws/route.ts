@@ -13,6 +13,7 @@ import {
   getRegularThrows,
   isMatchFullyComplete,
   isRegularRoundsComplete,
+  shouldMarkMatchFinishedAfterRegularPhaseComplete,
 } from "@/lib/suddenDeath";
 import {
   createRound,
@@ -118,7 +119,10 @@ export async function POST(req: Request, context: RouteContext) {
         match.status,
         shotsPerRound,
       );
-      if (afterResult.isMatchFullyComplete) {
+      if (
+        afterResult.isMatchFullyComplete &&
+        shouldMarkMatchFinishedAfterRegularPhaseComplete(matchPlayers.length)
+      ) {
         await updateMatchToFinished(matchId);
         await evaluateMatchAchievements(matchId);
       }

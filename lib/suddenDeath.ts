@@ -408,6 +408,20 @@ export function deriveSuddenDeath(
 }
 
 /**
+ * After regular rounds and any sudden death used for ranking/qualification are fully resolved,
+ * whether the parent Match row should be set to `matchFinished`.
+ *
+ * - 2 players: no playoffs — mark finished so the flow is complete and "Play again" applies.
+ * - 3+ players: playoffs follow — do not mark finished until playoff final confirmation
+ *   (`complete-final`); keeps state API on the pre-playoff branch with playoff CTAs.
+ */
+export function shouldMarkMatchFinishedAfterRegularPhaseComplete(
+  matchPlayerCount: number,
+): boolean {
+  return matchPlayerCount === 2;
+}
+
+/**
  * True when match can be considered finished: either status is matchFinished,
  * or regular rounds are complete and there are no unresolved ties (including shrinking subsets).
  * Delegates to deriveSuddenDeath so completion and tie resolution share one source of truth.
