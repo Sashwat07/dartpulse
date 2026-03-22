@@ -60,7 +60,7 @@ export default async function PlayerPage({ params }: PageProps) {
           description="Career stats and achievements from completed matches."
         />
 
-        <div className="mt-6 min-w-0 space-y-8">
+        <div className="mt-4 min-w-0 space-y-5">
         {/* Hero / identity */}
         <section>
           <PlayerProfileHero
@@ -73,36 +73,27 @@ export default async function PlayerPage({ params }: PageProps) {
 
         {/* Core stats */}
         {stats && (
-          <section className="space-y-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-mutedForeground">
-              Core stats
-            </h2>
+          <section className="space-y-2">
+            <h2 className="section-heading">Core stats</h2>
             <PlayerStatsCards stats={stats} />
           </section>
         )}
 
-        {/* Performance charts — existing analytics data only */}
-        <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-mutedForeground">
-            Performance
-          </h2>
-          <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2">
+        {/* Performance charts */}
+        <section className="space-y-2">
+          <h2 className="section-heading">Performance</h2>
+          <div className="grid min-w-0 grid-cols-1 gap-3 lg:grid-cols-2">
             <PlayerVolumeChart stats={stats ?? null} />
             <PlayerScoringChart stats={stats ?? null} />
           </div>
         </section>
 
         {/* Achievements */}
-        <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-mutedForeground">
-            Achievements
-          </h2>
-          <p className="text-xs text-mutedForeground">
-            Earned from matches and milestones.
-          </p>
-          <GlassCard className="p-5">
+        <section className="space-y-2">
+          <h2 className="section-heading">Achievements</h2>
+          <GlassCard className="p-4">
             {achievements.length === 0 ? (
-              <p className="rounded-button border border-dashed border-glassBorder bg-surfaceMuted py-8 text-center text-sm text-mutedForeground">
+              <p className="rounded-button border border-dashed border-glassBorder bg-surfaceMuted py-6 text-center text-sm text-mutedForeground">
                 No achievements yet. Complete matches to earn badges.
               </p>
             ) : (

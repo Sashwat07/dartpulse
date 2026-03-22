@@ -10,7 +10,7 @@ export function PageHeader({ title, description, rightSlot }: PageHeaderProps) {
   return (
     <header className="flex items-start justify-between gap-4">
       <div className="space-y-1.5">
-        <h1 className="font-display text-3xl font-bold tracking-tight text-foreground leading-tight sm:text-4xl">
+        <h1 className="font-display text-2xl font-bold tracking-tight text-foreground leading-tight sm:text-3xl">
           {title}
         </h1>
         {description ? (

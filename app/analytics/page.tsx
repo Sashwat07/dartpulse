@@ -25,12 +25,12 @@ export default async function AnalyticsPage() {
           title="Analytics"
           description="Completed matches only. Regular-match throws (excludes playoff; includes sudden death)."
         />
-        <div className="mt-8 min-w-0 space-y-8">
+        <div className="mt-4 min-w-0 space-y-5">
 
           {/* Overview stat cards */}
-          <section className="space-y-3">
+          <section className="space-y-2">
             <h2 className="section-heading">Overview</h2>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
               {[
                 { label: "Completed matches", value: overview.totalCompletedMatches, accent: false },
                 { label: "Registered players", value: overview.totalRegisteredPlayers, accent: false },
@@ -39,9 +39,9 @@ export default async function AnalyticsPage() {
                 { label: "Highest match score", value: formatScore(overview.highestCompletedMatchScore), accent: false },
                 { label: "Total points", value: formatScore(overview.totalPoints), accent: false },
               ].map((stat) => (
-                <GlassCard key={stat.label} className="flex min-h-[90px] flex-col justify-between p-4">
+                <GlassCard key={stat.label} className="flex min-h-[72px] flex-col justify-between p-3">
                   <p className="stat-label leading-tight">{stat.label}</p>
-                  <p className={`stat-value mt-2 ${stat.accent ? "text-primaryNeon" : "text-foreground"}`}>
+                  <p className={`stat-value mt-1.5 ${stat.accent ? "text-primaryNeon" : "text-foreground"}`}>
                     {stat.value}
                   </p>
                 </GlassCard>
@@ -50,7 +50,7 @@ export default async function AnalyticsPage() {
           </section>
 
           {/* Top by wins */}
-          <section className="space-y-3">
+          <section className="space-y-2">
             <h2 className="section-heading">Top by wins</h2>
             {overview.topPlayersByWins.length === 0 ? (
               <GlassCard className="p-4">
@@ -64,7 +64,7 @@ export default async function AnalyticsPage() {
                   {overview.topPlayersByWins.map((p, i) => (
                     <li
                       key={p.playerId}
-                      className="flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-surfaceSubtle"
+                      className="flex items-center justify-between gap-3 px-4 py-2.5 transition-colors hover:bg-surfaceSubtle"
                     >
                       <span className={`w-5 shrink-0 text-center text-sm font-bold tabular-nums ${i === 0 ? "text-championGold" : i === 1 ? "text-rankSilver" : i === 2 ? "text-rankBronze" : "text-mutedForeground"}`}>
                         {i + 1}
@@ -87,7 +87,7 @@ export default async function AnalyticsPage() {
           </section>
 
           {/* Top by total points */}
-          <section className="space-y-3">
+          <section className="space-y-2">
             <h2 className="section-heading">Top by total points</h2>
             {overview.topPlayersByTotalPoints.length === 0 ? (
               <GlassCard className="p-4">
@@ -101,7 +101,7 @@ export default async function AnalyticsPage() {
                   {overview.topPlayersByTotalPoints.map((p, i) => (
                     <li
                       key={p.playerId}
-                      className="flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-surfaceSubtle"
+                      className="flex items-center justify-between gap-3 px-4 py-2.5 transition-colors hover:bg-surfaceSubtle"
                     >
                       <span className={`w-5 shrink-0 text-center text-sm font-bold tabular-nums ${i === 0 ? "text-championGold" : i === 1 ? "text-rankSilver" : i === 2 ? "text-rankBronze" : "text-mutedForeground"}`}>
                         {i + 1}
@@ -123,18 +123,18 @@ export default async function AnalyticsPage() {
           </section>
 
           {/* Charts */}
-          <section className="space-y-3">
+          <section className="space-y-2">
             <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">
               Charts
             </h2>
-            <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2">
+            <div className="grid min-w-0 grid-cols-1 gap-3 lg:grid-cols-2">
               <WinsAndTotalPointsChart players={players} />
               <AverageRoundScoreChart players={players} />
             </div>
           </section>
 
           {/* Player analytics table */}
-          <section className="space-y-3">
+          <section className="space-y-2">
             <h2 className="section-heading">Player analytics</h2>
             <AnalyticsPlayerTableClient players={players} />
           </section>

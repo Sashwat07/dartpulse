@@ -32,41 +32,69 @@ export function CurrentPlayerPanel() {
       : 1;
   const roundLabel = activeMatch
     ? inSuddenDeath
-      ? `Sudden death · round ${sdRoundDisplay}`
+      ? `SD·${sdRoundDisplay}`
       : `Round ${activeMatch.currentRound} / ${activeMatch.totalRounds}`
     : null;
 
+  // Round progress
+  const shotsPerRound = activeMatch?.shotsPerRound ?? 1;
+  const currentRound = activeMatch?.currentRound ?? 1;
+  const totalRounds = activeMatch?.totalRounds ?? 1;
+  const progressPct = totalRounds > 0 ? ((currentRound - 1) / totalRounds) * 100 : 0;
+  const shotsTaken = Math.min(
+    shotsPerRound,
+    throwEvents.filter(
+      (e) =>
+        e.eventType === "regular" &&
+        !e.playoffMatchId &&
+        e.roundNumber === currentRound &&
+        e.playerId === currentTurn?.playerId,
+    ).length,
+  );
+
   return (
-    <GlassCard className={`p-5 ${inSuddenDeath ? "border-amber-400/40 bg-gradient-to-br from-amber-400/5 to-transparent" : "border-primaryNeon/25 bg-gradient-to-br from-primaryNeon/5 to-transparent"}`}>
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">
+    <GlassCard className={`p-4 ${inSuddenDeath ? "border-amber-400/40 bg-gradient-to-br from-amber-400/5 to-transparent" : "border-primaryNeon/25 bg-gradient-to-br from-primaryNeon/5 to-transparent"}`}>
+      {/* Header: current turn label + round badge */}
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-mutedForeground">
           Current turn
         </p>
         {roundLabel && (
-          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${inSuddenDeath ? "border border-amber-400/30 bg-amber-400/10 text-amber-400" : "border border-primaryNeon/25 bg-primaryNeon/8 text-primaryNeon"}`}>
+          <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${inSuddenDeath ? "border border-amber-400/30 bg-amber-400/10 text-amber-400" : "border border-primaryNeon/25 bg-primaryNeon/8 text-primaryNeon"}`}>
             {roundLabel}
           </span>
         )}
       </div>
 
+      {/* Player name */}
       {matchComplete ? (
-        <p className="font-display text-2xl font-bold text-foreground">Match complete</p>
+        <p className="font-display text-xl font-bold text-foreground">Match complete</p>
       ) : inSuddenDeath ? (
         <div className="space-y-0.5">
-          <p className="font-display text-2xl font-bold text-amber-400">
+          <p className="font-display text-xl font-bold text-amber-400">
             {currentPlayer?.name ?? "—"}
           </p>
           {tiedNames && (
-            <p className="text-xs text-mutedForeground">Tied: {tiedNames}</p>
+            <p className="text-[10px] text-mutedForeground">Tied: {tiedNames}</p>
           )}
         </div>
       ) : (
-        <p className="font-display text-2xl font-bold text-foreground leading-tight">
+        <p className="font-display text-xl font-bold text-foreground leading-tight">
           {currentPlayer?.name ?? "—"}
         </p>
       )}
 
-      <div className="mt-5 space-y-3">
+      {/* Round progress bar */}
+      <div className="mt-2 mb-1 h-1 w-full overflow-hidden rounded-full bg-surfaceSubtle">
+        <div
+          className="h-full rounded-full bg-primaryNeon/50 transition-all duration-300"
+          style={{ width: `${progressPct}%` }}
+          aria-hidden
+        />
+      </div>
+
+      {/* Last throw + shot dots inline */}
+      <div className="flex items-center justify-between mb-3">
         <LastThrowIndicator
           lastScore={
             throwEvents.length > 0
@@ -74,19 +102,35 @@ export function CurrentPlayerPanel() {
               : null
           }
         />
-        <DartScoreInput
-          onScore={(score) => addThrow(score)}
-          disabled={Boolean(matchComplete)}
-        />
-        <button
-          type="button"
-          onClick={() => undoLastThrow()}
-          disabled={!canUndo}
-          className="rounded-button border border-glassBorder bg-glassBackground px-3 py-2 text-sm font-medium text-mutedForeground hover:border-primaryNeon/30 hover:bg-surfaceSubtle hover:text-foreground transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          Undo last throw
-        </button>
+        {shotsPerRound > 1 && (
+          <div className="flex gap-1.5 items-center" aria-label={`${shotsTaken} of ${shotsPerRound} shots`}>
+            {Array.from({ length: shotsPerRound }, (_, i) => (
+              <span
+                key={i}
+                className={
+                  i < shotsTaken
+                    ? "h-2.5 w-2.5 rounded-full shrink-0 bg-primaryNeon shadow-[0_0_6px_rgba(0,229,255,0.5)] transition-all duration-150"
+                    : "h-2.5 w-2.5 rounded-full shrink-0 border border-glassBorder bg-transparent transition-all duration-150"
+                }
+              />
+            ))}
+          </div>
+        )}
       </div>
+
+      <DartScoreInput
+        onScore={(score) => addThrow(score)}
+        disabled={Boolean(matchComplete)}
+      />
+
+      <button
+        type="button"
+        onClick={() => undoLastThrow()}
+        disabled={!canUndo}
+        className="mt-2 w-full rounded-button border border-glassBorder bg-glassBackground px-3 py-1.5 text-xs font-medium text-mutedForeground hover:border-primaryNeon/30 hover:bg-surfaceSubtle hover:text-foreground transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        Undo last throw
+      </button>
     </GlassCard>
   );
 }

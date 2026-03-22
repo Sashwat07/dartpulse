@@ -14,9 +14,9 @@ const MULTIPLIERS: { id: DartMultiplier; label: string }[] = [
 
 const NUMBERS = Array.from({ length: 20 }, (_, i) => i + 1);
 
-/** 44px minimum touch target; shared button base with focus-visible. */
+/** 36px minimum touch target; shared button base with focus-visible. */
 const btnBase =
-  "rounded-lg border tabular-nums font-medium transition-all duration-150 min-h-[44px] min-w-[44px] " +
+  "rounded-lg border tabular-nums font-medium transition-all duration-150 min-h-[36px] min-w-[36px] " +
   "shadow-[0_1px_0_var(--inputInsetHighlight)_inset] hover:brightness-110 active:scale-[0.98] " +
   "disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
@@ -52,13 +52,9 @@ export function DartScoreInput({
   }, [onScore]);
 
   return (
-    <div className={cn("space-y-3", className)} role="group" aria-label="Score entry">
-      <p className="text-xs font-medium text-mutedForeground tracking-wide">
-        Score
-      </p>
-
-      {/* Multiplier row — 44px touch targets */}
-      <div className="flex gap-2">
+    <div className={cn("space-y-2", className)} role="group" aria-label="Score entry">
+      {/* Multiplier row */}
+      <div className="flex gap-1.5">
         {MULTIPLIERS.map((m) => (
           <button
             key={m.id}
@@ -67,7 +63,7 @@ export function DartScoreInput({
             disabled={disabled}
             className={cn(
               btnBase,
-              "flex-1 px-2 py-2 text-sm",
+              "flex-1 px-1.5 py-1 text-xs",
               multiplier === m.id ? btnActive : btnDefault,
             )}
             aria-label={`Multiplier: ${m.label}${m.id === "bull" ? " (bullseye)" : ""}`}
@@ -78,26 +74,26 @@ export function DartScoreInput({
         ))}
       </div>
 
-      {/* Number grid (1–20) or Bull — 44px min */}
+      {/* Number grid (1–20) or Bull */}
       {multiplier === "bull" ? (
         <button
           type="button"
           onClick={handleBullClick}
           disabled={disabled}
-          className={cn(btnBase, btnDefault, "w-full px-3 py-3 text-sm")}
+          className={cn(btnBase, btnDefault, "w-full px-3 py-2 text-sm")}
           aria-label="Score: Bull (50 points)"
         >
           50 (BULL)
         </button>
       ) : (
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-5 gap-1.5">
           {NUMBERS.map((n) => (
             <button
               key={n}
               type="button"
               onClick={() => handleNumberClick(n)}
               disabled={disabled}
-              className={cn(btnBase, btnDefault, "px-2 py-2 text-sm min-w-[44px]")}
+              className={cn(btnBase, btnDefault, "px-1 py-1 text-xs min-w-[36px]")}
               aria-label={`Number: ${n}`}
             >
               {n}
@@ -106,9 +102,9 @@ export function DartScoreInput({
         </div>
       )}
 
-      {/* Quick score actions — one tap, visually secondary */}
+      {/* Quick score actions */}
       <div>
-        <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-mutedForeground/80">
+        <p className="mb-1 text-[9px] font-semibold uppercase tracking-wider text-mutedForeground/70">
           Quick
         </p>
         <QuickScoreButtons onScore={onScore} disabled={disabled} />

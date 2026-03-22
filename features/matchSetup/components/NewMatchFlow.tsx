@@ -183,13 +183,13 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
   }
 
   return (
-    <div className="mt-6 space-y-5">
+    <div className="mt-4 space-y-3">
       {/* Player selection */}
-      <GlassCard className="p-5">
-        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-4">
+      <GlassCard className="p-4">
+        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-3">
           Select players <span className="text-mutedForeground/60 normal-case">(order = turn order)</span>
         </h3>
-        <div className="mb-4">
+        <div className="mb-3">
           <label htmlFor="player-search" className="sr-only">
             Search players
           </label>
@@ -285,8 +285,8 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
         )}
 
         {/* Selected players */}
-        <div className="mt-4 pt-4 border-t border-glassBorder">
-          <p className="text-xs font-semibold text-mutedForeground mb-2.5">
+        <div className="mt-3 pt-3 border-t border-glassBorder">
+          <p className="text-xs font-semibold text-mutedForeground mb-2">
             Selected players <span className="text-mutedForeground/60 normal-case font-normal">(turn order)</span>
           </p>
           {selectedOrder.length === 0 ? (
@@ -322,8 +322,8 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
       </GlassCard>
 
       {/* Add player */}
-      <GlassCard className="p-5">
-        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-4">
+      <GlassCard className="p-4">
+        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-3">
           Add new player
         </h3>
         <form onSubmit={handleAddPlayer} className="flex flex-wrap gap-3 items-end">
@@ -377,11 +377,11 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
       </GlassCard>
 
       {/* Match settings */}
-      <GlassCard className="p-5">
-        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-4">
+      <GlassCard className="p-4">
+        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-3">
           Match settings
         </h3>
-        <form onSubmit={handleCreateMatch} className="space-y-4">
+        <form onSubmit={handleCreateMatch} className="space-y-3">
           <div>
             <label htmlFor="match-name" className="block text-xs font-medium text-mutedForeground mb-1.5">
               Match name
@@ -395,7 +395,7 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
               className={inputCls}
             />
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-3">
             <div>
               <label htmlFor="total-rounds" className="block text-xs font-medium text-mutedForeground mb-1.5">
                 Total rounds
@@ -453,7 +453,7 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
             </label>
           </div>
 
-          <div className="pt-2">
+          <div className="pt-1">
             <Button
               type="submit"
               variant="primary"

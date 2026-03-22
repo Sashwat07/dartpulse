@@ -72,35 +72,35 @@ export default async function AppHomePage() {
           }
         />
 
-        <div className="mt-8 min-w-0 space-y-8">
+        <div className="mt-4 min-w-0 space-y-5">
           {/* Overview stat cards */}
-          <section className="space-y-3">
+          <section className="space-y-2">
             <h2 className="section-heading">Overview</h2>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              <GlassCard className="flex min-h-[90px] flex-col justify-between p-4">
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
+              <GlassCard className="flex min-h-[72px] flex-col justify-between p-3">
                 <p className="stat-label">Completed</p>
-                <p className="stat-value mt-2 text-foreground">
+                <p className="stat-value mt-1.5 text-foreground">
                   {overview.totalCompletedMatches}
                 </p>
               </GlassCard>
-              <GlassCard className="flex min-h-[90px] flex-col justify-between p-4">
+              <GlassCard className="flex min-h-[72px] flex-col justify-between p-3">
                 <p className="stat-label">Players</p>
-                <p className="stat-value mt-2 text-foreground">
+                <p className="stat-value mt-1.5 text-foreground">
                   {overview.totalRegisteredPlayers}
                 </p>
               </GlassCard>
-              <GlassCard className="flex min-h-[90px] flex-col justify-between p-4">
+              <GlassCard className="flex min-h-[72px] flex-col justify-between p-3">
                 <p className="stat-label">Best throw</p>
-                <p className="stat-value mt-2 text-primaryNeon">
+                <p className="stat-value mt-1.5 text-primaryNeon">
                   {formatScore(overview.bestThrow)}
                 </p>
               </GlassCard>
               {topByWins && (
-                <GlassCard className="flex min-h-[90px] flex-col justify-between p-4">
+                <GlassCard className="flex min-h-[72px] flex-col justify-between p-3">
                   <p className="stat-label">Top by wins</p>
                   <Link
                     href={`/players/${topByWins.playerId}`}
-                    className="mt-2 truncate font-display text-xl font-bold text-foreground hover:text-primaryNeon transition-colors leading-tight"
+                    className="mt-1.5 truncate font-display text-lg font-bold text-foreground hover:text-primaryNeon transition-colors leading-tight"
                   >
                     {topByWins.playerName}
                   </Link>
@@ -110,7 +110,7 @@ export default async function AppHomePage() {
           </section>
 
           {/* Resume */}
-          <section className="space-y-3">
+          <section className="space-y-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="section-heading">In progress</h2>
               {resumable.length > 3 && (
@@ -150,7 +150,7 @@ export default async function AppHomePage() {
           </section>
 
           {/* Recent completed */}
-          <section className="space-y-3">
+          <section className="space-y-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="section-heading">Recent matches</h2>
               {completed.length > 5 && (
@@ -182,9 +182,9 @@ export default async function AppHomePage() {
           </section>
 
           {/* Leaderboard + Analytics preview */}
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-2">
             {/* Leaderboard preview */}
-            <section className="space-y-3">
+            <section className="space-y-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h2 className="section-heading">Leaderboard</h2>
                 <Link
@@ -207,7 +207,7 @@ export default async function AppHomePage() {
                       <li key={entry.playerId}>
                         <Link
                           href={`/players/${entry.playerId}`}
-                          className="flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-surfaceSubtle"
+                          className="flex items-center justify-between gap-3 px-4 py-2.5 transition-colors hover:bg-surfaceSubtle"
                         >
                           <span
                             className={`w-5 shrink-0 text-center text-sm font-bold tabular-nums ${
@@ -237,7 +237,7 @@ export default async function AppHomePage() {
             </section>
 
             {/* Analytics preview */}
-            <section className="space-y-3">
+            <section className="space-y-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h2 className="section-heading">Analytics</h2>
                 <Link
@@ -247,30 +247,30 @@ export default async function AppHomePage() {
                   View full
                 </Link>
               </div>
-              <GlassCard className="p-5">
-                <div className="grid grid-cols-3 gap-5">
+              <GlassCard className="p-4">
+                <div className="grid grid-cols-3 gap-3">
                   <div>
                     <p className="stat-label">Avg / round</p>
-                    <p className="stat-value mt-1.5 text-foreground text-2xl">
+                    <p className="stat-value mt-1 text-foreground text-xl">
                       {formatScore(overview.averageRoundScore)}
                     </p>
                   </div>
                   <div>
                     <p className="stat-label">Total pts</p>
-                    <p className="stat-value mt-1.5 text-foreground text-2xl">
+                    <p className="stat-value mt-1 text-foreground text-xl">
                       {formatScore(overview.totalPoints)}
                     </p>
                   </div>
                   <div>
                     <p className="stat-label">High match</p>
-                    <p className="stat-value mt-1.5 text-foreground text-2xl">
+                    <p className="stat-value mt-1 text-foreground text-xl">
                       {formatScore(overview.highestCompletedMatchScore)}
                     </p>
                   </div>
                 </div>
                 <Link
                   href="/analytics"
-                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primaryNeon hover:underline focus-ring rounded"
+                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-primaryNeon hover:underline focus-ring rounded"
                 >
                   Open analytics →
                 </Link>

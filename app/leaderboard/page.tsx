@@ -14,7 +14,7 @@ export default async function LeaderboardPage() {
           title="Leaderboard"
           description="Global standings from completed matches only. Order by tab; default Overall (wins, avg finish, then scoring)."
         />
-        <div className="mt-6">
+        <div className="mt-4">
           <LeaderboardTableClient entries={entries} />
         </div>
       </PageTransition>

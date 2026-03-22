@@ -59,9 +59,9 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
               title={match.name}
               description="Playoffs in progress. Complete the final and confirm to mark this match complete."
             />
-            <div className="mt-6">
-              <GlassCard className="p-6">
-                <div className="flex flex-col items-center gap-4 text-center">
+            <div className="mt-4">
+              <GlassCard className="p-4">
+                <div className="flex flex-col items-center gap-3 text-center">
                   <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm font-semibold text-amber-600 dark:text-amber-400">
                     <Trophy size={18} aria-hidden />
                     Playoffs pending
@@ -123,10 +123,10 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
           description={`Completed ${dateLabel} · ${matchPlayers.length} players`}
         />
 
-        <div className="mt-6 space-y-8">
+        <div className="mt-4 space-y-4">
         {/* Match info */}
-        <GlassCard className="p-4">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-3">
+        <GlassCard className="p-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-2">
             Match info
           </h2>
           <dl className="grid grid-cols-1 gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
@@ -213,11 +213,9 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
         )}
 
         {/* Match analytics (reuses same components as analytics page polish) */}
-        <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-mutedForeground">
-            Match analytics
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2">
+        <section className="space-y-2">
+          <h2 className="section-heading">Match analytics</h2>
+          <div className="grid gap-3 sm:grid-cols-2">
             <MomentumTimeline timeline={momentum} playerNames={playerNames} />
             <MatchEnergyMeter
               energyScore={matchEnergy.energyScore}
@@ -239,8 +237,8 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
           </GlassCard>
         )}
         {clutch.length > 0 && (
-          <GlassCard className="p-4">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-3">
+          <GlassCard className="p-3">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-2">
               Clutch (final round)
             </h2>
             <ul className="space-y-1 text-sm">

@@ -48,21 +48,24 @@ export function PlayoffBracket({
 
   return (
     <GlassCard className="p-4">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-mutedForeground">
+      <h2 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-3">
         Bracket
       </h2>
-      <div className="mt-4 flex flex-col gap-8">
+      <div className="flex flex-col gap-4">
         {STAGE_GROUPS.map((group) => {
           const matchesInGroup = group.stages
             .map((s) => matchesByStage.get(s))
             .filter(Boolean) as PlayoffMatch[];
           if (matchesInGroup.length === 0) return null;
+          const showGroupLabel = matchesInGroup.length > 1;
           return (
-            <section key={group.label} className="flex flex-col gap-3">
-              <p className="text-center text-xs font-medium uppercase tracking-wider text-mutedForeground">
-                {group.label}
-              </p>
-              <ul className="flex flex-col gap-2">
+            <section key={group.label} className="flex flex-col gap-2">
+              {showGroupLabel && (
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-mutedForeground">
+                  {group.label}
+                </p>
+              )}
+              <ul className="flex flex-col gap-1.5">
                 {matchesInGroup.map((m) => (
                   <li key={m.playoffMatchId}>
                     <PlayoffMatchCard

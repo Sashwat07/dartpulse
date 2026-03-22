@@ -27,91 +27,66 @@ export function MatchOutcomeSummary({ summary }: MatchOutcomeSummaryProps) {
       ? ranking.find((r) => r.playerId === summary.winnerPlayerId)?.playerName ?? ""
       : null;
 
+  const hasPairings = summary.finalPairing || summary.qualifier1Pairing || summary.qualifier2Pairing;
+  const hasDecisionRights = decisionRights.final || decisionRights.qualifier1 || decisionRights.qualifier2;
+
   return (
-    <GlassCard className="p-4 space-y-4 border-amber-500/20">
-      <p className="text-sm font-semibold text-amber-400/90">Match complete</p>
-
-      {/* A. Final Ranking */}
-      <section>
-        <p className="text-xs font-medium text-mutedForeground uppercase tracking-wide mb-2">
-          Final ranking
+    <GlassCard className="px-4 py-3 border-amber-500/20 space-y-2.5">
+      {/* Header row: status + outcome */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <p className="text-xs font-semibold text-amber-400/90 uppercase tracking-wide">
+          Match complete
         </p>
-        <ul className="space-y-1">
-          {ranking.map(({ rank, playerName }) => (
-            <li key={rank} className="text-sm">
-              <span className="font-medium text-amber-500/90">Rank {rank}</span>
-              <span className="ml-2">{playerName}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* B. Outcome */}
-      <section>
-        <p className="text-xs font-medium text-mutedForeground uppercase tracking-wide mb-1">
-          Outcome
-        </p>
-        <p className="text-sm font-medium">
+        <span className="text-[10px] font-medium text-amber-500/70 bg-amber-500/10 border border-amber-500/20 rounded px-1.5 py-0.5">
           {outcomeLabel}
-          {winnerName != null && winnerName !== "" && (
-            <span className="ml-2 text-amber-400">{winnerName}</span>
+          {winnerName ? ` · ${winnerName}` : ""}
+        </span>
+      </div>
+
+      {/* Ranking — horizontal chips */}
+      <div className="flex flex-wrap gap-1.5">
+        {ranking.map(({ rank, playerName }) => (
+          <span
+            key={rank}
+            className="inline-flex items-center gap-1.5 rounded border border-glassBorder bg-surfaceSubtle px-2 py-0.5 text-xs"
+          >
+            <span className="font-semibold text-amber-500/80">#{rank}</span>
+            <span className="text-foreground/90">{playerName}</span>
+          </span>
+        ))}
+      </div>
+
+      {/* Pairings + decision rights — compact rows */}
+      {(hasPairings || hasDecisionRights) && (
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-mutedForeground">
+          {summary.finalPairing && (
+            <span>
+              <span className="font-medium text-foreground/60">Final:</span>{" "}
+              {summary.finalPairing.player1Name} vs {summary.finalPairing.player2Name}
+            </span>
           )}
-        </p>
-      </section>
-
-      {/* C. Pairing preview */}
-      {(summary.finalPairing || summary.qualifier1Pairing || summary.qualifier2Pairing) && (
-        <section>
-          <p className="text-xs font-medium text-mutedForeground uppercase tracking-wide mb-2">
-            Pairing preview
-          </p>
-          <ul className="space-y-1.5 text-sm">
-            {summary.finalPairing && (
-              <li>
-                <span className="text-mutedForeground">Final:</span>{" "}
-                {summary.finalPairing.player1Name} vs {summary.finalPairing.player2Name}
-              </li>
-            )}
-            {summary.qualifier1Pairing && (
-              <li>
-                <span className="text-mutedForeground">Qualifier 1:</span>{" "}
-                {summary.qualifier1Pairing.player1Name} vs {summary.qualifier1Pairing.player2Name}
-              </li>
-            )}
-            {summary.qualifier2Pairing && (
-              <li>
-                <span className="text-mutedForeground">Qualifier 2:</span>{" "}
-                {summary.qualifier2Pairing.player1Name} vs {summary.qualifier2Pairing.player2Name}
-              </li>
-            )}
-          </ul>
-        </section>
-      )}
-
-      {/* D. Decision-right text */}
-      {(decisionRights.final || decisionRights.qualifier1 || decisionRights.qualifier2) && (
-        <section>
-          <p className="text-xs font-medium text-mutedForeground uppercase tracking-wide mb-1.5">
-            First throw
-          </p>
-          <ul className="space-y-1 text-sm text-mutedForeground">
-            {decisionRights.final && (
-              <li>
-                {decisionRights.final.playerName} decides first throw for the final.
-              </li>
-            )}
-            {decisionRights.qualifier1 && (
-              <li>
-                {decisionRights.qualifier1.playerName} decides first throw for Qualifier 1.
-              </li>
-            )}
-            {decisionRights.qualifier2 && (
-              <li>
-                {decisionRights.qualifier2.playerName} decides first throw for Qualifier 2.
-              </li>
-            )}
-          </ul>
-        </section>
+          {summary.qualifier1Pairing && (
+            <span>
+              <span className="font-medium text-foreground/60">Q1:</span>{" "}
+              {summary.qualifier1Pairing.player1Name} vs {summary.qualifier1Pairing.player2Name}
+            </span>
+          )}
+          {summary.qualifier2Pairing && (
+            <span>
+              <span className="font-medium text-foreground/60">Q2:</span>{" "}
+              {summary.qualifier2Pairing.player1Name} vs {summary.qualifier2Pairing.player2Name}
+            </span>
+          )}
+          {decisionRights.final && (
+            <span>{decisionRights.final.playerName} decides first throw (final).</span>
+          )}
+          {decisionRights.qualifier1 && (
+            <span>{decisionRights.qualifier1.playerName} decides first throw (Q1).</span>
+          )}
+          {decisionRights.qualifier2 && (
+            <span>{decisionRights.qualifier2.playerName} decides first throw (Q2).</span>
+          )}
+        </div>
       )}
     </GlassCard>
   );

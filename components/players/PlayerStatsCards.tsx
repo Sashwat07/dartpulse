@@ -34,16 +34,16 @@ export function PlayerStatsCards({ stats }: PlayerStatsCardsProps) {
   const items = statItems(stats);
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+    <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       {items.map(({ label, value }) => (
         <GlassCard
           key={label}
-          className="flex min-h-[88px] flex-col justify-between p-4"
+          className="flex min-h-[72px] flex-col justify-between p-3"
         >
           <p className="text-xs font-medium uppercase tracking-wider text-mutedForeground">
             {label}
           </p>
-          <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
+          <p className="mt-1.5 text-xl font-bold tabular-nums text-foreground">
             {value}
           </p>
         </GlassCard>

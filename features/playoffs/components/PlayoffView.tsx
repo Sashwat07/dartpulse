@@ -110,52 +110,56 @@ export function PlayoffView({ matchId }: PlayoffViewProps) {
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-3"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={MOTION_TRANSITION_STANDARD}
     >
-      <PlayoffBracket
-        matchId={matchId}
-        playoffMatches={state.playoffMatches}
-        matchPlayers={state.matchPlayers}
-        stageOrder={state.stageOrder}
-        activePlayoffMatchId={state.activePlayoffMatchId}
-        onRefresh={fetchState}
-        finalConfirmed={state.playoffMatches.some(
-          (m) => m.stage === "final" && m.status === "completed",
-        )}
-      />
-      {state.activePlayoffMatch && (
-        <ActivePlayoffMatch
-          matchId={matchId}
-          playoffMatch={state.activePlayoffMatch}
-          throwEvents={state.throwEventsForActive}
-          matchPlayers={state.matchPlayers}
-          totalRounds={state.totalRounds}
-          playoffShotsPerRound={state.playoffShotsPerRound ?? 1}
-          playoffTurnState={state.playoffTurnState}
-          onThrowAdded={fetchState}
-        />
-      )}
       {allComplete && championName && (
-        <GlassCard className="p-4 border-amber-500/30">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground">
-            Champion
-          </h2>
-          <p className="mt-2 text-xl font-semibold text-amber-400">{championName}</p>
+        <GlassCard className="px-4 py-3 border-amber-500/30 flex flex-wrap items-center gap-3">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-mutedForeground">Champion</p>
+            <p className="text-lg font-semibold text-amber-400">{championName}</p>
+          </div>
           {finalConfirmed && (
-            <div className="mt-3">
-              <PlayAgainButton sourceMatchId={matchId} label="Play again" variant="button" />
-            </div>
+            <PlayAgainButton sourceMatchId={matchId} label="Play again" variant="button" />
           )}
         </GlassCard>
       )}
+      <div className="grid grid-cols-1 md:grid-cols-[284px_1fr] gap-3 items-start">
+        {/* Left: active scoring (only when there's an active match) */}
+        {state.activePlayoffMatch ? (
+          <ActivePlayoffMatch
+            matchId={matchId}
+            playoffMatch={state.activePlayoffMatch}
+            throwEvents={state.throwEventsForActive}
+            matchPlayers={state.matchPlayers}
+            totalRounds={state.totalRounds}
+            playoffShotsPerRound={state.playoffShotsPerRound ?? 1}
+            playoffTurnState={state.playoffTurnState}
+            onThrowAdded={fetchState}
+          />
+        ) : (
+          <div />
+        )}
+        {/* Right: bracket */}
+        <PlayoffBracket
+          matchId={matchId}
+          playoffMatches={state.playoffMatches}
+          matchPlayers={state.matchPlayers}
+          stageOrder={state.stageOrder}
+          activePlayoffMatchId={state.activePlayoffMatchId}
+          onRefresh={fetchState}
+          finalConfirmed={state.playoffMatches.some(
+            (m) => m.stage === "final" && m.status === "completed",
+          )}
+        />
+      </div>
       <Link
         href={`/match/${matchId}`}
-        className="inline-block text-sm text-mutedForeground transition-colors hover:text-primaryNeon hover:underline"
+        className="inline-block text-xs text-mutedForeground transition-colors hover:text-primaryNeon hover:underline"
       >
-        Back to match
+        ← Back to match
       </Link>
     </motion.div>
   );

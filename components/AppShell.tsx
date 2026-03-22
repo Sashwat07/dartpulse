@@ -27,7 +27,7 @@ export function AppShell({ children }: AppShellProps) {
         </aside>
         <div className="min-w-0 min-h-dvh">
           <TopBar onMenuClick={() => setMobileNavOpen(true)} />
-          <main className="p-4 lg:p-6">{children}</main>
+          <main className="p-3 lg:p-5">{children}</main>
         </div>
       </div>
 

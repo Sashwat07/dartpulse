@@ -32,9 +32,9 @@ export function MatchCompleteBanner({ matchId }: MatchCompleteBannerProps) {
   const showPlayAgain = isFullyComplete;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <MatchOutcomeSummary summary={matchOutcomeSummary} />
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2">
         {showPlayoffsLink && !isFullyComplete && (
           <Link
             href={`/playoffs/${matchId}`}

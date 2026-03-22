@@ -20,7 +20,7 @@ export default async function PlayoffsPage({ params }: PageProps) {
         title="Playoffs"
         description={`Match ${matchId.slice(-6)}`}
       />
-      <div className="mt-6">
+      <div className="mt-3">
         <PlayoffView matchId={matchId} />
       </div>
     </AppShell>

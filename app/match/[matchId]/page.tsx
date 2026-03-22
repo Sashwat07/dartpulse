@@ -17,7 +17,7 @@ export default async function MatchPage({ params }: PageProps) {
 
   return (
     <AppShell>
-      <PageHeader title={match.name} description={`matchId: ${matchId}`} />
+      <PageHeader title={match.name} />
       <LiveMatchHydrator matchId={matchId}>
         <LiveMatchScoring matchId={matchId} />
       </LiveMatchHydrator>

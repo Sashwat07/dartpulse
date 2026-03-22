@@ -9,7 +9,7 @@ const QUICK_SCORES = [
 ] as const;
 
 const btnBase =
-  "rounded-lg border border-glassBorder bg-glassBackground/80 tabular-nums font-medium transition-all duration-150 min-h-[44px] min-w-[44px] " +
+  "rounded-lg border border-glassBorder bg-glassBackground/80 tabular-nums font-medium transition-all duration-150 min-h-[32px] min-w-[36px] " +
   "shadow-[0_1px_0_var(--inputInsetHighlight)_inset] hover:border-[var(--inputBorderHover)] hover:bg-glassBackground hover:brightness-110 " +
   "active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
@@ -33,7 +33,7 @@ export function QuickScoreButtons({
           type="button"
           onClick={() => onScore(score)}
           disabled={disabled}
-          className={cn(btnBase, "flex-1 basis-0 px-3 text-sm")}
+          className={cn(btnBase, "flex-1 basis-0 px-2 text-xs")}
           aria-label={`Quick score: ${label} (${score} points)`}
         >
           {label}

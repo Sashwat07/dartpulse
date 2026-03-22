@@ -29,10 +29,10 @@ export function PlayerProfileHero({
   const ringColor = player.avatarColor ?? "var(--primaryNeon)";
 
   return (
-    <GlassCard className="overflow-hidden bg-gradient-to-br from-primaryNeon/[0.07] dark:from-white/[0.07] to-transparent p-6 md:p-8">
-      <div className="flex flex-col items-center gap-5 text-center md:flex-row md:items-center md:gap-7 md:text-left">
+    <GlassCard className="overflow-hidden bg-gradient-to-br from-primaryNeon/[0.07] dark:from-white/[0.07] to-transparent p-4 md:p-5">
+      <div className="flex flex-col items-center gap-4 text-center md:flex-row md:items-center md:gap-5 md:text-left">
         <div
-          className="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl font-display text-2xl font-bold md:h-24 md:w-24 md:text-3xl"
+          className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl font-display text-xl font-bold md:h-20 md:w-20 md:text-2xl"
           style={{
             backgroundColor: `${ringColor}20`,
             color: ringColor,
@@ -42,21 +42,21 @@ export function PlayerProfileHero({
         >
           {initials}
         </div>
-        <div className="min-w-0 flex-1 space-y-2">
-          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl leading-tight">
+        <div className="min-w-0 flex-1 space-y-1.5">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-foreground md:text-3xl leading-tight">
             {player.name}
           </h1>
-          <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
-            <span className="rounded-full border border-primaryNeon/40 bg-primaryNeon/10 px-3 py-1 text-sm font-semibold text-primaryNeon">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 md:justify-start">
+            <span className="rounded-full border border-primaryNeon/40 bg-primaryNeon/10 px-2.5 py-0.5 text-xs font-semibold text-primaryNeon">
               {archetype}
             </span>
             {showChampionBadge && (
-              <span className="rounded-full border border-championGold/50 bg-championGold/10 px-3 py-1 text-sm font-semibold text-championGold">
+              <span className="rounded-full border border-championGold/50 bg-championGold/10 px-2.5 py-0.5 text-xs font-semibold text-championGold">
                 Champion
               </span>
             )}
           </div>
-          <p className="text-sm text-mutedForeground leading-relaxed">{archetypeDescription}</p>
+          <p className="text-xs text-mutedForeground leading-relaxed">{archetypeDescription}</p>
         </div>
       </div>
     </GlassCard>

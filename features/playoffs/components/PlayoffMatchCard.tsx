@@ -26,14 +26,14 @@ function playerName(players: MatchPlayerWithDisplay[], playerId: string): string
   return players.find((p) => p.playerId === playerId)?.name ?? playerId;
 }
 
-function stageLabel(stage: PlayoffMatch["stage"]): string {
-  return stage.replace(/([A-Z])/g, " $1").trim();
-}
-
-function matchTypeLabel(stage: PlayoffMatch["stage"]): string {
-  if (stage === "qualifier1" || stage === "qualifier2") return "Qualifier";
-  if (stage === "eliminator") return "Eliminator";
-  return "Final";
+function stageDisplayLabel(stage: PlayoffMatch["stage"]): string {
+  switch (stage) {
+    case "qualifier1": return "Qualifier 1";
+    case "qualifier2": return "Qualifier 2";
+    case "eliminator": return "Eliminator";
+    case "final": return "Final";
+    default: return stage;
+  }
 }
 
 export function PlayoffMatchCard({
@@ -129,51 +129,55 @@ export function PlayoffMatchCard({
           : "border-glassBorder bg-surfaceSubtle",
       )}
     >
-      <p className="text-xs font-semibold uppercase tracking-wider text-mutedForeground">
-        {matchTypeLabel(playoffMatch.stage)} — {stageLabel(playoffMatch.stage)}
-      </p>
-      <div className="mt-3 space-y-1.5">
+      <div className="flex items-center justify-between">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-mutedForeground">
+          {stageDisplayLabel(playoffMatch.stage)}
+        </p>
+        {playoffMatch.status === "active" && (
+          <span className="text-[10px] font-semibold text-primaryNeon uppercase tracking-wide">Live</span>
+        )}
+      </div>
+      <div className="mt-2 space-y-1">
           <div
             className={cn(
-              "flex items-center justify-between rounded px-2 py-1.5",
-              p1IsWinner &&
-                "border-l-2 border-l-championGold bg-championGold/10 font-semibold text-championGold",
+              "flex items-center justify-between rounded px-2 py-1",
+              p1IsWinner
+                ? "border-l-2 border-l-championGold bg-championGold/10 font-semibold text-championGold"
+                : "text-foreground",
             )}
           >
-            <span className="flex items-center gap-2 truncate">
-              {p1IsWinner && <Check size={14} className="shrink-0" aria-hidden />}
+            <span className="flex items-center gap-1.5 truncate text-sm">
+              {p1IsWinner && <Check size={12} className="shrink-0" aria-hidden />}
               {p1Name}
             </span>
             {playoffMatch.player1Score != null && (
-              <span className="tabular-nums text-mutedForeground">{playoffMatch.player1Score}</span>
+              <span className="tabular-nums text-xs font-semibold text-mutedForeground">{playoffMatch.player1Score}</span>
             )}
           </div>
           <div
             className={cn(
-              "flex items-center justify-between rounded px-2 py-1.5",
-              p2IsWinner &&
-                "border-l-2 border-l-championGold bg-championGold/10 font-semibold text-championGold",
+              "flex items-center justify-between rounded px-2 py-1",
+              p2IsWinner
+                ? "border-l-2 border-l-championGold bg-championGold/10 font-semibold text-championGold"
+                : "text-foreground",
             )}
           >
-            <span className="flex items-center gap-2 truncate">
-              {p2IsWinner && <Check size={14} className="shrink-0" aria-hidden />}
+            <span className="flex items-center gap-1.5 truncate text-sm">
+              {p2IsWinner && <Check size={12} className="shrink-0" aria-hidden />}
               {p2Name}
             </span>
             {playoffMatch.player2Score != null && (
-              <span className="tabular-nums text-mutedForeground">{playoffMatch.player2Score}</span>
+              <span className="tabular-nums text-xs font-semibold text-mutedForeground">{playoffMatch.player2Score}</span>
             )}
           </div>
         </div>
         {isFinished && winnerName && (
-          <p className="mt-2 text-xs text-mutedForeground">
-            Winner: <span className="font-medium text-championGold">{winnerName}</span>
+          <p className="mt-1.5 text-[10px] text-mutedForeground">
+            Winner: <span className="font-semibold text-championGold">{winnerName}</span>
             {playoffMatch.status === "provisionalCompleted" && (
-              <span className="ml-1">(provisional)</span>
+              <span className="ml-1 opacity-60">(provisional)</span>
             )}
           </p>
-        )}
-        {playoffMatch.status === "active" && (
-          <p className="mt-2 text-xs text-primaryNeon">In progress</p>
         )}
 
         {isExpanded && (
@@ -181,14 +185,14 @@ export function PlayoffMatchCard({
             id={expandedRegionId}
             role="region"
             aria-labelledby={expandTriggerId}
-            className="mt-3 pt-3 border-t border-glassBorder"
+            className="mt-2 pt-2 border-t border-glassBorder"
             onClick={(e) => e.stopPropagation()}
           >
             {loadingThrows ? (
-            <p className="text-sm text-mutedForeground">Loading throw history…</p>
+            <p className="text-xs text-mutedForeground">Loading throw history…</p>
           ) : (
             <>
-              <p className="text-xs font-medium uppercase tracking-wide text-mutedForeground mb-1.5">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-mutedForeground mb-1.5">
                 Shot history
               </p>
               {throwEvents.length === 0 ? (

@@ -48,9 +48,9 @@ export function SidebarNav() {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Primary" className="flex h-full flex-col p-4 pt-5">
+    <nav aria-label="Primary" className="flex h-full flex-col p-3 pt-4">
       {/* Brand */}
-      <div className="mb-6 flex items-center gap-2.5 px-1">
+      <div className="mb-4 flex items-center gap-2.5 px-1">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primaryNeon/15 border border-primaryNeon/30">
           <Target size={16} className="text-primaryNeon" aria-hidden />
         </span>
@@ -69,7 +69,7 @@ export function SidebarNav() {
               <Link
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-button px-3 py-2.5 text-sm font-medium transition-all duration-150",
+                  "flex items-center gap-3 rounded-button px-3 py-2 text-sm font-medium transition-all duration-150",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
                   active
                     ? "bg-primaryNeon/10 text-primaryNeon ring-1 ring-inset ring-primaryNeon/25"

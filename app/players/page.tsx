@@ -15,7 +15,7 @@ export default async function PlayersPage() {
           title="Players"
           description="View profiles, stats, and achievements."
         />
-        <div className="mt-8">
+        <div className="mt-4">
           {players.length === 0 ? (
             <EmptyState
               title="No players yet"

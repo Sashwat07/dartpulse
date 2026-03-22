@@ -16,7 +16,7 @@ export default async function ResumePage() {
           title="Resume"
           description="Continue where you left off."
         />
-        <div className="mt-6">
+        <div className="mt-4">
           <ResumeCardList items={items} />
         </div>
       </PageTransition>
