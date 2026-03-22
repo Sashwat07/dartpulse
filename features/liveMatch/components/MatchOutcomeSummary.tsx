@@ -73,7 +73,7 @@ export function MatchOutcomeSummary({ summary }: MatchOutcomeSummaryProps) {
           )}
           {summary.qualifier2Pairing && (
             <span>
-              <span className="font-medium text-foreground/60">Q2:</span>{" "}
+              <span className="font-medium text-foreground/60">Eliminator:</span>{" "}
               {summary.qualifier2Pairing.player1Name} vs {summary.qualifier2Pairing.player2Name}
             </span>
           )}
@@ -84,7 +84,7 @@ export function MatchOutcomeSummary({ summary }: MatchOutcomeSummaryProps) {
             <span>{decisionRights.qualifier1.playerName} decides first throw (Q1).</span>
           )}
           {decisionRights.qualifier2 && (
-            <span>{decisionRights.qualifier2.playerName} decides first throw (Q2).</span>
+            <span>{decisionRights.qualifier2.playerName} decides first throw (eliminator).</span>
           )}
         </div>
       )}

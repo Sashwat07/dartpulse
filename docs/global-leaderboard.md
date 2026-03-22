@@ -15,7 +15,7 @@ The **global leaderboard** is a cross-player ranking page. It is **not** the per
 - Placement is **canonical**: same rules as history / completed-match summary. Do not double-count regular-match rank and playoff result separately.
 - **2 players:** Final placement = regular-match resolved ranking (rank 1 = winner).
 - **3 players:** Rank 1 = playoff final winner, rank 2 = final loser, rank 3 = player who did not reach the final.
-- **4+ players:** Ranks **1–4** are derived from the **completed playoff bracket** (champion, final loser, eliminator loser, remaining qualifier). Ranks **5+** are the **canonical regular-match ranking** for players **outside** the playoff qualifiers (top four by regular total), unchanged in order vs. regular leaderboard ranks 5, 6, …
+- **4+ players:** Ranks **1–4** are derived from the **completed playoff bracket**: **1st** = final winner, **2nd** = final loser, **3rd** = Qualifier 2 loser, **4th** = eliminator loser (3rd vs 4th match). Ranks **5+** are the **canonical regular-match ranking** for players **outside** the playoff qualifiers (top four by regular total), unchanged in order vs. regular leaderboard ranks 5, 6, …
 
 Global metrics (wins, podiums, average finish) use only these final placements. Scoring metrics (total points, average score per round, best throw) follow **Phase 9 analytics** semantics (completed matches; regular-match throws only; exclude playoff throws; include sudden death within the regular match).
 

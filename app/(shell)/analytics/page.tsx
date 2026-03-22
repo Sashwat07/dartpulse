@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { AppShell } from "@/components/AppShell";
 import { AverageRoundScoreChart } from "@/components/charts/AverageRoundScoreChart";
 import { WinsAndTotalPointsChart } from "@/components/charts/WinsAndTotalPointsChart";
 import { GlassCard } from "@/components/GlassCard";
@@ -19,8 +18,7 @@ export default async function AnalyticsPage() {
   ]);
 
   return (
-    <AppShell>
-      <PageTransition>
+    <PageTransition>
         <PageHeader
           title="Analytics"
           description="Completed matches only. Regular-match throws (excludes playoff; includes sudden death)."
@@ -139,7 +137,6 @@ export default async function AnalyticsPage() {
             <AnalyticsPlayerTableClient players={players} />
           </section>
         </div>
-      </PageTransition>
-    </AppShell>
+    </PageTransition>
   );
 }

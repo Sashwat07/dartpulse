@@ -129,7 +129,7 @@ export default async function LandingPage() {
                 {
                   icon: Trophy,
                   title: "Tournament Brackets",
-                  desc: "Auto-generated playoffs for top four players with qualifier, eliminator, and final flows.",
+                  desc: "Auto-generated playoffs for top four: Q1 and eliminator (3rd vs 4th), then qualifier 2 and a grand final.",
                 },
                 {
                   icon: BarChart3,

@@ -258,6 +258,12 @@ Round data is derived from `ThrowEvents`; the `Round` entity may remain for anal
 - `eliminator`
 - `final`
 
+**Four-player bracket semantics (names are historical; order is Q1 → Eliminator → Q2 → Final):**
+- `qualifier1` — 1st vs 2nd seed (parallel with eliminator).
+- `eliminator` — 3rd vs 4th seed (parallel with Q1).
+- `qualifier2` — loser(Q1) vs winner(eliminator).
+- `final` — winner(Q1) vs winner(qualifier2).
+
 **Possible status values:**
 - `pending`
 - `active`

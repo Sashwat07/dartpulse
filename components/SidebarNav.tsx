@@ -6,6 +6,7 @@ import {
   BarChart3,
   Clock,
   LayoutDashboard,
+  PanelLeft,
   Play,
   Target,
   Trophy,
@@ -44,19 +45,57 @@ function isActive(
   return pathname === href || pathname.startsWith(href + "/");
 }
 
-export function SidebarNav() {
+type SidebarNavProps = {
+  collapsed?: boolean;
+  /** When set (desktop sidebar only), shows collapse/expand to the right of the brand (below when collapsed). */
+  onDesktopSidebarToggle?: () => void;
+};
+
+export function SidebarNav({ collapsed = false, onDesktopSidebarToggle }: SidebarNavProps) {
   const pathname = usePathname();
+  const showDesktopToggle = Boolean(onDesktopSidebarToggle);
 
   return (
     <nav aria-label="Primary" className="flex h-full flex-col p-3 pt-4">
-      {/* Brand */}
-      <div className="mb-4 flex items-center gap-2.5 px-1">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primaryNeon/15 border border-primaryNeon/30">
-          <Target size={16} className="text-primaryNeon" aria-hidden />
-        </span>
-        <span className="font-display text-base font-bold tracking-wide text-foreground">
-          DartPulse
-        </span>
+      {/* Brand + desktop collapse */}
+      <div
+        className={cn(
+          "mb-4 flex px-1",
+          showDesktopToggle && collapsed && "flex-col items-center gap-2",
+          showDesktopToggle && !collapsed && "items-center gap-1.5",
+          !showDesktopToggle && "items-center gap-2.5"
+        )}
+      >
+        <Link
+          href="/app"
+          title="DartPulse — Home"
+          className={cn(
+            "flex items-center rounded-lg text-foreground outline-none transition-colors",
+            "hover:text-primaryNeon focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+            showDesktopToggle && !collapsed && "min-w-0 flex-1 gap-2.5",
+            showDesktopToggle && collapsed && "justify-center",
+            !showDesktopToggle && "gap-2.5"
+          )}
+        >
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primaryNeon/15 border border-primaryNeon/30">
+            <Target size={16} className="text-primaryNeon" aria-hidden />
+          </span>
+          {!collapsed && (
+            <span className="font-display text-base font-bold tracking-wide whitespace-nowrap">
+              DartPulse
+            </span>
+          )}
+        </Link>
+        {onDesktopSidebarToggle ? (
+          <button
+            type="button"
+            onClick={onDesktopSidebarToggle}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-button border border-glassBorder text-mutedForeground hover:border-primaryNeon/40 hover:bg-surfaceSubtle hover:text-primaryNeon focus-ring transition-colors"
+          >
+            <PanelLeft size={16} />
+          </button>
+        ) : null}
       </div>
 
       {/* Nav items */}
@@ -68,9 +107,11 @@ export function SidebarNav() {
             <li key={item.href}>
               <Link
                 href={item.href}
+                title={collapsed ? item.label : undefined}
                 className={cn(
-                  "flex items-center gap-3 rounded-button px-3 py-2 text-sm font-medium transition-all duration-150",
+                  "flex items-center rounded-button py-2 text-sm font-medium transition-all duration-150",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                  collapsed ? "justify-center px-0" : "gap-3 px-3",
                   active
                     ? "bg-primaryNeon/10 text-primaryNeon ring-1 ring-inset ring-primaryNeon/25"
                     : "text-mutedForeground hover:bg-surfaceHover hover:text-foreground"
@@ -85,7 +126,7 @@ export function SidebarNav() {
                   )}
                   aria-hidden
                 />
-                {item.label}
+                {!collapsed && item.label}
               </Link>
             </li>
           );

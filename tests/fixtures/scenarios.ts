@@ -286,7 +286,7 @@ export const PLAYOFF_IDS = {
   final: "pm-final",
 } as const;
 
-/** Q1: A vs B. Winner A, loser B. Q2: C vs D. Winner C, loser D. Eliminator: C vs B. Winner B, loser C. Final: A vs B. Winner A (champion). */
+/** Q1: A vs B → A wins. Eliminator: C vs D → C wins, D out (4th). Q2: B vs C → B wins, C out (3rd). Final: A vs B → A champion. */
 export const fourPlayerPlayoffMatchesProvisional = [
   makePlayoffMatch({
     playoffMatchId: PLAYOFF_IDS.qualifier1,
@@ -304,9 +304,9 @@ export const fourPlayerPlayoffMatchesProvisional = [
     resolvedBy: "normal",
   }),
   makePlayoffMatch({
-    playoffMatchId: PLAYOFF_IDS.qualifier2,
+    playoffMatchId: PLAYOFF_IDS.eliminator,
     parentMatchId: M4P,
-    stage: "qualifier2",
+    stage: "eliminator",
     player1Id: C,
     player2Id: D,
     startingPlayerId: C,
@@ -319,15 +319,15 @@ export const fourPlayerPlayoffMatchesProvisional = [
     resolvedBy: "normal",
   }),
   makePlayoffMatch({
-    playoffMatchId: PLAYOFF_IDS.eliminator,
+    playoffMatchId: PLAYOFF_IDS.qualifier2,
     parentMatchId: M4P,
-    stage: "eliminator",
-    player1Id: C,
-    player2Id: B,
+    stage: "qualifier2",
+    player1Id: B,
+    player2Id: C,
     startingPlayerId: C,
     decidedByPlayerId: C,
-    player1Score: 35,
-    player2Score: 38,
+    player1Score: 38,
+    player2Score: 35,
     winnerId: B,
     loserId: C,
     status: "completed",
@@ -360,7 +360,18 @@ export const fourPlayerPlayoffMatchesFinalConfirmed = fourPlayerPlayoffMatchesPr
 
 export const fourPlayerPlayoffExpectedChampionId = A;
 
-/** Canonical scenario: four players, playoffs Q1/Q2/Eliminator/Final, provisional and confirmed final. */
+/**
+ * Final standings for the golden four-player playoff path (new format).
+ * 4th = eliminator loser; 3rd = Q2 loser; 2nd = final loser; 1st = final winner.
+ */
+export const fourPlayerPlayoffExpectedPlacements = {
+  first: A,
+  second: B,
+  third: C,
+  fourth: D,
+} as const;
+
+/** Canonical scenario: four players, playoffs Q1 → Eliminator (3v4) → Q2 → Final, provisional and confirmed final. */
 export const fourPlayerPlayoffScenario = {
   match: fourPlayerPlayoffMatch,
   players: fourPlayerPlayoffPlayers,
@@ -369,4 +380,5 @@ export const fourPlayerPlayoffScenario = {
   playoffMatchesFinalConfirmed: fourPlayerPlayoffMatchesFinalConfirmed,
   expectedChampionId: fourPlayerPlayoffExpectedChampionId,
   expectedRanking: [A, B, C, D] as string[],
+  expectedPlacements: fourPlayerPlayoffExpectedPlacements,
 };

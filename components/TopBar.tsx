@@ -16,7 +16,8 @@ export function TopBar({ onMenuClick }: TopBarProps) {
 
   return (
     <div className="flex h-14 items-center justify-between border-b border-glassBorder bg-glassBackground/80 px-4 backdrop-blur-[20px]">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        {/* Mobile hamburger */}
         {onMenuClick ? (
           <button
             type="button"

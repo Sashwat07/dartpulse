@@ -14,7 +14,8 @@ function byStage(allMatches: PlayoffMatch[], stage: PlayoffMatch["stage"]) {
 
 /**
  * Returns the downstream chain used for blocking: if any match in this list has throws, undo is blocked.
- * Q1 → [Q2]; Q2 → [Eliminator, Final]; Eliminator → [Final]; Final → [].
+ * Bracket: Q1 ∥ Eliminator → Q2 → Final.
+ * Q1 → [Eliminator] (parallel opening round); Eliminator → [Q2]; Q2 → [Final]; Final → [].
  * Order: immediate next to furthest (so we can delete in reverse).
  */
 export function getDownstreamForBlocking(
@@ -26,18 +27,14 @@ export function getDownstreamForBlocking(
 
   const stage = current.stage;
   if (stage === "qualifier1") {
+    const elim = byStage(allMatches, "eliminator");
+    return elim ? [elim] : [];
+  }
+  if (stage === "eliminator") {
     const q2 = byStage(allMatches, "qualifier2");
     return q2 ? [q2] : [];
   }
   if (stage === "qualifier2") {
-    const elim = byStage(allMatches, "eliminator");
-    const fin = byStage(allMatches, "final");
-    const out: PlayoffMatch[] = [];
-    if (elim) out.push(elim);
-    if (fin) out.push(fin);
-    return out;
-  }
-  if (stage === "eliminator") {
     const fin = byStage(allMatches, "final");
     return fin ? [fin] : [];
   }
@@ -47,7 +44,7 @@ export function getDownstreamForBlocking(
 /**
  * Returns the full downstream derived chain to delete after undo (cascading reconciliation).
  * All of these will have been verified 0 throws before undo was allowed.
- * Q1 → [Eliminator, Final]; Q2 → [Eliminator, Final]; Eliminator → [Final]; Final → [].
+ * Q1 → [Q2, Final]; Eliminator → [Q2, Final]; Q2 → [Final]; Final → [].
  * Order: immediate next to furthest so we delete in reverse (furthest first).
  */
 export function getDownstreamForReconcile(
@@ -58,15 +55,15 @@ export function getDownstreamForReconcile(
   if (!current) return [];
 
   const stage = current.stage;
-  if (stage === "qualifier1" || stage === "qualifier2") {
-    const elim = byStage(allMatches, "eliminator");
+  if (stage === "qualifier1" || stage === "eliminator") {
+    const q2 = byStage(allMatches, "qualifier2");
     const fin = byStage(allMatches, "final");
     const out: PlayoffMatch[] = [];
-    if (elim) out.push(elim);
+    if (q2) out.push(q2);
     if (fin) out.push(fin);
     return out;
   }
-  if (stage === "eliminator") {
+  if (stage === "qualifier2") {
     const fin = byStage(allMatches, "final");
     return fin ? [fin] : [];
   }

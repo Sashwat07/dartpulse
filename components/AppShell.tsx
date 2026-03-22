@@ -13,6 +13,7 @@ export type AppShellProps = {
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
+  const [desktopSidebarOpen, setDesktopSidebarOpen] = React.useState(true);
 
   React.useEffect(() => {
     setMobileNavOpen(false);
@@ -20,12 +21,21 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="min-h-dvh app-shell-bg">
-      <div className="mx-auto grid w-full max-w-mainContent grid-cols-1 lg:grid-cols-[260px_1fr]">
+      <div className="mx-auto flex w-full max-w-mainContent">
         {/* Desktop sidebar */}
-        <aside className="hidden border-r border-sidebarBorder bg-sidebarBg backdrop-blur-[20px] lg:block">
-          <SidebarNav />
+        <aside
+          className={`hidden lg:flex flex-col shrink-0 border-r border-sidebarBorder bg-sidebarBg backdrop-blur-[20px] transition-[width] duration-200 overflow-hidden ${
+            desktopSidebarOpen ? "w-[240px]" : "w-[52px]"
+          }`}
+          aria-label="Primary navigation"
+        >
+          <SidebarNav
+            collapsed={!desktopSidebarOpen}
+            onDesktopSidebarToggle={() => setDesktopSidebarOpen((v) => !v)}
+          />
         </aside>
-        <div className="min-w-0 min-h-dvh">
+
+        <div className="min-w-0 flex-1 min-h-dvh">
           <TopBar onMenuClick={() => setMobileNavOpen(true)} />
           <main className="p-3 lg:p-5">{children}</main>
         </div>
@@ -41,7 +51,7 @@ export function AppShell({ children }: AppShellProps) {
             onClick={() => setMobileNavOpen(false)}
           />
           <aside
-            className="fixed left-0 top-0 z-50 h-dvh w-[260px] border-r border-sidebarBorder bg-sidebarBg backdrop-blur-[20px] lg:hidden"
+            className="fixed left-0 top-0 z-50 h-dvh w-[240px] border-r border-sidebarBorder bg-sidebarBg backdrop-blur-[20px] lg:hidden"
             aria-label="Primary navigation"
           >
             <SidebarNav />

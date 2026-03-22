@@ -66,5 +66,17 @@ describe("Analytics / leaderboard composition sanity", () => {
     const championId = byRank[0].playerId;
     const finalMatch = payload.playoffMatches.find((m) => m.stage === "final");
     expect(finalMatch?.winnerId).toBe(championId);
+
+    const { expectedPlacements } = fourPlayerPlayoffScenario;
+    expect(byRank[0].playerId).toBe(expectedPlacements.first);
+    expect(byRank[1].playerId).toBe(expectedPlacements.second);
+    expect(byRank[2].playerId).toBe(expectedPlacements.third);
+    expect(byRank[3].playerId).toBe(expectedPlacements.fourth);
+
+    const elim = payload.playoffMatches.find((m) => m.stage === "eliminator");
+    const q2 = payload.playoffMatches.find((m) => m.stage === "qualifier2");
+    expect(elim?.loserId).toBe(expectedPlacements.fourth);
+    expect(q2?.loserId).toBe(expectedPlacements.third);
+    expect(finalMatch?.loserId).toBe(expectedPlacements.second);
   });
 });

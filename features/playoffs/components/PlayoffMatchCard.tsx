@@ -1,45 +1,38 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Check } from "lucide-react";
+import { Trophy } from "lucide-react";
 import type { PlayoffMatch } from "@/types/playoff";
 import type { MatchPlayerWithDisplay, ThrowEvent } from "@/types/match";
 import { cn } from "@/utils/cn";
-import { Button } from "@/components/ui/button";
 import { PlayoffThrowHistory } from "./PlayoffThrowHistory";
 
 type PlayoffMatchCardProps = {
   matchId: string;
   playoffMatch: PlayoffMatch;
   matchPlayers: MatchPlayerWithDisplay[];
+  matchNumber?: string;
   isActive: boolean;
   isExpanded: boolean;
   onExpandToggle: () => void;
   onRefresh: () => void;
-  /** When true (e.g. history page), Undo is not shown. */
   readOnly?: boolean;
-  /** When true (final confirmed via "Match complete"), Undo is disabled for entire bracket. */
   finalConfirmed?: boolean;
 };
 
-function playerName(players: MatchPlayerWithDisplay[], playerId: string): string {
-  return players.find((p) => p.playerId === playerId)?.name ?? playerId;
+function playerInitial(name: string): string {
+  return name.slice(0, 1).toUpperCase();
 }
 
-function stageDisplayLabel(stage: PlayoffMatch["stage"]): string {
-  switch (stage) {
-    case "qualifier1": return "Qualifier 1";
-    case "qualifier2": return "Qualifier 2";
-    case "eliminator": return "Eliminator";
-    case "final": return "Final";
-    default: return stage;
-  }
+function playerName(players: MatchPlayerWithDisplay[], playerId: string): string {
+  return players.find((p) => p.playerId === playerId)?.name ?? playerId;
 }
 
 export function PlayoffMatchCard({
   matchId,
   playoffMatch,
   matchPlayers,
+  matchNumber,
   isActive,
   isExpanded,
   onExpandToggle,
@@ -72,14 +65,11 @@ export function PlayoffMatchCard({
   const isFinished =
     playoffMatch.status === "completed" ||
     (playoffMatch.stage === "final" && playoffMatch.status === "provisionalCompleted");
-  const winnerName =
-    winnerId ? playerName(matchPlayers, winnerId) : null;
 
   const p1IsWinner = winnerId === playoffMatch.player1Id;
   const p2IsWinner = winnerId === playoffMatch.player2Id;
 
-  const canShowUndo =
-    throwEvents.length > 0 && !readOnly && !finalConfirmed;
+  const canShowUndo = throwEvents.length > 0 && !readOnly && !finalConfirmed;
 
   const handleUndo = async () => {
     setUndoSubmitting(true);
@@ -123,80 +113,115 @@ export function PlayoffMatchCard({
       onClick={onExpandToggle}
       onKeyDown={handleCardKeyDown}
       className={cn(
-        "rounded-card border p-3 transition-colors cursor-pointer",
+        "rounded-xl border cursor-pointer transition-all duration-150 min-w-[200px] select-none",
         isActive
-          ? "border-primaryNeon/50 bg-primaryNeon/5 shadow-[0_0_12px_rgba(0,229,255,0.12)]"
-          : "border-glassBorder bg-surfaceSubtle",
+          ? "border-primaryNeon/40 bg-surfaceSubtle/80 shadow-[0_0_18px_rgba(0,229,255,0.12)]"
+          : isFinished
+            ? "border-glassBorder/60 bg-glassBackground/60"
+            : "border-glassBorder/80 bg-glassBackground",
       )}
     >
-      <div className="flex items-center justify-between">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-mutedForeground">
-          {stageDisplayLabel(playoffMatch.stage)}
-        </p>
-        {playoffMatch.status === "active" && (
-          <span className="text-[10px] font-semibold text-primaryNeon uppercase tracking-wide">Live</span>
-        )}
-      </div>
-      <div className="mt-2 space-y-1">
-          <div
-            className={cn(
-              "flex items-center justify-between rounded px-2 py-1",
-              p1IsWinner
-                ? "border-l-2 border-l-championGold bg-championGold/10 font-semibold text-championGold"
-                : "text-foreground",
-            )}
-          >
-            <span className="flex items-center gap-1.5 truncate text-sm">
-              {p1IsWinner && <Check size={12} className="shrink-0" aria-hidden />}
-              {p1Name}
+      {/* Card header */}
+      <div className="flex items-center justify-between px-3 py-2 border-b border-glassBorder/40">
+        <span className="text-[9px] font-black uppercase tracking-widest text-mutedForeground/50">
+          {matchNumber ? `MATCH #${matchNumber}` : "MATCH"}
+        </span>
+        <div className="flex items-center gap-1.5">
+          {isActive && (
+            <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-primaryNeon">
+              <span className="h-1.5 w-1.5 rounded-full bg-primaryNeon animate-pulse" />
+              LIVE
             </span>
-            {playoffMatch.player1Score != null && (
-              <span className="tabular-nums text-xs font-semibold text-mutedForeground">{playoffMatch.player1Score}</span>
-            )}
-          </div>
-          <div
-            className={cn(
-              "flex items-center justify-between rounded px-2 py-1",
-              p2IsWinner
-                ? "border-l-2 border-l-championGold bg-championGold/10 font-semibold text-championGold"
-                : "text-foreground",
-            )}
-          >
-            <span className="flex items-center gap-1.5 truncate text-sm">
-              {p2IsWinner && <Check size={12} className="shrink-0" aria-hidden />}
-              {p2Name}
+          )}
+          {isFinished && !isActive && (
+            <span className="text-[9px] font-bold uppercase tracking-widest text-championGold/60">
+              Done
             </span>
-            {playoffMatch.player2Score != null && (
-              <span className="tabular-nums text-xs font-semibold text-mutedForeground">{playoffMatch.player2Score}</span>
-            )}
-          </div>
+          )}
         </div>
-        {isFinished && winnerName && (
-          <p className="mt-1.5 text-[10px] text-mutedForeground">
-            Winner: <span className="font-semibold text-championGold">{winnerName}</span>
-            {playoffMatch.status === "provisionalCompleted" && (
-              <span className="ml-1 opacity-60">(provisional)</span>
-            )}
-          </p>
-        )}
+      </div>
 
-        {isExpanded && (
-          <div
-            id={expandedRegionId}
-            role="region"
-            aria-labelledby={expandTriggerId}
-            className="mt-2 pt-2 border-t border-glassBorder"
-            onClick={(e) => e.stopPropagation()}
+      {/* Players */}
+      <div className="px-3 py-2.5 space-y-1.5">
+        {/* Player 1 */}
+        <div
+          className={cn(
+            "flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors",
+            p1IsWinner
+              ? "bg-championGold/8 border border-championGold/20"
+              : "border border-transparent",
+          )}
+        >
+          <span className="h-6 w-6 shrink-0 rounded-full bg-primaryNeon/15 border border-primaryNeon/25 flex items-center justify-center text-[9px] font-black text-primaryNeon">
+            {playerInitial(p1Name)}
+          </span>
+          <span
+            className={cn(
+              "flex-1 truncate text-xs font-semibold leading-none",
+              p1IsWinner ? "text-championGold" : "text-foreground/90",
+            )}
           >
-            {loadingThrows ? (
-            <p className="text-xs text-mutedForeground">Loading throw history…</p>
+            {p1Name}
+          </span>
+          {p1IsWinner && (
+            <Trophy size={10} className="shrink-0 text-championGold" aria-hidden />
+          )}
+          {playoffMatch.player1Score != null && (
+            <span className="tabular-nums text-xs font-bold text-mutedForeground shrink-0">
+              {playoffMatch.player1Score}
+            </span>
+          )}
+        </div>
+
+        {/* Player 2 */}
+        <div
+          className={cn(
+            "flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors",
+            p2IsWinner
+              ? "bg-championGold/8 border border-championGold/20"
+              : "border border-transparent",
+          )}
+        >
+          <span className="h-6 w-6 shrink-0 rounded-full bg-amber-500/15 border border-amber-500/25 flex items-center justify-center text-[9px] font-black text-amber-400">
+            {playerInitial(p2Name)}
+          </span>
+          <span
+            className={cn(
+              "flex-1 truncate text-xs font-semibold leading-none",
+              p2IsWinner ? "text-championGold" : "text-foreground/90",
+            )}
+          >
+            {p2Name}
+          </span>
+          {p2IsWinner && (
+            <Trophy size={10} className="shrink-0 text-championGold" aria-hidden />
+          )}
+          {playoffMatch.player2Score != null && (
+            <span className="tabular-nums text-xs font-bold text-mutedForeground shrink-0">
+              {playoffMatch.player2Score}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Expanded: throw history */}
+      {isExpanded && (
+        <div
+          id={expandedRegionId}
+          role="region"
+          aria-labelledby={expandTriggerId}
+          className="px-3 pb-3 border-t border-glassBorder/40 pt-2.5"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {loadingThrows ? (
+            <p className="text-xs text-mutedForeground">Loading…</p>
           ) : (
             <>
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-mutedForeground mb-1.5">
+              <p className="text-[9px] font-bold uppercase tracking-widest text-mutedForeground/50 mb-2">
                 Shot history
               </p>
               {throwEvents.length === 0 ? (
-                <p className="text-sm text-mutedForeground">No throws recorded</p>
+                <p className="text-xs text-mutedForeground/60 italic">No throws recorded</p>
               ) : (
                 <PlayoffThrowHistory
                   throwEvents={throwEvents}
@@ -205,26 +230,22 @@ export function PlayoffMatchCard({
                 />
               )}
               {!readOnly && canShowUndo && (
-                <div className="mt-3">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="sm"
-                    onClick={handleUndo}
-                    disabled={undoSubmitting}
-                    className="rounded-button border border-glassBorder bg-glassBackground"
-                  >
-                    Undo last throw
-                  </Button>
-                </div>
+                <button
+                  type="button"
+                  onClick={handleUndo}
+                  disabled={undoSubmitting}
+                  className="mt-3 w-full rounded-lg border border-glassBorder/60 bg-glassBackground px-3 py-1.5 text-[11px] font-medium text-mutedForeground hover:text-foreground hover:border-glassBorder transition-colors disabled:opacity-40"
+                >
+                  Undo last throw
+                </button>
               )}
               {undoError && (
-                <p className="mt-2 text-sm text-destructive">{undoError}</p>
+                <p className="mt-1.5 text-xs text-destructive">{undoError}</p>
               )}
             </>
           )}
-          </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }

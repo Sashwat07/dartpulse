@@ -1,4 +1,3 @@
-import { AppShell } from "@/components/AppShell";
 import { PageHeader } from "@/components/PageHeader";
 import { LiveMatchHydrator } from "@/features/liveMatch/components/LiveMatchHydrator";
 import { LiveMatchScoring } from "@/features/liveMatch/components/LiveMatchScoring";
@@ -16,12 +15,12 @@ export default async function MatchPage({ params }: PageProps) {
   const match = await getOwnedMatchOrThrow(matchId, user.id);
 
   return (
-    <AppShell>
+    <>
       <PageHeader title={match.name} />
       <LiveMatchHydrator matchId={matchId}>
         <LiveMatchScoring matchId={matchId} />
       </LiveMatchHydrator>
-    </AppShell>
+    </>
   );
 }
 

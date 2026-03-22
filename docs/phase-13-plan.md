@@ -114,7 +114,7 @@ Define a small set of **canonical scenarios** and reuse them across unit, integr
 
 ### Scenario 3 — Four-player playoff path (provisional result and final confirm)
 
-- **Purpose:** Full playoff path: Q1, Q2, Eliminator, Final; includes provisional result and final confirmation.
+- **Purpose:** Full playoff path: Q1 ∥ Eliminator → Q2 → Final; includes provisional result and final confirmation.
 - **Contents:** 4 players, completed regular (and if needed sudden death) rounds; playoff matches with throws; final match in provisionalCompleted then completed (champion confirmed).
 - **Use in:** Unit (deriveMatchOutcome, getDownstreamForBlocking/Reconcile, playoff undo rules); integration (playoff throw API, undo blocked after downstream throws or final confirm); e2e (playoff critical path and read-only history after confirm).
 

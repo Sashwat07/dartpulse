@@ -16,7 +16,7 @@ Three canonical scenarios are defined and exported from `scenarios.ts`:
 |----------|---------|--------|
 | **Two-player normal finish** | No tie, no playoffs; match completes after regular rounds. | `twoPlayerNormalFinishScenario`, `match`, `players`, `throwEvents`, `expectedOutcome`, `expectedRanking` |
 | **Four-player sudden death** | Tie at end of regular rounds; sudden death resolves ranking. | `fourPlayerSuddenDeathScenario`, `match`, `players`, `throwEvents`, `resolvedTieOrders`, `expectedRanking` |
-| **Four-player playoff path** | Full bracket: Q1, Q2, Eliminator, Final; includes provisional and final-confirmed variants. | `fourPlayerPlayoffScenario`, `match`, `players`, `throwEvents`, `playoffMatches`, `playoffMatchesFinalConfirmed`, `expectedChampionId` |
+| **Four-player playoff path** | Full bracket: Q1 ∥ Eliminator → Q2 → Final; includes provisional and final-confirmed variants. | `fourPlayerPlayoffScenario` (includes `expectedPlacements`, `expectedRanking`, `PLAYOFF_IDS`), `fourPlayerPlayoffMatch`, `fourPlayerPlayoffPlayers`, `fourPlayerPlayoffRegularThrowEvents`, `fourPlayerPlayoffMatchesProvisional`, `fourPlayerPlayoffMatchesFinalConfirmed`, `fourPlayerPlayoffExpectedChampionId`, `fourPlayerPlayoffExpectedPlacements` |
 
 Reuse these across tests so assertions (e.g. leaderboard order, undo rules, read-only history) stay consistent.
 

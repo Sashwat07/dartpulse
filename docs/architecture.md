@@ -212,7 +212,7 @@ A match transitions through deterministic lifecycle states to restrict invalid U
 - `MatchStarted` → Triggers initialization.
 - `RoundActive` → Accepts score entries. Transitions to `RoundComplete`.
 - `RoundComplete` → Awaits confirmation or rolls automatically to `RoundActive` (new round) or to `PlayoffPhase`.
-- `PlayoffPhase` → Sequentially moves through `Qualifier1Active`, `Qualifier2Active`, `EliminatorActive`, `FinalActive`.
+- `PlayoffPhase` → **Opening round:** Qualifier 1 and Eliminator (3rd vs 4th) in parallel; then **Qualifier 2**; then **Final** (see §9 flowchart).
 - `MatchFinished` → Terminated state; triggers history archival.
 
 ### State Machine Diagram
@@ -226,10 +226,9 @@ stateDiagram-v2
     RoundComplete --> PlayoffPhase : All Rounds Done
     
     state PlayoffPhase {
-        [*] --> Qualifier1Active
-        Qualifier1Active --> Qualifier2Active
-        Qualifier2Active --> EliminatorActive
-        EliminatorActive --> FinalActive
+        [*] --> OpeningRound
+        OpeningRound --> Qualifier2Active : Q1 & Eliminator complete
+        Qualifier2Active --> FinalActive
     }
     
     PlayoffPhase --> MatchFinished
@@ -248,13 +247,10 @@ The Playoff Engine operates only when player count is 4 or more. Progression is 
 **Steps (4+ players):**
 1. Sort final leaderboard by `total_score` from **regular throws only** (apply Sudden-Death tie-breakers for ordering among tied players; ties must be fully resolved).
 2. Slice top 4 players from the array.
-3. Instantiate `PlayoffMatch` objects:
-   - Match Q1: Rank 1 vs Rank 2.
-   - Match Q2: Rank 3 vs Rank 4.
-4. Active UI locks onto Match Q1. Once completed, winner writes to `Final`, loser writes to `Eliminator`.
-5. UI locks Match Q2. Winner writes to `Eliminator`, loser is dropped.
-6. UI locks Eliminator. Winner writes to `Final`.
-7. UI locks Final. Winner is declared Champion.
+3. Bootstrap `PlayoffMatch` rows: **Qualifier 1** (rank 1 vs 2) and **Eliminator** (rank 3 vs 4), playable in parallel.
+4. When both Q1 and Eliminator are complete, create **Qualifier 2**: loser(Q1) vs winner(Eliminator). Loser is **4th** place; Q2 loser is **3rd** place.
+5. When Q2 completes, create **Final**: winner(Q1) vs winner(Q2). Final loser is **2nd**; final winner is **Champion (1st)**.
+6. Active playoff UI follows the current `PlayoffMatch` state from the API (pending/active/completed per stage).
 
 **Playoff undo (server-authoritative):** Bracket safety for playoff undo depends on **downstream throw existence**, not on whether the downstream playoff match row exists. Undo validation must inspect the **downstream dependent** playoff match and its **throw count**: if that match has one or more persisted throws, undo of the prior match is blocked; if it has zero throws (or does not exist), undo is allowed and any invalid downstream match may be reconciled. Downstream match creation or display (e.g. match row exists, bracket shows the match, first-throw choice made) does **not** by itself lock prior matches. The client must not decide bracket safety by itself; the server is the sole authority.
 
@@ -262,18 +258,19 @@ The Playoff Engine operates only when player count is 4 or more. Progression is 
 ```mermaid
 flowchart TD
     Start[Final Leaderboard Top 4] --> Q1[Qualifier 1: Rank 1 vs 2]
-    Start --> Q2[Qualifier 2: Rank 3 vs 4]
+    Start --> Elim[Eliminator: Rank 3 vs 4]
     
     Q1 -- Winner --> Final[Final]
-    Q1 -- Loser --> Elim[Eliminator]
+    Q1 -- Loser --> Q2[Qualifier 2]
     
-    Q2 -- Winner --> Elim
-    Q2 -- Loser --> Out1[Eliminated]
+    Elim -- Winner --> Q2
+    Elim -- Loser --> Out4[4th place]
     
-    Elim -- Winner --> Final
-    Elim -- Loser --> Out2[Eliminated]
+    Q2 -- Winner --> Final
+    Q2 -- Loser --> Out3[3rd place]
     
-    Final -- Winner --> Champ((Champion))
+    Final -- Winner --> Champ((Champion / 1st))
+    Final -- Loser --> Out2[2nd place]
 ```
 
 ---

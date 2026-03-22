@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { AppShell } from "@/components/AppShell";
 import { GlassCard } from "@/components/GlassCard";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { PageHeader } from "@/components/PageHeader";
@@ -36,8 +35,7 @@ export default async function AppHomePage() {
   const topByWins = overview.topPlayersByWins?.[0];
 
   return (
-    <AppShell>
-      <PageTransition>
+    <PageTransition>
         <PageHeader
           title="DartPulse"
           description="Track every throw. Own every match."
@@ -278,7 +276,6 @@ export default async function AppHomePage() {
             </section>
           </div>
         </div>
-      </PageTransition>
-    </AppShell>
+    </PageTransition>
   );
 }

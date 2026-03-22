@@ -1,5 +1,12 @@
 import type { IsoDateString } from "@/types/common";
 
+/**
+ * Four-player bracket (names are historical):
+ * - qualifier1: 1st vs 2nd
+ * - eliminator: 3rd vs 4th
+ * - qualifier2: loser(Q1) vs winner(eliminator)
+ * - final: winner(Q1) vs winner(qualifier2)
+ */
 export type PlayoffStage = "qualifier1" | "qualifier2" | "eliminator" | "final";
 
 /** Final only: "provisionalCompleted" until user confirms "Match complete"; then "completed". */

@@ -86,10 +86,24 @@ describe("getFinalPlacementFromPayload", () => {
     expect(byRank[3].rank).toBe(4);
   });
 
-  it("assigns champion rank 1, final loser rank 2, eliminator loser 3, fourth 4", () => {
+  it("assigns 1st–4th as final W/L, Q2 loser, eliminator loser", () => {
     const payload = buildPlayoffPayload(true);
     const placement = getFinalPlacementFromPayload(payload);
     const champion = placement.find((r) => r.rank === 1);
     expect(champion?.playerId).toBe(fourPlayerPlayoffScenario.expectedChampionId);
+    const { expectedPlacements, playoffMatchesFinalConfirmed } = fourPlayerPlayoffScenario;
+    const byRank = [...placement].sort((a, b) => a.rank - b.rank);
+    expect(byRank[0].playerId).toBe(expectedPlacements.first);
+    expect(byRank[1].playerId).toBe(expectedPlacements.second);
+    expect(byRank[2].playerId).toBe(expectedPlacements.third);
+    expect(byRank[3].playerId).toBe(expectedPlacements.fourth);
+
+    const finalM = playoffMatchesFinalConfirmed.find((m) => m.stage === "final");
+    const q2 = playoffMatchesFinalConfirmed.find((m) => m.stage === "qualifier2");
+    const elim = playoffMatchesFinalConfirmed.find((m) => m.stage === "eliminator");
+    expect(byRank[0].playerId).toBe(finalM?.winnerId);
+    expect(byRank[1].playerId).toBe(finalM?.loserId);
+    expect(byRank[2].playerId).toBe(q2?.loserId);
+    expect(byRank[3].playerId).toBe(elim?.loserId);
   });
 });

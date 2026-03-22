@@ -5,7 +5,6 @@ import { Trophy } from "lucide-react";
 import { MatchEnergyMeter } from "@/components/analytics/MatchEnergyMeter";
 import { MomentumTimeline } from "@/components/analytics/MomentumTimeline";
 import { RoundHeatmap } from "@/components/analytics/RoundHeatmap";
-import { AppShell } from "@/components/AppShell";
 import { GlassCard } from "@/components/GlassCard";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { PageHeader } from "@/components/PageHeader";
@@ -29,8 +28,8 @@ import { PLAYOFF_STATUSES } from "@/lib/repositories/matchRepository";
 
 const BRACKET_STAGE_ORDER: PlayoffStage[] = [
   "qualifier1",
-  "qualifier2",
   "eliminator",
+  "qualifier2",
   "final",
 ];
 
@@ -53,33 +52,31 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
         (PLAYOFF_STATUSES as readonly string[]).includes(match.status));
     if (isPlayoffPending) {
       return (
-        <AppShell>
-          <PageTransition>
-            <PageHeader
-              title={match.name}
-              description="Playoffs in progress. Complete the final and confirm to mark this match complete."
-            />
-            <div className="mt-4">
-              <GlassCard className="p-4">
-                <div className="flex flex-col items-center gap-3 text-center">
-                  <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm font-semibold text-amber-600 dark:text-amber-400">
-                    <Trophy size={18} aria-hidden />
-                    Playoffs pending
-                  </span>
-                  <p className="text-sm text-mutedForeground">
-                    This match is not fully complete until you confirm the final result.
-                  </p>
-                  <Link
-                    href={`/playoffs/${matchId}`}
-                    className="btn-outline-primary focus-ring"
-                  >
-                    Continue playoffs
-                  </Link>
-                </div>
-              </GlassCard>
-            </div>
-          </PageTransition>
-        </AppShell>
+        <PageTransition>
+          <PageHeader
+            title={match.name}
+            description="Playoffs in progress. Complete the final and confirm to mark this match complete."
+          />
+          <div className="mt-4">
+            <GlassCard className="p-4">
+              <div className="flex flex-col items-center gap-3 text-center">
+                <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm font-semibold text-amber-600 dark:text-amber-400">
+                  <Trophy size={18} aria-hidden />
+                  Playoffs pending
+                </span>
+                <p className="text-sm text-mutedForeground">
+                  This match is not fully complete until you confirm the final result.
+                </p>
+                <Link
+                  href={`/playoffs/${matchId}`}
+                  className="btn-outline-primary focus-ring"
+                >
+                  Continue playoffs
+                </Link>
+              </div>
+            </GlassCard>
+          </div>
+        </PageTransition>
       );
     }
     notFound();
@@ -116,8 +113,7 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
   );
 
   return (
-    <AppShell>
-      <PageTransition>
+    <PageTransition>
         <PageHeader
           title={match.name}
           description={`Completed ${dateLabel} · ${matchPlayers.length} players`}
@@ -261,7 +257,6 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
           />
         )}
         </div>
-      </PageTransition>
-    </AppShell>
+    </PageTransition>
   );
 }

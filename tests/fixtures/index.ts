@@ -42,5 +42,6 @@ export {
   fourPlayerPlayoffMatchesProvisional,
   fourPlayerPlayoffMatchesFinalConfirmed,
   fourPlayerPlayoffExpectedChampionId,
+  fourPlayerPlayoffExpectedPlacements,
   PLAYOFF_IDS,
 } from "./scenarios";

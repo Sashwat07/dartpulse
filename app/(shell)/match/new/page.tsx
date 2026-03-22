@@ -1,4 +1,3 @@
-import { AppShell } from "@/components/AppShell";
 import { PageHeader } from "@/components/PageHeader";
 import { NewMatchFlow } from "@/features/matchSetup/components/NewMatchFlow";
 import {
@@ -20,7 +19,7 @@ export default async function NewMatchPage() {
       : [];
 
   return (
-    <AppShell>
+    <>
       <PageHeader
         title="New Match"
         description="Select players, set rounds, and start scoring."
@@ -33,6 +32,6 @@ export default async function NewMatchPage() {
           avatarColor: p.avatarColor,
         }))}
       />
-    </AppShell>
+    </>
   );
 }

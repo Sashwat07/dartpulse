@@ -31,7 +31,7 @@ DartPulse is **feature-complete** for the current release scope and has complete
 - [ ] **Match creation** — New match flow works; players can be added/selected; match starts and redirects to live match.
 - [ ] **Live scoring** — Throws can be entered; scoreboard and leaderboard update; turn order and round progression correct.
 - [ ] **Sudden death** — Tie-break triggers and resolves; sudden-death scores visible and separate from regular rounds; ranking resolves correctly.
-- [ ] **Playoff flow** — For 4+ players, “Go to playoffs” appears and navigates to bracket; qualifiers, eliminator, and final progress correctly.
+- [ ] **Playoff flow** — For 4+ players, “Go to playoffs” appears and navigates to bracket; **Qualifier 1** and **Eliminator** (parallel), then **Qualifier 2**, then **Final**, progress correctly.
 - [ ] **Final confirm** — Final match completion and champion confirmation work; no stuck or inconsistent state.
 - [ ] **History read-only** — Match history detail shows no score entry, no undo, no playoff/final editing controls.
 - [ ] **Resume / History separation** — In-progress matches appear only under Resume; completed matches appear only under History; resume links go to correct surface.

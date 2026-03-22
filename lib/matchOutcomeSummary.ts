@@ -58,6 +58,7 @@ export function buildMatchOutcomeSummary(
   const e3 = ordered[2];
   const e4 = ordered[3];
   if (e1) decisionRights.qualifier1 = { playerId: e1.playerId, playerName: e1.playerName };
+  /** Rank 3 decides first throw in eliminator (3rd vs 4th opening round). Field key is legacy DTO name. */
   if (e3) decisionRights.qualifier2 = { playerId: e3.playerId, playerName: e3.playerName };
 
   return {
@@ -72,6 +73,7 @@ export function buildMatchOutcomeSummary(
             player2Name: e2.playerName,
           }
         : undefined,
+    /** 3rd vs 4th — opens as `eliminator` in bracket (not legacy “Q2”). */
     qualifier2Pairing:
       r3 != null && r4 != null && e3 != null && e4 != null
         ? {

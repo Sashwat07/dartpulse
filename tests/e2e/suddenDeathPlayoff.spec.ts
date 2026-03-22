@@ -50,5 +50,9 @@ test.describe("Playoff critical path", () => {
     await expect(page.getByRole("heading", { name: "Playoffs", exact: true })).toBeVisible({
       timeout: 5000,
     });
+
+    // New format: opening round shows Q1 and Eliminator (3v4) in parallel; not legacy Q1+Q2 first.
+    await expect(page.getByText(/Qualifier 1/i).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(/Eliminator/i).first()).toBeVisible();
   });
 });

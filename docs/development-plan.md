@@ -105,14 +105,13 @@ To ensure predictable execution and prevent AI hallucination driven tech-debt, a
 **Deliverables:**
 - Player-count-based progression: 2 players → no playoffs/final, highest total wins (tie-break decides rank 1/2); 3 players → top 2 to final only (no qualifier/eliminator); 4+ players → top 4 to playoffs
 - Top-4 seeding (4+ players only)
-- Qualifier 1 & Qualifier 2 (4+ players)
-- Eliminator (4+ players)
-- Final (3-player: top 2; 4+: winner qualifier1 vs winner eliminator)
+- Qualifier 1 & Eliminator (3rd vs 4th) in parallel (4+ players); Qualifier 2 then Final derived
+- Final (3-player: top 2; 4+: winner Q1 vs winner Q2)
 - Playoff match scoring: one round, playoffShotsPerRound (or shotsPerRound) shots per player; playoff sudden death = 1 shot per player per cycle
-- Playoff first-throw: decision rights (rank 1 for 3-player final and Q1; rank 3 for Q2; higher score in previous playoff match for Eliminator; winner Q1 for Final 4+); persist startingPlayerId (and optionally decidedByPlayerId)
+- Playoff first-throw: decision rights (rank 1 for 3-player final and Q1; rank 3 for eliminator; higher score in prior completed playoff match for Q2; winner Q1 for Final 4+); persist startingPlayerId (and optionally decidedByPlayerId)
 - Playoff persistence
 - Champion determination
-- **Playoff undo:** Undo last throw for the active playoff match (regulation and sudden-death). Server must validate by checking the **downstream dependent match throw count**, not only whether the downstream match exists. Dependency flow: Qualifier 1 → Qualifier 2; Qualifier 2 → Eliminator; Eliminator → Final; Final has no downstream. Undo is allowed until the first throw of the next dependent playoff match is recorded; downstream match existence or first-throw choice alone must not block undo.
+- **Playoff undo:** Undo last throw for the active playoff match (regulation and sudden-death). Server must validate by checking the **downstream dependent match throw count**, not only whether the downstream match exists. Dependency flow: Qualifier 1 ↔ Eliminator (parallel opening); each blocks the other for immediate downstream; full reconcile deletes Q2 + Final after Q1 or Eliminator undo; Q2 → Final; Final has no downstream. Undo is allowed until the first throw of the next dependent playoff match is recorded; downstream match existence or first-throw choice alone must not block undo.
 
 ### Phase 7.5 — Completed Match Outcome Summary UI
 **Goal:** Implement the Match Outcome Summary UI shown when the regular match is finished, before the user navigates to playoffs or the final.
@@ -121,7 +120,7 @@ To ensure predictable execution and prevent AI hallucination driven tech-debt, a
 **Deliverables:**
 - **Final ranking display** — Rank number and player name from the final resolved regular-match ranking (including sudden-death resolution when applicable).
 - **Winner / qualification display** — For 2 players: winner; for 3 players: qualified for final (top 2); for 4+ players: qualified for playoffs (top 4).
-- **Pairing preview for next stage** — 3 players: final pairing (rank 1 vs rank 2); 4+ players: Qualifier1 (rank 1 vs rank 2) and Qualifier2 (rank 3 vs rank 4).
+- **Pairing preview for next stage** — 3 players: final pairing (rank 1 vs rank 2); 4+ players: Qualifier1 (rank 1 vs rank 2) and eliminator opening (rank 3 vs rank 4; DTO may still label this block for display).
 - **Support for 2 / 3 / 4+ player outcomes** — All player counts covered with correct labels and pairings.
 - **Use of final resolved ranking** — UI must consume the same derivation source as playoff creation (e.g. `deriveSuddenDeath` → `deriveLeaderboardFromThrowEvents` → `deriveMatchOutcome`); must not infer ranking from raw totals alone.
 - **Placement** — Summary shown after match completion, before “Go to playoffs” or next-stage navigation.

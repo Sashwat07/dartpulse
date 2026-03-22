@@ -7,7 +7,6 @@ import { PlayerStatsCards } from "@/components/players/PlayerStatsCards";
 import { PlayerAchievementsList } from "@/components/players/PlayerAchievementsList";
 import { PlayerScoringChart } from "@/components/charts/PlayerScoringChart";
 import { PlayerVolumeChart } from "@/components/charts/PlayerVolumeChart";
-import { AppShell } from "@/components/AppShell";
 import { GlassCard } from "@/components/GlassCard";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { PageHeader } from "@/components/PageHeader";
@@ -53,8 +52,7 @@ export default async function PlayerPage({ params }: PageProps) {
   const hasChampionAchievement = achievements.some((a) => a.type === "champion");
 
   return (
-    <AppShell>
-      <PageTransition>
+    <PageTransition>
         <PageHeader
           title="Player profile"
           description="Career stats and achievements from completed matches."
@@ -120,7 +118,6 @@ export default async function PlayerPage({ params }: PageProps) {
           </Link>
         </section>
         </div>
-      </PageTransition>
-    </AppShell>
+    </PageTransition>
   );
 }

@@ -12,7 +12,7 @@ type RouteContext = { params: Promise<{ matchId: string }> };
 
 /**
  * GET: Returns playoff matches for the parent match.
- * If match is finished and no playoff records exist, bootstraps them (3-player final or 4+ qualifier1/qualifier2).
+ * If match is finished and no playoff records exist, bootstraps them (3-player final or 4+ Q1/eliminator).
  * Idempotent.
  */
 export async function GET(_req: Request, context: RouteContext) {
@@ -47,7 +47,7 @@ export async function GET(_req: Request, context: RouteContext) {
     );
   }
 
-  // Reconcile progression: ensure eliminator/final exist when prerequisites are met (idempotent).
+  // Reconcile progression: ensure qualifier2/final exist when prerequisites are met (idempotent).
   let next = await deriveNextPlayoffMatchIfNeeded(matchId, playoffMatches);
   while (next) {
     playoffMatches = [...playoffMatches, next];

@@ -16,8 +16,8 @@ type RouteContext = { params: Promise<{ matchId: string }> };
 
 const STAGE_ORDER: PlayoffMatch["stage"][] = [
   "qualifier1",
-  "qualifier2",
   "eliminator",
+  "qualifier2",
   "final",
 ];
 
@@ -58,7 +58,7 @@ export async function GET(_req: Request, context: RouteContext) {
     );
   }
 
-  // Reconcile progression: ensure eliminator/final exist when prerequisites are met (idempotent).
+  // Reconcile progression: ensure qualifier2/final exist when prerequisites are met (idempotent).
   let next = await deriveNextPlayoffMatchIfNeeded(matchId, playoffMatches);
   while (next) {
     playoffMatches = [...playoffMatches, next];

@@ -36,7 +36,7 @@ export function isPlayoffBootstrapEligible(
  * Idempotent: if any playoff match exists for this parent, returns existing list.
  * - 2 players: no playoffs.
  * - 3 players: one final (rank 1 vs rank 2).
- * - 4+ players: qualifier1 (rank 1 vs 2), qualifier2 (rank 3 vs 4).
+ * - 4+ players: qualifier1 (rank 1 vs 2), eliminator (rank 3 vs 4). Qualifier2 and final are derived later.
  */
 export async function bootstrapPlayoffs(
   matchId: string,
@@ -94,22 +94,22 @@ export async function bootstrapPlayoffs(
       player2Id: r2,
       decidedByPlayerId: r1,
     });
-    const qualifier2 = await createPlayoffMatch({
+    const eliminatorMatch = await createPlayoffMatch({
       parentMatchId: matchId,
-      stage: "qualifier2",
+      stage: "eliminator",
       player1Id: r3,
       player2Id: r4,
       decidedByPlayerId: r3,
     });
-    return [qualifier1, qualifier2];
+    return [qualifier1, eliminatorMatch];
   }
   return [];
 }
 
 /**
  * Create the next playoff match when prerequisites are met (4+ only).
- * - Eliminator: after qualifier1 and qualifier2 completed (winner Q2 vs loser Q1).
- * - Final: after eliminator completed (winner Q1 vs winner eliminator).
+ * - Qualifier2: after qualifier1 and eliminator completed (loser Q1 vs winner eliminator).
+ * - Final: after qualifier2 completed (winner Q1 vs winner Q2).
  */
 export async function deriveNextPlayoffMatchIfNeeded(
   parentMatchId: string,
@@ -123,35 +123,35 @@ export async function deriveNextPlayoffMatchIfNeeded(
   const elim = byStage("eliminator");
   const finalMatch = byStage("final");
 
-  if (q1 && q2 && q1.status === "completed" && q2.status === "completed" && !elim) {
+  if (q1 && elim && q1.status === "completed" && elim.status === "completed" && !q2) {
     const loserQ1 = q1.loserId ?? (q1.player1Id === q1.winnerId ? q1.player2Id : q1.player1Id);
-    const winnerQ2 = q2.winnerId ?? q2.player1Id;
-    if (loserQ1 && winnerQ2) {
-      const scoreWinnerQ2 =
-        q2.winnerId === q2.player1Id ? (q2.player1Score ?? 0) : (q2.player2Score ?? 0);
+    const winnerElim = elim.winnerId ?? elim.player1Id;
+    if (loserQ1 && winnerElim) {
+      const scoreWinnerElim =
+        elim.winnerId === elim.player1Id ? (elim.player1Score ?? 0) : (elim.player2Score ?? 0);
       const scoreLoserQ1 =
         q1.loserId === q1.player1Id ? (q1.player1Score ?? 0) : (q1.player2Score ?? 0);
       const decidedByPlayerId =
-        scoreWinnerQ2 >= scoreLoserQ1 ? winnerQ2 : loserQ1;
+        scoreWinnerElim >= scoreLoserQ1 ? winnerElim : loserQ1;
       return createPlayoffMatch({
         parentMatchId,
-        stage: "eliminator",
-        player1Id: winnerQ2,
-        player2Id: loserQ1,
+        stage: "qualifier2",
+        player1Id: loserQ1,
+        player2Id: winnerElim,
         decidedByPlayerId,
       });
     }
   }
 
-  if (elim && elim.status === "completed" && !finalMatch) {
+  if (q2 && q2.status === "completed" && !finalMatch) {
     const winnerQ1 = q1?.winnerId;
-    const winnerElim = elim.winnerId;
-    if (winnerQ1 && winnerElim) {
+    const winnerQ2 = q2.winnerId;
+    if (winnerQ1 && winnerQ2) {
       return createPlayoffMatch({
         parentMatchId,
         stage: "final",
         player1Id: winnerQ1,
-        player2Id: winnerElim,
+        player2Id: winnerQ2,
         decidedByPlayerId: winnerQ1,
       });
     }

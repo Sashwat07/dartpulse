@@ -123,8 +123,9 @@ export type FinalPlacementRow = { playerId: string; rank: number };
  *
  * - 2p: regular-match ranking (final).
  * - 3p: 1 = final winner, 2 = final loser, 3 = player not in final.
- * - 4+p: ranks 1–4 from completed playoff bracket (champion, final loser, eliminator loser,
- *   remaining qualifier); ranks 5+ = regular-match rank for players not in top four qualifiers.
+ * - 4+p: ranks 1–4 from completed playoff bracket: champion (final winner), 2nd (final loser),
+ *   3rd (qualifier2 loser — loser Q1 vs winner elim), 4th (eliminator loser — 3rd vs 4th).
+ *   Ranks 5+ = regular-match rank for players not in top four qualifiers.
  */
 export function getFinalPlacementFromPayload(
   payload: MatchHistoryPayload,
@@ -157,26 +158,21 @@ export function getFinalPlacementFromPayload(
   }
 
   const finalM = payload.playoffMatches.find((m) => m.stage === "final");
+  const q2 = payload.playoffMatches.find((m) => m.stage === "qualifier2");
   const elim = payload.playoffMatches.find((m) => m.stage === "eliminator");
   const champion = finalM?.winnerId;
   const finalLoser = finalM?.loserId;
+  const q2Loser = q2?.loserId;
   const elimLoser = elim?.loserId;
-  if (!champion || !finalLoser || !elimLoser) {
-    return ordered.map((e) => ({ playerId: e.playerId, rank: e.rank }));
-  }
-
-  const fourth = topFour.find(
-    (id) => id !== champion && id !== finalLoser && id !== elimLoser,
-  );
-  if (!fourth) {
+  if (!champion || !finalLoser || !q2Loser || !elimLoser) {
     return ordered.map((e) => ({ playerId: e.playerId, rank: e.rank }));
   }
 
   const playoffRanks = new Map<string, number>([
     [champion, 1],
     [finalLoser, 2],
-    [elimLoser, 3],
-    [fourth, 4],
+    [q2Loser, 3],
+    [elimLoser, 4],
   ]);
 
   const rows: FinalPlacementRow[] = [];

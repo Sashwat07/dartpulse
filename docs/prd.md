@@ -57,18 +57,22 @@ Tracks and ranks players during the match to identify playoff contenders. The dy
 - **Playoff Cutoff Indicator:** Visual line/highlight showing the top 4 players qualifying for playoffs.
 
 ### 3.4 Playoff System Structure
-Triggered after regular rounds conclude. A top-4 elimination bracket. Once playoffs begin, match winners are determined by defined playoff rules (head-to-head match outcomes) rather than overall score rankings.
-- **Qualifier 1:** Rank 1 vs Rank 2 
-  - *Winner* → Final
-  - *Loser* → Eliminator
-- **Qualifier 2:** Rank 3 vs Rank 4
-  - *Winner* → Eliminator
-  - *Loser* → Eliminated
-- **Eliminator:** Winner (Qualifier 2) vs Loser (Qualifier 1)
-  - *Winner* → Final
-  - *Loser* → Eliminated
-- **Final:** Winner (Qualifier 1) vs Winner (Eliminator)
-  - *Winner* → Crowned Champion
+Triggered after regular rounds conclude. A top-4 elimination bracket. **Stage order:** Qualifier 1 → Eliminator → Qualifier 2 → Final. Once playoffs begin, match winners are determined by defined playoff rules (head-to-head match outcomes) rather than overall score rankings.
+
+- **Qualifier 1 (Q1):** Rank 1 vs Rank 2 (played in parallel with Eliminator).
+  - *Winner* → Grand Final
+  - *Loser* → Qualifier 2
+- **Eliminator:** Rank 3 vs Rank 4 (played in parallel with Q1).
+  - *Winner* → Qualifier 2
+  - *Loser* → Eliminated (**4th place** in final standings among the top four)
+- **Qualifier 2 (Q2):** Loser (Q1) vs Winner (Eliminator)
+  - *Winner* → Grand Final
+  - *Loser* → Eliminated (**3rd place** among the top four)
+- **Final:** Winner (Q1) vs Winner (Q2)
+  - *Winner* → **Champion (1st place)**
+  - *Loser* → **2nd place**
+
+**Final placement (top four only):** 1st = final winner; 2nd = final loser; 3rd = Q2 loser; 4th = eliminator loser.
 
 ### 3.5 Match History & Detail Pages
 - **Match History:** Browse past matches showing date, players, winner, total rounds, and key stats.
@@ -93,7 +97,7 @@ When a regular match is completed (`match.status === "matchFinished"`), the UI m
 - **Content:** It displays the **final ranking** (fully resolved, including any sudden-death tie-breaks) and, depending on player count:
   - **2 players:** Winner (no playoffs, no final).
   - **3 players:** Qualified players for the final; final pairing (rank 1 vs rank 2); who has the right to decide first throw for the final (rank 1).
-  - **4+ players:** Qualified players for playoffs; initial playoff pairings (qualifier1 = rank 1 vs rank 2, qualifier2 = rank 3 vs rank 4); who has the right to decide first throw for each qualifier (qualifier1 → rank 1, qualifier2 → rank 3).
+  - **4+ players:** Qualified players for playoffs; initial playoff pairings (qualifier1 = rank 1 vs rank 2, eliminator = rank 3 vs rank 4); who has the right to decide first throw for each opening match (qualifier1 → rank 1, eliminator → rank 3). Qualifier 2 (loser of Q1 vs winner of eliminator) and the final are derived after those complete.
 - **Placement:** The Match Outcome Summary is displayed **before** the “Go to playoffs” (or next-stage) navigation action. Qualification and pairings must come from the **fully resolved final regular-match ranking**; if sudden death was required to resolve ranking, that resolved ranking must be used. The UI must not infer ranking from raw totals alone.
 
 ### 3.8 Gamification
@@ -114,7 +118,7 @@ Streak tracking rewards players across rounds or matches and may trigger achieve
 `Home` → `Create Match` → `Configure Players & Rounds` → `Start Match` → `Live Scoring Dashboard`.
 
 ### Flow 2: Live Gameplay to Playoffs
-`Live Scoring Dashboard` (Round End) → `Final Leaderboard View` → `Auto-generate Playoff Bracket` → `Play Qualifier 1` → ... → `Final` → `Crowning Champion` → `Match Detail Summary`.
+`Live Scoring Dashboard` (Round End) → `Final Leaderboard View` → `Auto-generate Playoff Bracket` → `Qualifier 1` & `Eliminator` (parallel) → `Qualifier 2` → `Final` → `Crowning Champion` → `Match Detail Summary`.
 
 ### Flow 3: Post-Match Analysis
 `Home` → `Analytics` → `Select Player/Season` → `View Radar Chart & Trends`.
@@ -165,7 +169,7 @@ To achieve the desired "arcade-meets-sports-broadcast" feel, follow these guidel
 
 ### Epic 4: Playoff Engine
 - [ ] Write logic to transition top 4 players from Leaderboard to Playoff state.
-- [ ] Implement the UI bracket for Qualifier 1 & 2, Eliminator, and Final.
+- [ ] Implement the UI bracket for Qualifier 1, Eliminator, Qualifier 2, and Final (order: Q1 ∥ Eliminator → Q2 → Final).
 - [ ] Handle winner/loser state transitions sequentially to the Champion screen.
 
 ### Epic 5: Analytics & Gamification
@@ -273,7 +277,7 @@ If players remain tied after all standard tie-breaker checks, the tied players e
 These rules ensure deterministic ranking for playoffs and correct progression by player count.
 
 ### Playoff Match Structure
-- Playoff matches (Qualifier 1, Qualifier 2, Eliminator, Final) always have **exactly one round**.
+- Playoff matches (Qualifier 1, Eliminator, Qualifier 2, Final) always have **exactly one round**.
 - In that round, each player takes **playoffShotsPerRound** shots (or **shotsPerRound** if playoffShotsPerRound is not specified).
 - If the playoff round ends in a tie, **playoff sudden death** begins: **1 shot per player** per cycle until the tie is broken.
 
@@ -287,8 +291,8 @@ The chosen player is the **starting player** for that playoff match. This decisi
 ### Playoff Decision Rights (Who Decides Who Throws First)
 - **3-player final:** Rank 1 decides who throws first.  
 - **Qualifier 1:** Rank 1 decides who throws first.  
-- **Qualifier 2:** Rank 3 decides who throws first.  
-- **Eliminator:** The player with the **higher score in their immediately previous playoff match** decides who throws first. (This refers only to the score in that previous playoff match—not regular match totals or seed rank.)  
+- **Eliminator (3rd vs 4th):** Rank 3 decides who throws first.  
+- **Qualifier 2:** The player with the **higher score in their immediately previous playoff match** (Q1 or Eliminator for the two participants) decides who throws first. (Score in that previous playoff match only—not regular match totals or seed rank.)  
 - **Final (4+ player bracket):** Winner of Qualifier 1 decides who throws first.
 
 ### Persisting First Throw
@@ -306,19 +310,21 @@ Once playoffs begin, match winners are determined by defined playoff rules rathe
 ### Playoff Undo
 A completed playoff match can still be undone until the **first throw of the next dependent playoff match** is recorded.
 
-**Dependency chain:**
-- Qualifier 1 → Qualifier 2 (downstream)
-- Qualifier 2 → Eliminator (downstream)
-- Eliminator → Final (downstream)
+**Dependency chain (blocking: immediate next match only):**
+- Qualifier 1 → Eliminator (parallel opening round; undo on one is blocked if the other has throws)
+- Eliminator → Qualifier 2
+- Qualifier 2 → Final
 - Final → no downstream match
+
+**Reconcile (cascade delete of derived empty matches):** Undoing **Qualifier 1** or **Eliminator** may delete **Qualifier 2** and **Final** when those downstream rows exist and have no throws. Undoing **Qualifier 2** may delete **Final** only.
 
 **“Started”** means the first throw of that downstream playoff match has been persisted. The following do **not** count as started: the downstream match row exists; the downstream match is visible in the bracket; the downstream match is shown in the UI; first-throw choice exists but no throw has been recorded.
 
-**Stage-specific undo rules:**
-1. **Qualifier 1** — If Qualifier 2 has 0 throws, Qualifier 1 can still be undone. If Qualifier 2 has 1 or more throws, undo is blocked.
-2. **Qualifier 2** — If Eliminator has 0 throws, Qualifier 2 can still be undone. If Eliminator has 1 or more throws, undo is blocked.
-3. **Eliminator** — If Final has 0 throws, Eliminator can still be undone. If Final has 1 or more throws, undo is blocked.
-4. **Final** — Always undoable (no downstream match).
+**Stage-specific undo rules (blocking):**
+1. **Qualifier 1** — Blocked if **Eliminator** has 1+ throws (opening-round sibling).
+2. **Eliminator** — Blocked if **Qualifier 2** has 1+ throws.
+3. **Qualifier 2** — Blocked if **Final** has 1+ throws.
+4. **Final** — No downstream match. Undo is blocked once the final is **completed** (champion confirmed); behavior while **provisionalCompleted** follows the playoff API.
 
 Undo is scoped only to the current playoff match (the last throw of that `playoffMatchId`). Undo must never affect regular-match throws or throws from another playoff match. The server must decide whether playoff undo is allowed; the client must not determine bracket safety by itself.
 

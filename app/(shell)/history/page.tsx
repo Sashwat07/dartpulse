@@ -3,7 +3,6 @@ import {
   listOwnedHistoryMatches,
   listPlayers,
 } from "@/lib/repositories";
-import { AppShell } from "@/components/AppShell";
 import { requireUser } from "@/lib/requireUser";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { PageHeader } from "@/components/PageHeader";
@@ -29,16 +28,14 @@ export default async function HistoryPage() {
   });
 
   return (
-    <AppShell>
-      <PageTransition>
-        <PageHeader
-          title="Match History"
-          description="Completed matches and playoffs in progress. Click to view scoreboard, playoffs, and analytics."
-        />
-        <div className="mt-4">
-          <HistoryCardList items={items} />
-        </div>
-      </PageTransition>
-    </AppShell>
+    <PageTransition>
+      <PageHeader
+        title="Match History"
+        description="Completed matches and playoffs in progress. Click to view scoreboard, playoffs, and analytics."
+      />
+      <div className="mt-4">
+        <HistoryCardList items={items} />
+      </div>
+    </PageTransition>
   );
 }
