@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import type { PlayoffMatch } from "@/types/playoff";
 import type { ThrowEvent } from "@/types/match";
-import { getOwnedMatchForApi } from "@/lib/auth/ownership";
+import { getMatchReadAccessForApi } from "@/lib/auth/matchAccess";
 import { bootstrapPlayoffs, deriveNextPlayoffMatchIfNeeded, isPlayoffBootstrapEligible } from "@/lib/playoffEngine";
 import {
   listMatchPlayersWithDisplayByMatchId,
@@ -27,9 +27,9 @@ const STAGE_ORDER: PlayoffMatch["stage"][] = [
  */
 export async function GET(_req: Request, context: RouteContext) {
   const { matchId } = await context.params;
-  const auth = await getOwnedMatchForApi(matchId);
+  const auth = await getMatchReadAccessForApi(matchId);
   if (auth instanceof NextResponse) return auth;
-  const { match } = auth;
+  const { match, sessionWriteEnabled } = auth;
 
   const [matchPlayers, throwEvents] = await Promise.all([
     listMatchPlayersWithDisplayByMatchId(matchId),
@@ -100,5 +100,6 @@ export async function GET(_req: Request, context: RouteContext) {
     totalRounds: match.totalRounds,
     playoffShotsPerRound,
     playoffTurnState: playoffTurnState ?? undefined,
+    sessionWriteEnabled,
   });
 }

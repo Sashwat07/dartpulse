@@ -15,6 +15,10 @@ export {
   resolvedBySchema,
 } from "./playoff";
 export {
+  completeProfileSchema,
+  updateLinkedPlayerColorSchema,
+} from "./profile";
+export {
   createPlayerPayloadSchema,
   playerSchema,
 } from "./player";

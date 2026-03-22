@@ -22,6 +22,7 @@ const initialState: Omit<
   resolvedTieOrders: [],
   matchOutcomeSummary: null,
   undoLocked: false,
+  sessionWriteEnabled: true,
   analyticsFilters: {},
   globalPlayerStats: {},
   uiFlags: {
@@ -44,6 +45,7 @@ function applyMatchStatePayload(payload: MatchStatePayload): Partial<MatchStore>
     resolvedTieOrders: payload.resolvedTieOrders ?? [],
     matchOutcomeSummary: payload.matchOutcomeSummary ?? null,
     undoLocked: payload.undoLocked ?? false,
+    sessionWriteEnabled: payload.sessionWriteEnabled !== false,
     matchLeaderboard: [],
   };
 }
@@ -54,8 +56,8 @@ export const useMatchStore = create<MatchStore>((set, get) => ({
   addThrow: (score: number) => {
     if (addThrowInFlight) return;
     const state = get();
-    const { activeMatch, currentTurn } = state;
-    if (!activeMatch || !currentTurn) return;
+    const { activeMatch, currentTurn, sessionWriteEnabled } = state;
+    if (!sessionWriteEnabled || !activeMatch || !currentTurn) return;
 
     addThrowInFlight = true;
     const matchId = activeMatch.matchId;
@@ -96,7 +98,7 @@ export const useMatchStore = create<MatchStore>((set, get) => ({
   undoLastThrow: () => {
     const state = get();
     const matchId = state.activeMatch?.matchId;
-    if (!matchId) return;
+    if (!matchId || !state.sessionWriteEnabled) return;
 
     fetch(`/api/matches/${matchId}/throws/undo`, { method: "POST" })
       .then((res) => {

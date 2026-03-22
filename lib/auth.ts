@@ -3,6 +3,7 @@ import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 import { db } from "@/lib/db";
+import { ensureLinkedPlayerForUser } from "@/lib/repositories/playerRepository";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
@@ -26,5 +27,15 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/login",
+  },
+  events: {
+    async signIn({ user }) {
+      await ensureLinkedPlayerForUser({
+        userId: user.id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+      });
+    },
   },
 };

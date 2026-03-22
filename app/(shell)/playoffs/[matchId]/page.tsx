@@ -1,16 +1,21 @@
 import { PlayoffView } from "@/features/playoffs/components/PlayoffView";
-import { getOwnedMatchOrThrow } from "@/lib/auth/ownership";
-import { requireUser } from "@/lib/requireUser";
+import { getMatchViewAccessOrNotFound } from "@/lib/auth/matchAccess";
+import { getCurrentUser } from "@/lib/getCurrentUser";
+import { getLinkedPlayerByUserId } from "@/lib/repositories";
 
 type PageProps = {
   params: Promise<{ matchId: string }>;
 };
 
 export default async function PlayoffsPage({ params }: PageProps) {
-  const user = await requireUser();
   const { matchId } = await params;
-
-  await getOwnedMatchOrThrow(matchId, user.id);
+  const user = await getCurrentUser();
+  const linked = user?.id ? await getLinkedPlayerByUserId(user.id) : null;
+  await getMatchViewAccessOrNotFound(
+    matchId,
+    user?.id ?? null,
+    linked?.playerId ?? null,
+  );
 
   return <PlayoffView matchId={matchId} />;
 }

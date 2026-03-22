@@ -65,6 +65,8 @@ export type ResumableMatchListItem = {
   playerCount: number;
   /** MVP: "playoffs" if match has any playoff matches; "match" otherwise. May be refined later. */
   resumeTo: "match" | "playoffs";
+  /** Only the match owner may resume/score; participants get view-only links. */
+  canResume: boolean;
 };
 
 export type ActiveMatch = {

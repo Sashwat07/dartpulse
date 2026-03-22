@@ -16,6 +16,7 @@ type PlayoffScorePanelProps = {
   playoffShotsPerRound: number;
   playoffTurnState?: PlayoffTurnState;
   onThrowAdded: () => void;
+  sessionWriteEnabled?: boolean;
 };
 
 function playerName(players: MatchPlayerWithDisplay[], playerId: string): string {
@@ -31,6 +32,7 @@ export function PlayoffScorePanel({
   playoffShotsPerRound,
   playoffTurnState,
   onThrowAdded,
+  sessionWriteEnabled = true,
 }: PlayoffScorePanelProps) {
   const [submitting, setSubmitting] = useState(false);
   const [undoError, setUndoError] = useState<string | null>(null);
@@ -42,10 +44,14 @@ export function PlayoffScorePanel({
   const inSuddenDeath = playoffTurnState?.phase === "suddenDeath";
   const isFinalConfirmed =
     playoffMatch.stage === "final" && playoffMatch.status === "completed";
-  const canUndo = throwEvents.length > 0 && !needsFirstThrowChoice && !isFinalConfirmed;
+  const canUndo =
+    sessionWriteEnabled &&
+    throwEvents.length > 0 &&
+    !needsFirstThrowChoice &&
+    !isFinalConfirmed;
 
   const handleThrow = async (score: number) => {
-    if (isComplete || !currentPlayerId) return;
+    if (!sessionWriteEnabled || isComplete || !currentPlayerId) return;
     setSubmitting(true);
     setUndoError(null);
     try {
@@ -65,7 +71,7 @@ export function PlayoffScorePanel({
   };
 
   const handleUndo = async () => {
-    if (throwEvents.length === 0) return;
+    if (!sessionWriteEnabled || throwEvents.length === 0) return;
     setSubmitting(true);
     setUndoError(null);
     try {
@@ -123,7 +129,7 @@ export function PlayoffScorePanel({
         {/* Score input */}
         <DartScoreInput
           onScore={(score) => handleThrow(score)}
-          disabled={submitting || !currentPlayerId}
+          disabled={submitting || !sessionWriteEnabled || !currentPlayerId}
         />
 
         {/* Undo */}

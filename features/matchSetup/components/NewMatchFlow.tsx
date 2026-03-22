@@ -53,6 +53,8 @@ type NewMatchFlowProps = {
   defaultMatchName: string;
   /** Players from the current user's most recent completed match (not preselected). */
   recentPlayers?: PlayerOption[];
+  /** Logged-in user's linked player (highlighted, not auto-selected). */
+  linkedPlayerId?: string | null;
 };
 
 const inputCls =
@@ -61,7 +63,11 @@ const inputCls =
 const inputNarrowCls =
   "rounded-button border border-glassBorder bg-glassBackground px-3 py-2.5 text-sm text-foreground tabular-nums transition-colors focus:border-primaryNeon/60 focus:outline-none focus:ring-2 focus:ring-primaryNeon/20 w-24";
 
-export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchFlowProps) {
+export function NewMatchFlow({
+  defaultMatchName,
+  recentPlayers = [],
+  linkedPlayerId = null,
+}: NewMatchFlowProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [matchName, setMatchName] = useState(defaultMatchName);
@@ -91,6 +97,9 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
       );
     },
   });
+
+  const isYou = (playerId: string) =>
+    linkedPlayerId != null && linkedPlayerId !== "" && playerId === linkedPlayerId;
 
   const createMatchMutation = useMutation({
     mutationFn: createMatch,
@@ -238,6 +247,11 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
                           />
                         )}
                         <span>{p.name}</span>
+                        {isYou(p.playerId) && (
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-primaryNeon border border-primaryNeon/35 rounded px-1.5 py-px shrink-0">
+                            You
+                          </span>
+                        )}
                       </button>
                     );
                   })}
@@ -276,6 +290,11 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
                         />
                       )}
                       <span className="text-sm font-medium text-foreground">{p.name}</span>
+                      {isYou(p.playerId) && (
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-primaryNeon border border-primaryNeon/35 rounded px-1.5 py-px">
+                          You
+                        </span>
+                      )}
                     </label>
                   </li>
                 ))}
@@ -305,7 +324,14 @@ export function NewMatchFlow({ defaultMatchName, recentPlayers = [] }: NewMatchF
                       aria-hidden
                     />
                   )}
-                  <span className="font-medium flex-1 min-w-0 text-foreground">{p.name}</span>
+                  <span className="font-medium flex-1 min-w-0 text-foreground inline-flex items-center gap-2 flex-wrap">
+                    {p.name}
+                    {isYou(p.playerId) && (
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-primaryNeon border border-primaryNeon/35 rounded px-1.5 py-px shrink-0">
+                        You
+                      </span>
+                    )}
+                  </span>
                   <button
                     type="button"
                     onClick={() => togglePlayer(p.playerId)}

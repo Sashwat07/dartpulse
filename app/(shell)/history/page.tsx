@@ -1,7 +1,8 @@
 import { getChampionsByMatchIds } from "@/lib/matchHistory";
 import {
-  listOwnedHistoryMatches,
+  getLinkedPlayerByUserId,
   listPlayers,
+  listVisibleHistoryMatches,
 } from "@/lib/repositories";
 import { requireUser } from "@/lib/requireUser";
 import { PageTransition } from "@/components/motion/PageTransition";
@@ -10,7 +11,11 @@ import { HistoryCardList } from "@/components/history/HistoryCardList";
 
 export default async function HistoryPage() {
   const user = await requireUser();
-  const rawItems = await listOwnedHistoryMatches(user.id);
+  const linked = await getLinkedPlayerByUserId(user.id);
+  const rawItems = await listVisibleHistoryMatches(
+    user.id,
+    linked?.playerId ?? null,
+  );
   const completedItems = rawItems.filter((i) => i.isFullyComplete);
   const [championsByMatchId, players] = await Promise.all([
     getChampionsByMatchIds(completedItems.map((i) => i.matchId)),

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { NextResponse } from "next/server";
 
-import { getCurrentUser } from "@/lib/getCurrentUser";
+import { getMatchWriteAccessForApi } from "@/lib/auth/matchAccess";
 import { getMatchById } from "@/lib/repositories";
 import type { Match } from "@/types/match";
 
@@ -22,25 +22,22 @@ export async function getOwnedMatchOrThrow(
 }
 
 export type OwnedMatchApiContext = {
-  user: { id: string };
+  /** Null for unowned matches scored without a signed-in user. */
+  user: {
+    id: string;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  } | null;
   match: Match;
 };
 
 /**
- * Use in API route handlers that accept matchId. Ensures the caller is authenticated and owns the match.
- * Returns 401 if unauthenticated, 404 if match missing or not owned (no resource existence leak).
- * Otherwise returns { user, match } for use in the handler.
+ * Use in API route handlers that mutate match state. Unowned matches allow null user; owned matches require the owner.
+ * Returns 401/404 as appropriate. Otherwise returns { user, match } for use in the handler.
  */
 export async function getOwnedMatchForApi(
   matchId: string,
 ): Promise<NextResponse | OwnedMatchApiContext> {
-  const user = await getCurrentUser();
-  if (!user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const match = await getMatchById(matchId);
-  if (!match || match.createdByUserId !== user.id) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
-  return { user, match };
+  return getMatchWriteAccessForApi(matchId);
 }

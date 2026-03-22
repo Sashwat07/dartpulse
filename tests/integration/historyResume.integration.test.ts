@@ -33,8 +33,8 @@ describe("History vs resume separation", () => {
   });
 
   it("a match cannot be both completed and resumable (status partition)", () => {
-    const completedSet = new Set([COMPLETED_STATUS]);
-    const resumableSet = new Set(RESUMABLE_STATUSES);
+    const completedSet = new Set<string>([COMPLETED_STATUS]);
+    const resumableSet = new Set<string>(RESUMABLE_STATUSES);
     for (const s of resumableSet) {
       expect(completedSet.has(s)).toBe(false);
     }

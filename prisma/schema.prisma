@@ -22,6 +22,7 @@ model User {
   accounts Account[]
   sessions Session[]
   matches  Match[]
+  linkedPlayer Player?
 }
 
 model Account {
@@ -71,6 +72,12 @@ model Player {
   status      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  /** When set, this player is the linked in-game identity for that User (1:1). Manual players omit this. */
+  userId           String?  @unique @db.ObjectId
+  user             User?    @relation(fields: [userId], references: [id])
+  /** Linked players must complete profile (name + color) before using the app; manual players ignore this. */
+  profileCompleted Boolean  @default(true)
 
   matchPlayers  MatchPlayer[]
   throwEvents   ThrowEvent[]

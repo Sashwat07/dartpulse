@@ -116,9 +116,15 @@ export function ResumeCardList({ items }: ResumeCardListProps) {
                       </span>
                     </div>
                   </div>
-                  <span className="flex shrink-0 items-center gap-1.5 rounded-button border border-primaryNeon/40 bg-primaryNeon/10 px-3 py-1.5 text-xs font-semibold text-primaryNeon group-hover:bg-primaryNeon/20 transition-colors">
+                  <span
+                    className={`flex shrink-0 items-center gap-1.5 rounded-button border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                      item.canResume
+                        ? "border-primaryNeon/40 bg-primaryNeon/10 text-primaryNeon group-hover:bg-primaryNeon/20"
+                        : "border-glassBorder bg-surfaceSubtle text-mutedForeground group-hover:border-glassBorder/80"
+                    }`}
+                  >
                     <Play size={12} className="shrink-0" aria-hidden />
-                    Continue
+                    {item.canResume ? "Continue" : "View"}
                   </span>
                 </div>
               </GlassCard>

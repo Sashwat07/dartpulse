@@ -8,6 +8,15 @@ import type {
 
 import { db } from "@/lib/db";
 
+const IN_PROGRESS_STATUSES = ["matchStarted", "roundActive", "roundComplete"] as const;
+export const PLAYOFF_STATUSES = [
+  "playoffPhase",
+  "qualifier1Active",
+  "qualifier2Active",
+  "eliminatorActive",
+  "finalActive",
+] as const;
+
 /** Filter for match history list. "inProgress" = matchStarted | roundActive | roundComplete; "playoffs" = playoff-phase statuses. */
 export type MatchHistoryFilter =
   | "all"
@@ -125,7 +134,153 @@ export async function listResumableMatches(): Promise<ResumableMatchListItem[]> 
     createdAt: m.createdAt.toISOString(),
     playerCount: m._count.matchPlayers,
     resumeTo: m._count.playoffMatches > 0 ? "playoffs" : "match",
+    canResume: true,
   }));
+}
+
+function matchVisibilityWhere(
+  userId: string,
+  linkedPlayerId: string | null,
+): { OR: object[] } | { createdByUserId: string } {
+  if (linkedPlayerId == null || linkedPlayerId === "") {
+    return { createdByUserId: userId };
+  }
+  return {
+    OR: [
+      { createdByUserId: userId },
+      { matchPlayers: { some: { playerId: linkedPlayerId } } },
+    ],
+  };
+}
+
+/**
+ * In-progress matches the user may see: owned or participated (linked player in roster).
+ * canResume is true only for matches the user owns.
+ */
+export async function listVisibleResumableMatches(
+  userId: string,
+  linkedPlayerId: string | null,
+): Promise<ResumableMatchListItem[]> {
+  const list = await db.match.findMany({
+    where: {
+      AND: [
+        { status: { not: "matchFinished" } },
+        matchVisibilityWhere(userId, linkedPlayerId),
+      ],
+    },
+    include: {
+      _count: {
+        select: { matchPlayers: true, playoffMatches: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+  return list.map((m) => ({
+    matchId: m.matchId,
+    matchName: m.name,
+    status: m.status as Match["status"],
+    createdAt: m.createdAt.toISOString(),
+    playerCount: m._count.matchPlayers,
+    resumeTo: m._count.playoffMatches > 0 ? "playoffs" : "match",
+    canResume: m.createdByUserId === userId,
+  }));
+}
+
+/**
+ * Completed matches visible to the user (owner or participant).
+ */
+export async function listVisibleCompletedMatches(
+  userId: string,
+  linkedPlayerId: string | null,
+): Promise<CompletedMatchListItem[]> {
+  const list = await db.match.findMany({
+    where: {
+      AND: [
+        { status: "matchFinished" },
+        matchVisibilityWhere(userId, linkedPlayerId),
+      ],
+    },
+    include: {
+      _count: {
+        select: { matchPlayers: true, playoffMatches: true },
+      },
+    },
+    orderBy: [{ completedAt: "desc" }, { createdAt: "desc" }],
+  });
+  return list.map((m) => ({
+    matchId: m.matchId,
+    matchName: m.name,
+    status: m.status as Match["status"],
+    createdAt: m.createdAt.toISOString(),
+    completedAt: m.completedAt?.toISOString() ?? null,
+    playerCount: m._count.matchPlayers,
+    hasPlayoffs: m._count.playoffMatches > 0,
+  }));
+}
+
+/**
+ * History list: completed or playoff-pending, owned or participated.
+ */
+export async function listVisibleHistoryMatches(
+  userId: string,
+  linkedPlayerId: string | null,
+): Promise<HistoryListItem[]> {
+  const [completed, pending] = await Promise.all([
+    db.match.findMany({
+      where: {
+        AND: [
+          { status: "matchFinished" },
+          matchVisibilityWhere(userId, linkedPlayerId),
+        ],
+      },
+      include: {
+        _count: {
+          select: { matchPlayers: true, playoffMatches: true },
+        },
+      },
+      orderBy: [{ completedAt: "desc" }, { createdAt: "desc" }],
+    }),
+    db.match.findMany({
+      where: {
+        AND: [
+          { status: { in: ["roundComplete", ...PLAYOFF_STATUSES] } },
+          matchVisibilityWhere(userId, linkedPlayerId),
+        ],
+      },
+      include: {
+        _count: {
+          select: { matchPlayers: true, playoffMatches: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
+
+  const completedItems: HistoryListItem[] = completed.map((m) => ({
+    matchId: m.matchId,
+    matchName: m.name,
+    status: m.status as Match["status"],
+    createdAt: m.createdAt.toISOString(),
+    completedAt: m.completedAt?.toISOString() ?? null,
+    playerCount: m._count.matchPlayers,
+    hasPlayoffs: m._count.playoffMatches > 0,
+    displayStatus: "complete" as const,
+    isFullyComplete: true,
+  }));
+
+  const pendingItems: HistoryListItem[] = pending.map((m) => ({
+    matchId: m.matchId,
+    matchName: m.name,
+    status: m.status as Match["status"],
+    createdAt: m.createdAt.toISOString(),
+    completedAt: null,
+    playerCount: m._count.matchPlayers,
+    hasPlayoffs: m._count.playoffMatches > 0,
+    displayStatus: "playoffsPending" as const,
+    isFullyComplete: false,
+  }));
+
+  return [...completedItems, ...pendingItems];
 }
 
 /**
@@ -184,17 +339,9 @@ export async function listOwnedResumableMatches(
     createdAt: m.createdAt.toISOString(),
     playerCount: m._count.matchPlayers,
     resumeTo: m._count.playoffMatches > 0 ? "playoffs" : "match",
+    canResume: true,
   }));
 }
-
-const IN_PROGRESS_STATUSES = ["matchStarted", "roundActive", "roundComplete"] as const;
-export const PLAYOFF_STATUSES = [
-  "playoffPhase",
-  "qualifier1Active",
-  "qualifier2Active",
-  "eliminatorActive",
-  "finalActive",
-] as const;
 
 /**
  * List matches that belong in History: fully complete (matchFinished) or playoff-pending.

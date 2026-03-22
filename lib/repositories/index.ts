@@ -17,11 +17,15 @@ export {
   listOwnedHistoryMatches,
   listOwnedResumableMatches,
   listResumableMatches,
+  listVisibleCompletedMatches,
+  listVisibleHistoryMatches,
+  listVisibleResumableMatches,
   revertMatchFromFinished,
   updateMatchToFinished,
 } from "./matchRepository";
 export {
   createMatchPlayersForMatch,
+  isPlayerInMatch,
   listCompletedMatchParticipations,
   listMatchPlayersWithDisplayByMatchId,
 } from "./matchPlayerRepository";
@@ -37,9 +41,13 @@ export {
 } from "./playoffMatchRepository";
 export type { UpdatePlayoffMatchResultData } from "./playoffMatchRepository";
 export {
+  completeLinkedPlayerProfile,
   createPlayer,
+  ensureLinkedPlayerForUser,
+  getLinkedPlayerByUserId,
   getPlayerById,
   listPlayers,
+  updateLinkedPlayerColor,
 } from "./playerRepository";
 export {
   createRound,

@@ -20,12 +20,12 @@ import {
   getMomentumTimeline,
   getRoundHeatmap,
 } from "@/lib/analytics";
-import { getOwnedMatchOrThrow } from "@/lib/auth/ownership";
+import { assertHistoryMatchViewable } from "@/lib/auth/matchAccess";
 import {
   getChampionPlayerIdFromPayload,
   getMatchHistoryPayload,
 } from "@/lib/matchHistory";
-import { getMatchById } from "@/lib/repositories";
+import { getLinkedPlayerByUserId, getMatchById } from "@/lib/repositories";
 import { requireUser } from "@/lib/requireUser";
 import { PLAYOFF_STATUSES } from "@/lib/repositories/matchRepository";
 
@@ -44,7 +44,8 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
   const user = await requireUser();
   const { matchId } = await params;
 
-  await getOwnedMatchOrThrow(matchId, user.id);
+  const linked = await getLinkedPlayerByUserId(user.id);
+  await assertHistoryMatchViewable(matchId, user.id, linked?.playerId ?? null);
 
   const payload = await getMatchHistoryPayload(matchId);
   if (payload === null) {
@@ -54,6 +55,7 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
       (match.status === "roundComplete" ||
         (PLAYOFF_STATUSES as readonly string[]).includes(match.status));
     if (isPlayoffPending) {
+      const isOwner = match.createdByUserId === user.id;
       return (
         <PageTransition>
           <PageHeader
@@ -74,7 +76,7 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
                   href={`/playoffs/${matchId}`}
                   className="btn-outline-primary focus-ring"
                 >
-                  Continue playoffs
+                  {isOwner ? "Continue playoffs" : "View playoffs"}
                 </Link>
               </div>
             </GlassCard>
@@ -121,6 +123,8 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
   const playerNames: Record<string, string> = Object.fromEntries(
     matchPlayers.map((p) => [p.playerId, p.name]),
   );
+
+  const isOwner = match.createdByUserId === user.id;
 
   return (
     <PageTransition>
@@ -179,13 +183,15 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
         {/* Outcome summary (final ranking + winner/qualification) */}
         <MatchOutcomeSummary summary={matchOutcomeSummary} />
 
-        <div>
-          <PlayAgainButton
-            sourceMatchId={matchId}
-            label="Play again"
-            variant="button"
-          />
-        </div>
+        {isOwner && (
+          <div>
+            <PlayAgainButton
+              sourceMatchId={matchId}
+              label="Play again"
+              variant="button"
+            />
+          </div>
+        )}
 
         {/* Scoreboard (expandable rows show shot history inline) */}
         <HistoryScoreTable

@@ -2,6 +2,17 @@ import type { MatchPlayerWithDisplay } from "@/types/match";
 
 import { db } from "@/lib/db";
 
+export async function isPlayerInMatch(
+  matchId: string,
+  playerId: string,
+): Promise<boolean> {
+  const row = await db.matchPlayer.findFirst({
+    where: { matchId, playerId },
+    select: { matchPlayerId: true },
+  });
+  return row != null;
+}
+
 /**
  * Create MatchPlayer rows for a match in the given player order.
  * Order is preserved via sequential create so createdAt asc = turn order.

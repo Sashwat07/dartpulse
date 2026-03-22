@@ -35,12 +35,12 @@ describe("addThrowPayloadSchema", () => {
     expect(result.success).toBe(true);
   });
 
-  it("rejects score 0", () => {
+  it("accepts score 0 (miss / rules min)", () => {
     const result = addThrowPayloadSchema.safeParse({
       ...basePayload,
       score: 0,
     });
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it("rejects score above 60", () => {

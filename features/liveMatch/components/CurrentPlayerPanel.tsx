@@ -9,6 +9,7 @@ import { LastThrowIndicator } from "@/components/DartScoreInput/LastThrowIndicat
 export function CurrentPlayerPanel() {
   const addThrow = useMatchStore((s) => s.addThrow);
   const undoLastThrow = useMatchStore((s) => s.undoLastThrow);
+  const sessionWriteEnabled = useMatchStore((s) => s.sessionWriteEnabled);
 
   const activeMatch = useMatchStore(selectActiveMatch);
   const currentPlayer = useMatchStore(selectCurrentPlayer);
@@ -19,7 +20,8 @@ export function CurrentPlayerPanel() {
   const currentTurn = useMatchStore((s) => s.currentTurn);
   const undoLocked = useMatchStore((s) => s.undoLocked);
   const matchComplete = activeMatch && currentTurn === null && throwEvents.length > 0;
-  const canUndo = throwEvents.length > 0 && !undoLocked;
+  const canUndo =
+    sessionWriteEnabled && throwEvents.length > 0 && !undoLocked;
   const inSuddenDeath = suddenDeathState && !suddenDeathState.isResolved;
   const tiedNames = inSuddenDeath
     ? suddenDeathState.tiedPlayerIds
@@ -54,6 +56,11 @@ export function CurrentPlayerPanel() {
 
   return (
     <GlassCard className={`p-4 ${inSuddenDeath ? "border-amber-400/40 bg-gradient-to-br from-amber-400/5 to-transparent" : "border-primaryNeon/25 bg-gradient-to-br from-primaryNeon/5 to-transparent"}`}>
+      {!sessionWriteEnabled && (
+        <p className="mb-3 rounded-lg border border-glassBorder bg-surfaceSubtle px-3 py-2 text-xs font-medium text-mutedForeground">
+          View only — you can follow this match but only the owner can score.
+        </p>
+      )}
       {/* Header: current turn label + round badge */}
       <div className="flex items-center justify-between mb-2">
         <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-mutedForeground">
@@ -120,7 +127,7 @@ export function CurrentPlayerPanel() {
 
       <DartScoreInput
         onScore={(score) => addThrow(score)}
-        disabled={Boolean(matchComplete)}
+        disabled={Boolean(matchComplete) || !sessionWriteEnabled}
       />
 
       <button

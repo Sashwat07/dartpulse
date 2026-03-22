@@ -1,17 +1,19 @@
 import { PageHeader } from "@/components/PageHeader";
 import { NewMatchFlow } from "@/features/matchSetup/components/NewMatchFlow";
+import { getCurrentUser } from "@/lib/getCurrentUser";
 import {
   getDefaultMatchName,
+  getLinkedPlayerByUserId,
   getMostRecentOwnedCompletedMatch,
   listMatchPlayersWithDisplayByMatchId,
 } from "@/lib/repositories";
-import { requireUser } from "@/lib/requireUser";
 
 export default async function NewMatchPage() {
-  const user = await requireUser();
-  const [defaultMatchName, recentMatch] = await Promise.all([
+  const user = await getCurrentUser();
+  const [defaultMatchName, recentMatch, linked] = await Promise.all([
     getDefaultMatchName(),
-    getMostRecentOwnedCompletedMatch(user.id),
+    user?.id ? getMostRecentOwnedCompletedMatch(user.id) : Promise.resolve(null),
+    user?.id ? getLinkedPlayerByUserId(user.id) : Promise.resolve(null),
   ]);
   const recentPlayers =
     recentMatch != null
@@ -31,6 +33,7 @@ export default async function NewMatchPage() {
           name: p.name,
           avatarColor: p.avatarColor,
         }))}
+        linkedPlayerId={linked?.playerId ?? null}
       />
     </>
   );

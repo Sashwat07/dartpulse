@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import type { MatchStateResponse } from "@/types/dto";
 import type { MatchPlayerWithDisplay } from "@/types/match";
-import { getOwnedMatchForApi } from "@/lib/auth/ownership";
+import { getMatchReadAccessForApi } from "@/lib/auth/matchAccess";
 import { deriveLeaderboardFromThrowEvents } from "@/lib/leaderboard";
 import { buildMatchOutcomeSummary } from "@/lib/matchOutcomeSummary";
 import {
@@ -27,9 +27,9 @@ type RouteContext = { params: Promise<{ matchId: string }> };
 
 export async function GET(_req: Request, context: RouteContext) {
   const { matchId } = await context.params;
-  const auth = await getOwnedMatchForApi(matchId);
+  const auth = await getMatchReadAccessForApi(matchId);
   if (auth instanceof NextResponse) return auth;
-  const { match } = auth;
+  const { match, sessionWriteEnabled } = auth;
 
   const [rawMatchPlayers, rounds, throwEvents] = await Promise.all([
     listMatchPlayersWithDisplayByMatchId(matchId),
@@ -135,6 +135,7 @@ export async function GET(_req: Request, context: RouteContext) {
     resolvedTieOrders,
     matchOutcomeSummary,
     undoLocked,
+    sessionWriteEnabled,
   };
 
   return NextResponse.json(body);

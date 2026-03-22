@@ -134,6 +134,11 @@ export type MatchStatePayload = {
   matchOutcomeSummary?: MatchOutcomeSummary | null;
   /** True when match is finished and playoff final is confirmed; undo is then disabled everywhere. */
   undoLocked?: boolean;
+  /**
+   * When false, client must not send throws/undo (participant or read-only session).
+   * Omitted/true = scoring allowed (owner or unowned match).
+   */
+  sessionWriteEnabled?: boolean;
 };
 
 /** GET /api/matches/[matchId]/state response. */

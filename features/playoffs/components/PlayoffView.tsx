@@ -27,6 +27,7 @@ type PlayoffState = {
   totalRounds: number;
   playoffShotsPerRound?: number;
   playoffTurnState?: PlayoffTurnState;
+  sessionWriteEnabled?: boolean;
 };
 
 type PlayoffViewProps = { matchId: string };
@@ -169,7 +170,10 @@ export function PlayoffView({ matchId }: PlayoffViewProps) {
         return;
       }
       const data = await res.json();
-      setState(data);
+      setState({
+        ...data,
+        sessionWriteEnabled: data.sessionWriteEnabled !== false,
+      });
       setError(null);
     } catch {
       setError("Failed to load playoff state");
@@ -220,6 +224,8 @@ export function PlayoffView({ matchId }: PlayoffViewProps) {
     );
   }
 
+  const sessionWriteEnabled = state.sessionWriteEnabled !== false;
+
   const finalMatch = state.playoffMatches.find((m) => m.stage === "final");
   const finalConfirmed = finalMatch?.status === "completed";
   const allComplete = state.playoffMatches.every(
@@ -265,7 +271,7 @@ export function PlayoffView({ matchId }: PlayoffViewProps) {
                 {championName}
               </span>
             </div>
-            {finalConfirmed && (
+            {finalConfirmed && sessionWriteEnabled && (
               <PlayAgainButton
                 sourceMatchId={matchId}
                 label="Play again"
@@ -288,6 +294,7 @@ export function PlayoffView({ matchId }: PlayoffViewProps) {
             activePlayoffMatchId={state.activePlayoffMatchId}
             onRefresh={fetchState}
             finalConfirmed={finalConfirmed}
+            readOnly={!sessionWriteEnabled}
           />
           {state.activePlayoffMatch && (
             <ActivePlayoffMatch
@@ -300,6 +307,7 @@ export function PlayoffView({ matchId }: PlayoffViewProps) {
               playoffTurnState={state.playoffTurnState}
               onThrowAdded={fetchState}
               hideScoreInput
+              sessionWriteEnabled={sessionWriteEnabled}
             />
           )}
         </div>
@@ -321,6 +329,7 @@ export function PlayoffView({ matchId }: PlayoffViewProps) {
               playoffShotsPerRound={state.playoffShotsPerRound ?? 1}
               playoffTurnState={state.playoffTurnState}
               onThrowAdded={fetchState}
+              sessionWriteEnabled={sessionWriteEnabled}
             />
           )}
         </div>

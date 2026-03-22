@@ -21,6 +21,7 @@ type ActivePlayoffMatchProps = {
   onThrowAdded: () => void;
   /** When true the DartScoreInput is rendered elsewhere (e.g. right sidebar) */
   hideScoreInput?: boolean;
+  sessionWriteEnabled?: boolean;
 };
 
 function playerName(players: MatchPlayerWithDisplay[], playerId: string): string {
@@ -55,6 +56,7 @@ export function ActivePlayoffMatch({
   playoffTurnState,
   onThrowAdded,
   hideScoreInput = false,
+  sessionWriteEnabled = true,
 }: ActivePlayoffMatchProps) {
   const [submitting, setSubmitting] = useState(false);
   const [undoError, setUndoError] = useState<string | null>(null);
@@ -84,7 +86,7 @@ export function ActivePlayoffMatch({
   );
 
   const handleSetStartingPlayer = async (startingPlayerId: string) => {
-    if (!decidedByPlayerId) return;
+    if (!sessionWriteEnabled || !decidedByPlayerId) return;
     setSubmitting(true);
     try {
       const res = await fetch(`/api/playoffs/${matchId}/starting-player`, {
@@ -102,7 +104,7 @@ export function ActivePlayoffMatch({
   };
 
   const handleThrow = async (score: number) => {
-    if (isComplete || !currentPlayerId) return;
+    if (!sessionWriteEnabled || isComplete || !currentPlayerId) return;
     setSubmitting(true);
     setUndoError(null);
     try {
@@ -122,7 +124,7 @@ export function ActivePlayoffMatch({
   };
 
   const handleUndo = async () => {
-    if (throwEvents.length === 0) return;
+    if (!sessionWriteEnabled || throwEvents.length === 0) return;
     setSubmitting(true);
     setUndoError(null);
     try {
@@ -147,9 +149,13 @@ export function ActivePlayoffMatch({
   const isFinalConfirmed =
     playoffMatch.stage === "final" && playoffMatch.status === "completed";
   const canUndo =
-    throwEvents.length > 0 && !needsFirstThrowChoice && !isFinalConfirmed;
+    sessionWriteEnabled &&
+    throwEvents.length > 0 &&
+    !needsFirstThrowChoice &&
+    !isFinalConfirmed;
 
   const handleConfirmFinal = async () => {
+    if (!sessionWriteEnabled) return;
     setSubmitting(true);
     setUndoError(null);
     try {
@@ -262,7 +268,7 @@ export function ActivePlayoffMatch({
               <button
                 type="button"
                 onClick={() => handleSetStartingPlayer(playoffMatch.player1Id)}
-                disabled={submitting}
+                disabled={submitting || !sessionWriteEnabled}
                 className="group flex flex-col items-center gap-1.5 rounded-xl border border-primaryNeon/25 bg-primaryNeon/5 px-3 py-3 text-center transition-all hover:border-primaryNeon/50 hover:bg-primaryNeon/10 active:scale-[0.97] disabled:opacity-40"
               >
                 <span className="h-8 w-8 rounded-full bg-primaryNeon/20 border border-primaryNeon/30 flex items-center justify-center text-xs font-black text-primaryNeon">
@@ -276,7 +282,7 @@ export function ActivePlayoffMatch({
               <button
                 type="button"
                 onClick={() => handleSetStartingPlayer(playoffMatch.player2Id)}
-                disabled={submitting}
+                disabled={submitting || !sessionWriteEnabled}
                 className="group flex flex-col items-center gap-1.5 rounded-xl border border-amber-500/25 bg-amber-500/5 px-3 py-3 text-center transition-all hover:border-amber-400/50 hover:bg-amber-500/10 active:scale-[0.97] disabled:opacity-40"
               >
                 <span className="h-8 w-8 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-xs font-black text-amber-400">
@@ -311,7 +317,7 @@ export function ActivePlayoffMatch({
               <button
                 type="button"
                 onClick={handleConfirmFinal}
-                disabled={submitting}
+                disabled={submitting || !sessionWriteEnabled}
                 className="w-full rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-amber-400 hover:bg-amber-500/20 active:scale-[0.98] transition-all disabled:opacity-40"
               >
                 Confirm match complete
@@ -321,7 +327,7 @@ export function ActivePlayoffMatch({
               <button
                 type="button"
                 onClick={handleUndo}
-                disabled={submitting}
+                disabled={submitting || !sessionWriteEnabled}
                 className="w-full rounded-lg border border-glassBorder/60 bg-glassBackground px-3 py-2 text-xs font-medium text-mutedForeground hover:text-foreground hover:border-glassBorder transition-colors disabled:opacity-40"
               >
                 Undo last throw
@@ -351,13 +357,13 @@ export function ActivePlayoffMatch({
                 />
                 <DartScoreInput
                   onScore={(score) => handleThrow(score)}
-                  disabled={submitting}
+                  disabled={submitting || !sessionWriteEnabled}
                 />
                 {canUndo && (
                   <button
                     type="button"
                     onClick={handleUndo}
-                    disabled={submitting}
+                    disabled={submitting || !sessionWriteEnabled}
                     className="w-full rounded-lg border border-glassBorder/60 bg-glassBackground px-3 py-2 text-xs font-medium text-mutedForeground hover:text-foreground hover:border-glassBorder transition-colors disabled:opacity-40"
                   >
                     Undo last throw

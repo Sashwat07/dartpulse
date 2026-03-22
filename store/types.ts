@@ -41,6 +41,9 @@ export type MatchStoreState = {
   /** When true (e.g. playoff final confirmed), undo is disabled for this match. */
   undoLocked: boolean;
 
+  /** When false, scoring and undo are disabled (view-only participant). */
+  sessionWriteEnabled: boolean;
+
   analyticsFilters: AnalyticsFilters;
   globalPlayerStats: GlobalPlayerStats;
 

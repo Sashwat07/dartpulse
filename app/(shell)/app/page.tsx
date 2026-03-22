@@ -9,18 +9,21 @@ import { HistoryCardList } from "@/components/history/HistoryCardList";
 import { getAnalyticsOverview } from "@/lib/analytics";
 import { getGlobalLeaderboardStandings } from "@/lib/leaderboard/globalStandings";
 import {
-  listOwnedResumableMatches,
-  listOwnedCompletedMatches,
+  getLinkedPlayerByUserId,
+  listVisibleCompletedMatches,
+  listVisibleResumableMatches,
 } from "@/lib/repositories";
 import { requireUser } from "@/lib/requireUser";
 import { formatScore } from "@/lib/utils/dartScore";
 
 export default async function AppHomePage() {
   const user = await requireUser();
+  const linked = await getLinkedPlayerByUserId(user.id);
+  const linkedPlayerId = linked?.playerId ?? null;
 
   const [resumable, completed, overview, leaderboard] = await Promise.all([
-    listOwnedResumableMatches(user.id),
-    listOwnedCompletedMatches(user.id),
+    listVisibleResumableMatches(user.id, linkedPlayerId),
+    listVisibleCompletedMatches(user.id, linkedPlayerId),
     getAnalyticsOverview(),
     getGlobalLeaderboardStandings(),
   ]);
@@ -32,11 +35,13 @@ export default async function AppHomePage() {
   }));
   const resumePreview = resumable.slice(0, 3);
   const resumeHref =
-    resumable.length === 1
-      ? resumable[0].resumeTo === "playoffs"
-        ? `/playoffs/${resumable[0].matchId}`
-        : `/match/${resumable[0].matchId}`
-      : "/resume";
+    resumable.length > 1
+      ? "/resume"
+      : resumable.length === 1
+        ? resumable[0].resumeTo === "playoffs"
+          ? `/playoffs/${resumable[0].matchId}`
+          : `/match/${resumable[0].matchId}`
+        : null;
   const topThree = leaderboard.slice(0, 3);
   const topByWins = overview.topPlayersByWins?.[0];
 
@@ -54,7 +59,7 @@ export default async function AppHomePage() {
                   <span aria-hidden>＋</span>
                   <span>New Match</span>
                 </Link>
-              {resumable.length > 0 && (
+              {resumeHref != null && (
                 <Link href={resumeHref} className="btn-secondary focus-ring">
                   Resume
                 </Link>
@@ -75,9 +80,9 @@ export default async function AppHomePage() {
             <h2 className="section-heading">Overview</h2>
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
               <GlassCard className="flex min-h-[72px] flex-col justify-between p-3">
-                <p className="stat-label">Completed</p>
+                <p className="stat-label">Your completed</p>
                 <p className="stat-value mt-1.5 text-foreground">
-                  {overview.totalCompletedMatches}
+                  {completed.length}
                 </p>
               </GlassCard>
               <GlassCard className="flex min-h-[72px] flex-col justify-between p-3">

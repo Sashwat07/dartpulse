@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, ChevronDown, LogOut, Menu, Target } from "lucide-react";
+import { BookOpen, ChevronDown, LogOut, Menu, Target, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -201,7 +201,15 @@ export function TopBar({ onMenuClick }: TopBarProps) {
                   </div>
 
                   {/* Actions */}
-                  <div className="p-1.5">
+                  <div className="p-1.5 space-y-0.5">
+                    <Link
+                      href="/profile"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground/85 transition-colors hover:bg-surfaceSubtle focus-ring"
+                    >
+                      <User size={14} className="shrink-0 text-mutedForeground" />
+                      View profile
+                    </Link>
                     <button
                       type="button"
                       onClick={() => {

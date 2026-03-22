@@ -34,6 +34,9 @@ export async function POST(req: Request) {
   const auth = await getOwnedMatchForApi(sourceMatchId);
   if (auth instanceof NextResponse) return auth;
   const { user, match: sourceMatch } = auth;
+  if (!user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   if (sourceMatch.status !== "matchFinished") {
     return NextResponse.json(
       { error: "Source match must be completed" },

@@ -20,14 +20,15 @@ const mockGetMatchById = vi.mocked(getMatchById);
 const mockGetCurrentUser = vi.mocked(getCurrentUser);
 
 function makeMatch(overrides: Partial<Match> & { matchId: string }): Match {
+  const { matchId, ...rest } = overrides;
   return {
-    matchId: overrides.matchId,
-    name: overrides.name ?? "Test",
+    name: "Test",
     mode: "casual",
     totalRounds: 3,
     status: "matchStarted",
     createdAt: "2025-01-01T00:00:00.000Z",
-    ...overrides,
+    ...rest,
+    matchId,
   };
 }
 
@@ -74,19 +75,35 @@ describe("getOwnedMatchForApi", () => {
     vi.clearAllMocks();
   });
 
-  it("returns 401 when user is not authenticated", async () => {
+  it("returns { user: null, match } when user is not authenticated and match is unowned", async () => {
     mockGetCurrentUser.mockResolvedValue(null);
+    const match = makeMatch({ matchId: "m1" });
+    delete (match as Partial<Match>).createdByUserId;
+    mockGetMatchById.mockResolvedValue(match);
+
+    const result = await getOwnedMatchForApi("m1");
+    expect(result).not.toBeInstanceOf(Response);
+    expect(result).toEqual({ user: null, match });
+    expect(mockGetMatchById).toHaveBeenCalledWith("m1");
+  });
+
+  it("returns 401 when user is not authenticated and match is owned", async () => {
+    mockGetCurrentUser.mockResolvedValue(null);
+    const match = makeMatch({ matchId: "m1", createdByUserId: "user-1" });
+    mockGetMatchById.mockResolvedValue(match);
 
     const result = await getOwnedMatchForApi("m1");
     expect(result).toBeInstanceOf(Response);
     const res = result as Response;
     expect(res.status).toBe(401);
     expect(await res.json()).toEqual({ error: "Unauthorized" });
-    expect(mockGetMatchById).not.toHaveBeenCalled();
+    expect(mockGetMatchById).toHaveBeenCalledWith("m1");
   });
 
-  it("returns 401 when user has no id", async () => {
+  it("returns 401 when user has no id and match is owned", async () => {
     mockGetCurrentUser.mockResolvedValue({ id: "", name: null, email: null, image: null });
+    const match = makeMatch({ matchId: "m1", createdByUserId: "user-1" });
+    mockGetMatchById.mockResolvedValue(match);
 
     const result = await getOwnedMatchForApi("m1");
     expect(result).toBeInstanceOf(Response);
@@ -125,5 +142,17 @@ describe("getOwnedMatchForApi", () => {
     expect(result).not.toBeInstanceOf(Response);
     expect(result).toEqual({ user, match });
     expect(mockGetMatchById).toHaveBeenCalledWith("m1");
+  });
+
+  it("returns { user, match } when authenticated and match is unowned", async () => {
+    const user = { id: "user-1", name: "Test", email: null, image: null };
+    mockGetCurrentUser.mockResolvedValue(user);
+    const match = makeMatch({ matchId: "m1" });
+    delete (match as Partial<Match>).createdByUserId;
+    mockGetMatchById.mockResolvedValue(match);
+
+    const result = await getOwnedMatchForApi("m1");
+    expect(result).not.toBeInstanceOf(Response);
+    expect(result).toEqual({ user, match });
   });
 });

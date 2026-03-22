@@ -1,4 +1,7 @@
-import { listOwnedResumableMatches } from "@/lib/repositories";
+import {
+  getLinkedPlayerByUserId,
+  listVisibleResumableMatches,
+} from "@/lib/repositories";
 import { requireUser } from "@/lib/requireUser";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { PageHeader } from "@/components/PageHeader";
@@ -6,7 +9,11 @@ import { ResumeCardList } from "@/components/resume/ResumeCardList";
 
 export default async function ResumePage() {
   const user = await requireUser();
-  const items = await listOwnedResumableMatches(user.id);
+  const linked = await getLinkedPlayerByUserId(user.id);
+  const items = await listVisibleResumableMatches(
+    user.id,
+    linked?.playerId ?? null,
+  );
 
   return (
     <PageTransition>

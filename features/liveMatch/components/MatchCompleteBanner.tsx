@@ -17,6 +17,7 @@ type MatchCompleteBannerProps = { matchId: string };
 export function MatchCompleteBanner({ matchId }: MatchCompleteBannerProps) {
   const activeMatch = useMatchStore((s) => s.activeMatch);
   const matchOutcomeSummary = useMatchStore((s) => s.matchOutcomeSummary);
+  const sessionWriteEnabled = useMatchStore((s) => s.sessionWriteEnabled);
 
   const showPlayoffsLink =
     matchOutcomeSummary?.outcomeType === "finalQualification" ||
@@ -40,10 +41,10 @@ export function MatchCompleteBanner({ matchId }: MatchCompleteBannerProps) {
             href={`/playoffs/${matchId}`}
             className="inline-block text-sm text-amber-400 hover:underline"
           >
-            Go to playoffs →
+            {sessionWriteEnabled ? "Go to playoffs →" : "View playoffs →"}
           </Link>
         )}
-        {showPlayAgain && (
+        {showPlayAgain && sessionWriteEnabled && (
           <PlayAgainButton sourceMatchId={matchId} label="Play again" variant="button" />
         )}
       </div>
