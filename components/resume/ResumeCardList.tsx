@@ -56,7 +56,9 @@ export function ResumeCardList({ items }: ResumeCardListProps) {
     setVisibleCount((n) => Math.min(filtered.length, n + CHUNK_SIZE));
   }, [filtered.length]);
 
-  const sentinelRef = useInfiniteReveal(hasMore, loadMore);
+  const sentinelRef = useInfiniteReveal(hasMore, loadMore, {
+    layoutCheckDeps: [visibleCount, filtered.length],
+  });
 
   if (items.length === 0) {
     return (

@@ -21,7 +21,10 @@ import {
   getRoundHeatmap,
 } from "@/lib/analytics";
 import { getOwnedMatchOrThrow } from "@/lib/auth/ownership";
-import { getMatchHistoryPayload } from "@/lib/matchHistory";
+import {
+  getChampionPlayerIdFromPayload,
+  getMatchHistoryPayload,
+} from "@/lib/matchHistory";
 import { getMatchById } from "@/lib/repositories";
 import { requireUser } from "@/lib/requireUser";
 import { PLAYOFF_STATUSES } from "@/lib/repositories/matchRepository";
@@ -82,6 +85,13 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const championPlayerId = getChampionPlayerIdFromPayload(payload);
+  const championName =
+    championPlayerId != null
+      ? payload.matchPlayers.find((p) => p.playerId === championPlayerId)?.name ??
+        null
+      : null;
+
   const {
     match,
     matchPlayers,
@@ -120,28 +130,51 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
         />
 
         <div className="mt-4 space-y-4">
-        {/* Match info */}
-        <GlassCard className="p-3">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-2">
-            Match info
-          </h2>
-          <dl className="grid grid-cols-1 gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
-            <div>
-              <dt className="text-mutedForeground">Rounds</dt>
-              <dd>{match.totalRounds}</dd>
-            </div>
-            <div>
-              <dt className="text-mutedForeground">Shots per round</dt>
-              <dd>{match.shotsPerRound ?? 1}</dd>
-            </div>
-            {match.playoffShotsPerRound != null && (
-              <div>
-                <dt className="text-mutedForeground">Playoff shots per round</dt>
-                <dd>{match.playoffShotsPerRound}</dd>
+        {/* Match info bar */}
+        <div className="rounded-card border border-glassBorder overflow-hidden shadow-panelShadow bg-glassBackground backdrop-blur-[20px]">
+          {/* Winner hero — only when there's a champion */}
+          {championName != null && (
+            <div className="relative flex items-center gap-4 px-6 py-4 overflow-hidden border-b border-amber-500/20 bg-amber-500/8">
+              {/* Glow orb behind trophy */}
+              <div
+                className="absolute left-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full blur-xl opacity-30 pointer-events-none"
+                style={{ background: "radial-gradient(circle, rgba(251,191,36,0.8), transparent)" }}
+                aria-hidden
+              />
+              <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-amber-500/40 bg-amber-500/15">
+                <Trophy size={16} className="text-championGold" aria-hidden />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-championGold/60 mb-0.5">Champion</p>
+                <p className="text-base font-black tracking-tight text-championGold truncate">{championName}</p>
               </div>
-            )}
-          </dl>
-        </GlassCard>
+            </div>
+          )}
+
+          {/* Stat bar */}
+          <div className="flex flex-wrap">
+            {[
+              { label: "Rounds", value: match.totalRounds },
+              { label: "Shots / Round", value: match.shotsPerRound ?? 1 },
+              ...(match.playoffShotsPerRound != null
+                ? [{ label: "Playoff Shots", value: match.playoffShotsPerRound }]
+                : []),
+              { label: "Players", value: matchPlayers.length },
+            ].map((stat, i) => (
+              <div
+                key={stat.label}
+                className={`flex flex-col justify-center px-6 py-4 min-w-[100px] ${i > 0 ? "border-l border-glassBorder" : ""}`}
+              >
+                <span className="text-[9px] font-black uppercase tracking-[0.18em] text-mutedForeground mb-1">
+                  {stat.label}
+                </span>
+                <span className="text-2xl font-black tabular-nums leading-none text-foreground">
+                  {stat.value}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Outcome summary (final ranking + winner/qualification) */}
         <MatchOutcomeSummary summary={matchOutcomeSummary} />
@@ -163,18 +196,18 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
 
         {/* Sudden death (if present) */}
         {suddenDeathDisplay !== null && (
-          <GlassCard className="p-4 overflow-x-auto">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-3">
-              Sudden death
-            </h2>
+          <GlassCard className="overflow-x-auto p-0">
+            <div className="px-5 pt-4 pb-3 border-b border-glassBorder">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">Sudden Death</h2>
+            </div>
             <table className="w-full min-w-[200px] border-collapse">
               <thead>
-                <tr className="border-b border-glassBorder text-left text-sm text-mutedForeground">
-                  <th className="px-3 py-2 font-medium">Player</th>
+                <tr className="border-b border-glassBorder text-left text-xs text-mutedForeground">
+                  <th className="px-5 py-2.5 font-semibold">Player</th>
                   {suddenDeathDisplay.sdRoundNumbers.map((r, i) => (
                     <th
                       key={r}
-                      className="px-3 py-2 text-right font-medium"
+                      className="px-3 py-2.5 text-right font-semibold"
                     >
                       SD{i + 1}
                     </th>
@@ -187,7 +220,7 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
                     key={row.playerId}
                     className="border-b border-glassBorder"
                   >
-                    <td className="px-3 py-2 text-left text-sm font-medium">
+                    <td className="px-5 py-3 text-left text-sm font-medium">
                       {row.playerName}
                     </td>
                     {suddenDeathDisplay.sdRoundNumbers.map((r, i) => {
@@ -195,7 +228,7 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
                       return (
                         <td
                           key={r}
-                          className="px-3 py-2 text-right text-sm tabular-nums"
+                          className="px-3 py-3 text-right text-sm tabular-nums"
                         >
                           {score > 0 ? score : "—"}
                         </td>
@@ -233,14 +266,15 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
           </GlassCard>
         )}
         {clutch.length > 0 && (
-          <GlassCard className="p-3">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-mutedForeground mb-2">
-              Clutch (final round)
-            </h2>
-            <ul className="space-y-1 text-sm">
+          <GlassCard className="p-0 overflow-hidden">
+            <div className="px-5 pt-4 pb-3 border-b border-glassBorder">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">Clutch — Final Round</h2>
+            </div>
+            <ul className="divide-y divide-glassBorder/50">
               {clutch.map((c) => (
-                <li key={c.playerId}>
-                  {c.playerName}: {c.averageFinalRoundScore} avg
+                <li key={c.playerId} className="flex items-center justify-between px-5 py-2.5 text-sm">
+                  <span className="text-foreground/85 font-medium">{c.playerName}</span>
+                  <span className="tabular-nums text-foreground/60">{c.averageFinalRoundScore} avg</span>
                 </li>
               ))}
             </ul>

@@ -31,6 +31,12 @@ export default async function AppHomePage() {
     isFullyComplete: true,
   }));
   const resumePreview = resumable.slice(0, 3);
+  const resumeHref =
+    resumable.length === 1
+      ? resumable[0].resumeTo === "playoffs"
+        ? `/playoffs/${resumable[0].matchId}`
+        : `/match/${resumable[0].matchId}`
+      : "/resume";
   const topThree = leaderboard.slice(0, 3);
   const topByWins = overview.topPlayersByWins?.[0];
 
@@ -49,14 +55,7 @@ export default async function AppHomePage() {
                   <span>New Match</span>
                 </Link>
               {resumable.length > 0 && (
-                <Link
-                  href={
-                    resumable[0].resumeTo === "playoffs"
-                      ? `/playoffs/${resumable[0].matchId}`
-                      : `/match/${resumable[0].matchId}`
-                  }
-                  className="btn-secondary focus-ring"
-                >
+                <Link href={resumeHref} className="btn-secondary focus-ring">
                   Resume
                 </Link>
               )}

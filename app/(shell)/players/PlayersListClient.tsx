@@ -5,9 +5,9 @@ import * as React from "react";
 import { ArrowRight, Search } from "lucide-react";
 import type { Player } from "@/types/player";
 import { GlassCard } from "@/components/GlassCard";
-import { useInfiniteReveal } from "@/hooks/useInfiniteReveal";
+import { Pagination } from "@/components/ui/Pagination";
 
-const CHUNK_SIZE = 10;
+const PAGE_SIZE = 12;
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -22,7 +22,7 @@ type Props = { players: Player[] };
 
 export function PlayersListClient({ players }: Props) {
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [visibleCount, setVisibleCount] = React.useState(CHUNK_SIZE);
+  const [currentPage, setCurrentPage] = React.useState(1);
 
   const filtered = React.useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -30,14 +30,14 @@ export function PlayersListClient({ players }: Props) {
     return players.filter((p) => p.name.toLowerCase().includes(q));
   }, [players, searchQuery]);
 
-  const visible = filtered.slice(0, visibleCount);
-  const hasMore = visibleCount < filtered.length;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const visible = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
-  const loadMore = React.useCallback(() => {
-    setVisibleCount((n) => Math.min(filtered.length, n + CHUNK_SIZE));
-  }, [filtered.length]);
-
-  const sentinelRef = useInfiniteReveal(hasMore, loadMore);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="space-y-3">
@@ -52,7 +52,7 @@ export function PlayersListClient({ players }: Props) {
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
-            setVisibleCount(CHUNK_SIZE);
+            setCurrentPage(1);
           }}
           className="w-full rounded-button border border-glassBorder bg-glassBackground py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-mutedForeground focus:border-primaryNeon/60 focus:outline-none focus:ring-2 focus:ring-primaryNeon/20 sm:max-w-xs"
           aria-label="Search players by name"
@@ -90,15 +90,14 @@ export function PlayersListClient({ players }: Props) {
           </li>
         ))}
       </ul>
-      {hasMore && (
-        <div
-          ref={sentinelRef}
-          className="flex min-h-[24px] items-center justify-center py-3"
-          aria-hidden
-        >
-          <span className="text-xs text-mutedForeground">Loading more…</span>
-        </div>
-      )}
+      <Pagination
+        currentPage={safePage}
+        totalPages={totalPages}
+        totalItems={filtered.length}
+        pageSize={PAGE_SIZE}
+        itemLabel="players"
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }
