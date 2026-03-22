@@ -43,13 +43,13 @@ export default async function PlayerPage({ params }: PageProps) {
     notFound();
   }
 
-  await evaluateCareerAchievements(playerId);
+  const stats = allAnalytics.find((a) => a.playerId === playerId);
+  await evaluateCareerAchievements(playerId, stats ?? null);
   const [achievements, archetype] = await Promise.all([
     listAchievementsByPlayerId(playerId),
     getPlayerArchetype(playerId),
   ]);
 
-  const stats = allAnalytics.find((a) => a.playerId === playerId);
   const hasChampionAchievement = achievements.some((a) => a.type === "champion");
 
   return (

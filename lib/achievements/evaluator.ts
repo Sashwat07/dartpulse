@@ -5,6 +5,7 @@ import {
   hasAchievement,
 } from "@/lib/achievements/repository";
 import type { AchievementType } from "@/types/achievement";
+import type { PlayerAnalytics } from "@/lib/analytics/types";
 import {
   getChampionPlayerIdFromPayload,
   getFinalPlacementFromPayload,
@@ -113,12 +114,15 @@ export async function evaluateMatchAchievements(
  * Evaluate career achievements for one player and persist if missing.
  * Idempotent: checks hasAchievement(playerId, type, null) before each create.
  * Call when loading player profile so career badges are up to date.
+ * Pass precomputed stats when already available to avoid duplicate analytics work.
  */
 export async function evaluateCareerAchievements(
   playerId: string,
+  statsOrUndefined?: PlayerAnalytics | null,
 ): Promise<void> {
-  const allPlayers = await getPerPlayerAnalytics();
-  const stats = allPlayers.find((p) => p.playerId === playerId);
+  const stats =
+    statsOrUndefined ??
+    (await getPerPlayerAnalytics()).find((p) => p.playerId === playerId);
   if (!stats) return;
 
   const checks: { type: AchievementType; condition: boolean }[] = [

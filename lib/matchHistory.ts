@@ -214,3 +214,27 @@ export async function getMatchChampion(matchId: string): Promise<string | null> 
   const payload = await getMatchHistoryPayload(matchId);
   return payload ? getChampionPlayerIdFromPayload(payload) : null;
 }
+
+/**
+ * Batched champion resolution for multiple matches.
+ * Deduplicates matchIds, loads payloads in parallel, returns map of matchId -> championPlayerId (or null).
+ * Use when multiple champions are needed in one request to avoid repeated per-match work.
+ */
+export async function getChampionsByMatchIds(
+  matchIds: string[],
+): Promise<Map<string, string | null>> {
+  const unique = [...new Set(matchIds)];
+  const payloads = await Promise.all(
+    unique.map((id) => getMatchHistoryPayload(id)),
+  );
+  const map = new Map<string, string | null>();
+  for (let i = 0; i < unique.length; i++) {
+    const matchId = unique[i];
+    const payload = payloads[i];
+    map.set(
+      matchId,
+      payload ? getChampionPlayerIdFromPayload(payload) : null,
+    );
+  }
+  return map;
+}

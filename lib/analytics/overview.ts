@@ -1,5 +1,5 @@
 import type { AnalyticsOverview } from "@/lib/analytics/types";
-import { getMatchChampion } from "@/lib/matchHistory";
+import { getChampionsByMatchIds } from "@/lib/matchHistory";
 import {
   listCompletedMatchSummaries,
   listPlayers,
@@ -19,11 +19,8 @@ export async function getAnalyticsOverview(): Promise<AnalyticsOverview> {
     listPlayers(),
   ]);
 
-  const champions = await Promise.all(
-    summaries.map(async (s) => ({
-      matchId: s.matchId,
-      championId: await getMatchChampion(s.matchId),
-    })),
+  const championsByMatchId = await getChampionsByMatchIds(
+    summaries.map((s) => s.matchId),
   );
 
   const totalCompletedMatches = summaries.length;
@@ -41,7 +38,8 @@ export async function getAnalyticsOverview(): Promise<AnalyticsOverview> {
     pointsByMatch.size > 0 ? Math.max(...pointsByMatch.values()) : 0;
 
   const winsByPlayerId = new Map<string, number>();
-  for (const { championId } of champions) {
+  for (const { matchId } of summaries) {
+    const championId = championsByMatchId.get(matchId) ?? null;
     if (championId) {
       winsByPlayerId.set(championId, (winsByPlayerId.get(championId) ?? 0) + 1);
     }

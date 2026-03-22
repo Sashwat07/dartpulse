@@ -1,5 +1,5 @@
 import type { PlayerAnalytics } from "@/lib/analytics/types";
-import { getMatchChampion } from "@/lib/matchHistory";
+import { getChampionsByMatchIds } from "@/lib/matchHistory";
 import {
   listCompletedMatchParticipations,
   listCompletedMatchSummaries,
@@ -20,11 +20,8 @@ export async function getPerPlayerAnalytics(): Promise<PlayerAnalytics[]> {
     listCompletedMatchSummaries(),
   ]);
 
-  const champions = await Promise.all(
-    summaries.map((s) => getMatchChampion(s.matchId)),
-  );
-  const matchIdToChampion = new Map(
-    summaries.map((s, i) => [s.matchId, champions[i]]),
+  const matchIdToChampion = await getChampionsByMatchIds(
+    summaries.map((s) => s.matchId),
   );
 
   const matchesPlayedByPlayer = new Map<string, number>();

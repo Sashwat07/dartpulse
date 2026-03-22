@@ -1,4 +1,4 @@
-import { getMatchChampion } from "@/lib/matchHistory";
+import { getChampionsByMatchIds } from "@/lib/matchHistory";
 import {
   listOwnedHistoryMatches,
   listPlayers,
@@ -13,15 +13,14 @@ export default async function HistoryPage() {
   const user = await requireUser();
   const rawItems = await listOwnedHistoryMatches(user.id);
   const completedItems = rawItems.filter((i) => i.isFullyComplete);
-  const [champions, players] = await Promise.all([
-    Promise.all(completedItems.map((i) => getMatchChampion(i.matchId))),
+  const [championsByMatchId, players] = await Promise.all([
+    getChampionsByMatchIds(completedItems.map((i) => i.matchId)),
     listPlayers(),
   ]);
   const playerNames = new Map(players.map((p) => [p.playerId, p.name]));
   const items = rawItems.map((item) => {
     if (!item.isFullyComplete) return item;
-    const idx = completedItems.findIndex((c) => c.matchId === item.matchId);
-    const championId = idx >= 0 ? champions[idx] ?? null : null;
+    const championId = championsByMatchId.get(item.matchId) ?? null;
     return {
       ...item,
       championPlayerId: championId ?? undefined,
