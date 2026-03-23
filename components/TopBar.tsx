@@ -24,6 +24,11 @@ export function TopBar({ onMenuClick }: TopBarProps) {
     session?.user?.email?.slice(0, 1) ??
     "?";
   const userName = session?.user?.name ?? session?.user?.email ?? "";
+  const userMenuLabel = (() => {
+    const firstToken = userName.trim().split(/\s+/)[0] ?? "";
+    if (!firstToken) return "";
+    return firstToken.charAt(0).toUpperCase() + firstToken.slice(1).toLowerCase();
+  })();
 
   // Close dropdown on outside click or Escape
   useEffect(() => {
@@ -168,7 +173,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
                 )}
                 {/* Name — hidden on very small screens */}
                 <span className="hidden sm:block max-w-[110px] truncate text-xs font-semibold text-foreground/85">
-                  {userName}
+                  {userMenuLabel}
                 </span>
                 <ChevronDown
                   size={12}

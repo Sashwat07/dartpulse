@@ -122,6 +122,17 @@ export async function completeLinkedPlayerProfile(
     throw new Error("Color is required");
   }
 
+  // Uniqueness check: reject if another player already has this name (case-insensitive)
+  const conflict = await db.player.findFirst({
+    where: {
+      name: { equals: trimmedName, mode: "insensitive" },
+      userId: { not: input.userId },
+    },
+  });
+  if (conflict) {
+    throw new Error("That name is already taken. Please choose a different one.");
+  }
+
   const updated = await db.player.updateMany({
     where: { userId: input.userId },
     data: {
