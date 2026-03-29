@@ -116,15 +116,27 @@ export function ResumeCardList({ items }: ResumeCardListProps) {
                       </span>
                     </div>
                   </div>
+                  {/* Liquid glass CTA pill — sits inside the card Link */}
                   <span
-                    className={`flex shrink-0 items-center gap-1.5 rounded-button border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                    className={`relative flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
                       item.canResume
-                        ? "border-primaryNeon/40 bg-primaryNeon/10 text-primaryNeon group-hover:bg-primaryNeon/20"
-                        : "border-glassBorder bg-surfaceSubtle text-mutedForeground group-hover:border-glassBorder/80"
+                        ? "text-primaryNeon group-hover:scale-[1.04]"
+                        : "text-mutedForeground group-hover:scale-[1.03]"
                     }`}
+                    style={{
+                      boxShadow: item.canResume
+                        ? "0 0 8px rgba(0,0,0,0.03),0 2px 6px rgba(0,0,0,0.08),inset 3px 3px 0.5px -3.5px rgba(255,255,255,0.14),inset -3px -3px 0.5px -3.5px rgba(255,255,255,0.9),inset 1px 1px 1px -0.5px rgba(255,255,255,0.65),inset -1px -1px 1px -0.5px rgba(255,255,255,0.65),inset 0 0 6px 6px rgba(255,255,255,0.10),inset 0 0 2px 2px rgba(255,255,255,0.06),0 0 16px rgba(0,229,255,0.12)"
+                        : "0 0 8px rgba(0,0,0,0.03),0 2px 6px rgba(0,0,0,0.08),inset 3px 3px 0.5px -3.5px rgba(255,255,255,0.08),inset -3px -3px 0.5px -3.5px rgba(255,255,255,0.5),inset 1px 1px 1px -0.5px rgba(255,255,255,0.35),inset -1px -1px 1px -0.5px rgba(255,255,255,0.35),inset 0 0 6px 6px rgba(255,255,255,0.06),inset 0 0 2px 2px rgba(255,255,255,0.04)",
+                    }}
                   >
-                    <Play size={12} className="shrink-0" aria-hidden />
-                    {item.canResume ? "Continue" : "View"}
+                    {/* Backdrop glass distortion layer */}
+                    <span
+                      aria-hidden
+                      className="absolute inset-0 z-0 overflow-hidden rounded-[inherit]"
+                      style={{ backdropFilter: 'url("#dartpulse-liquid-glass")' }}
+                    />
+                    <Play size={12} className="relative z-10 shrink-0" aria-hidden />
+                    <span className="relative z-10">{item.canResume ? "Continue" : "View"}</span>
                   </span>
                 </div>
               </GlassCard>

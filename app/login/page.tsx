@@ -11,21 +11,63 @@ export default async function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-background dark:bg-[radial-gradient(ellipse_at_top,#0d1525_0%,#080c15_70%)] px-4">
-      <div className="w-full max-w-sm">
-        {/* Brand header above card */}
+    <div
+      className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4"
+      style={{ background: "var(--background)" }}
+    >
+      {/* Subtle depth blobs */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse 60% 50% at 15% 40%, rgba(0,229,255,0.06) 0%, transparent 65%), radial-gradient(ellipse 55% 45% at 85% 25%, rgba(100,60,255,0.04) 0%, transparent 65%)",
+        }}
+        aria-hidden
+      />
+
+      <div className="relative z-10 w-full max-w-sm">
+        {/* Brand */}
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-primaryNeon/30 bg-primaryNeon/10 shadow-[0_0_24px_rgba(0,229,255,0.15)]">
+          {/* Badge pill */}
+          <div
+            className="mb-2 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium tracking-wide text-mutedForeground"
+            style={{
+              background: "var(--surfaceSubtle)",
+              border: "1px solid var(--glassBorder)",
+            }}
+          >
+            <span
+              className="h-1.5 w-1.5 rounded-full bg-primaryNeon/70"
+            />
+            Track every throw
+          </div>
+
+          <div
+            className="flex h-14 w-14 items-center justify-center rounded-2xl"
+            style={{
+              background: "var(--glassBackground)",
+              boxShadow: "var(--panelShadow), 0 0 28px rgba(0,229,255,0.15)",
+            }}
+          >
             <Target size={26} className="text-primaryNeon" aria-hidden />
           </div>
+
           <span className="font-display text-2xl font-bold tracking-tight text-foreground">
             DartPulse
           </span>
-          <p className="text-sm text-mutedForeground">Track every throw. Own every match.</p>
+          <p className="text-sm text-mutedForeground">
+            Own every match.
+          </p>
         </div>
 
-        {/* Auth card */}
-        <div className="rounded-2xl border border-glassBorder bg-glassBackground/90 p-8 shadow-[0_16px_48px_rgba(0,0,0,0.4)] backdrop-blur-[20px]">
+        {/* Auth card — neumorphic raised surface */}
+        <div
+          className="rounded-2xl p-8"
+          style={{
+            background: "var(--glassBackground)",
+            boxShadow: "var(--panelShadow)",
+          }}
+        >
           <div className="mb-6 text-center">
             <h1 className="font-display text-xl font-bold text-foreground">Sign in</h1>
             <p className="mt-1.5 text-sm text-mutedForeground">
@@ -33,7 +75,7 @@ export default async function LoginPage() {
             </p>
           </div>
           <GoogleSignInButton label="Continue with Google" />
-          <p className="mt-4 text-center text-xs text-mutedForeground">
+          <p className="mt-4 text-center text-xs text-mutedForeground/70">
             New to DartPulse? Your account is created automatically.
           </p>
         </div>

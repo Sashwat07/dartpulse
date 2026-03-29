@@ -11,14 +11,17 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const base =
-  "inline-flex items-center justify-center whitespace-nowrap rounded-button font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97]";
+  "inline-flex items-center justify-center whitespace-nowrap rounded-button font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed";
 
 const variants: Record<ButtonVariant, string> = {
+  // Filled brand — solid cyan with glow, convex depth
   primary:
-    "bg-primaryNeon text-primaryForeground shadow-glowShadow hover:shadow-glowStrong hover:brightness-105",
+    "bg-primaryNeon text-primaryForeground shadow-glowShadow hover:shadow-glowStrong hover:brightness-105 active:scale-[0.97] active:brightness-95",
+  // Neumorphic raised — same surface as bg, dual-tone shadow, inset on press
   secondary:
-    "bg-glassBackground text-foreground border border-glassBorder hover:bg-surfaceHover hover:border-primaryNeon/30 shadow-panelShadow",
-  ghost: "bg-transparent text-foreground hover:bg-surfaceSubtle",
+    "bg-glassBackground text-foreground shadow-panelShadow hover:text-primaryNeon active:shadow-[var(--insetShadow)] active:scale-[0.97]",
+  // Ghost — minimal, subtle hover
+  ghost: "bg-transparent text-foreground hover:bg-surfaceSubtle active:scale-[0.97]",
 };
 
 const sizes: Record<ButtonSize, string> = {

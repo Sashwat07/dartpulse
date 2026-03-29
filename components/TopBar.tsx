@@ -8,6 +8,7 @@ import { signOut, useSession } from "next-auth/react";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { RulebookModal } from "@/components/RulebookModal";
+import { LiquidButton } from "@/components/ui/LiquidButton";
 
 export type TopBarProps = {
   onMenuClick?: () => void;
@@ -53,19 +54,19 @@ export function TopBar({ onMenuClick }: TopBarProps) {
     <>
       {/* TopBar */}
       <div
-        className="relative z-30 flex h-14 items-center justify-between px-4 backdrop-blur-[24px]"
+        className="relative z-30 flex h-14 items-center justify-between px-4"
         style={{
-          background: "var(--glassBackground)",
+          background: "var(--sidebarBg)",
           borderBottom: "1px solid var(--glassBorder)",
-          boxShadow: "0 1px 0 0 rgba(0,229,255,0.06), 0 4px 16px rgba(0,0,0,0.08)",
+          boxShadow: "0 4px 12px rgba(4,4,8,0.5), 0 1px 0 rgba(255,255,255,0.05) inset",
         }}
       >
-        {/* Neon accent line at bottom */}
+        {/* Subtle cyan accent line at bottom */}
         <div
           className="pointer-events-none absolute bottom-0 left-0 h-px w-full"
           style={{
             background:
-              "linear-gradient(to right, transparent 0%, rgba(0,229,255,0.25) 40%, rgba(0,229,255,0.08) 70%, transparent 100%)",
+              "linear-gradient(to right, transparent 10%, rgba(0,229,255,0.25) 40%, rgba(0,229,255,0.35) 50%, rgba(0,229,255,0.25) 60%, transparent 90%)",
           }}
           aria-hidden
         />
@@ -103,31 +104,17 @@ export function TopBar({ onMenuClick }: TopBarProps) {
         {/* ── Right: actions ── */}
         <div className="flex items-center gap-2">
 
-          {/* Rules button */}
-          <button
+          {/* Rules button — liquid glass */}
+          <LiquidButton
             type="button"
+            size="sm"
+            variant="brand"
             onClick={() => setRulebookOpen(true)}
             aria-label="Open rulebook"
-            className="group flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-150 focus-ring"
-            style={{
-              border: "1px solid rgba(0,229,255,0.25)",
-              background: "rgba(0,229,255,0.06)",
-              color: "var(--primaryNeon)",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,229,255,0.12)";
-              (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(0,229,255,0.5)";
-              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 10px rgba(0,229,255,0.15)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,229,255,0.06)";
-              (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(0,229,255,0.25)";
-              (e.currentTarget as HTMLButtonElement).style.boxShadow = "";
-            }}
           >
             <BookOpen size={13} strokeWidth={2.2} />
-            <span className="hidden sm:inline tracking-wide">Rules</span>
-          </button>
+            <span className="hidden sm:inline">Rules</span>
+          </LiquidButton>
 
           {/* Thin separator */}
           <div
@@ -147,8 +134,8 @@ export function TopBar({ onMenuClick }: TopBarProps) {
                 aria-haspopup="true"
                 aria-expanded={userMenuOpen}
                 aria-label="User menu"
-                className="flex items-center gap-2 rounded-lg border border-glassBorder px-2.5 py-1.5 transition-all duration-150 hover:bg-surfaceSubtle focus-ring"
-                style={userMenuOpen ? { borderColor: "rgba(0,229,255,0.3)", background: "rgba(0,229,255,0.05)" } : undefined}
+                className="flex items-center gap-2 rounded-full border border-glassBorder px-2.5 py-1.5 transition-all duration-150 hover:bg-surfaceSubtle focus-ring"
+                style={userMenuOpen ? { borderColor: "rgba(0,229,255,0.3)", background: "rgba(0,229,255,0.07)" } : undefined}
               >
                 {/* Avatar */}
                 {session.user.image ? (
@@ -185,11 +172,11 @@ export function TopBar({ onMenuClick }: TopBarProps) {
               {/* Dropdown panel */}
               {userMenuOpen && (
                 <div
-                  className="absolute right-0 top-[calc(100%+8px)] z-[200] w-52 rounded-xl border border-glassBorder overflow-hidden"
+                  className="absolute right-0 top-[calc(100%+8px)] z-[200] w-52 rounded-2xl overflow-hidden"
                   style={{
-                    background: "color-mix(in srgb, var(--background) 92%, transparent)",
-                    backdropFilter: "blur(24px)",
-                    boxShadow: "0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08) inset",
+                    background: "var(--sidebarBg)",
+                    border: "1px solid var(--glassBorder)",
+                    boxShadow: "var(--panelShadow)",
                   }}
                 >
                   {/* User info header */}
@@ -231,12 +218,9 @@ export function TopBar({ onMenuClick }: TopBarProps) {
               )}
             </div>
           ) : (
-            <Link
-              href="/login"
-              className="btn-outline-primary focus-ring px-3 py-1.5 text-xs font-semibold"
-            >
-              Sign in
-            </Link>
+            <LiquidButton asChild size="sm" variant="brand">
+              <Link href="/login">Sign in</Link>
+            </LiquidButton>
           )}
 
           <ThemeToggle />

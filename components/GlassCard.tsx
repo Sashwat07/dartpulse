@@ -8,7 +8,7 @@ export function GlassCard({ className, ...props }: GlassCardProps) {
   return (
     <div
       className={cn(
-        "rounded-card border border-glassBorder bg-glassBackground shadow-panelShadow backdrop-blur-[20px]",
+        "rounded-card border border-glassBorder bg-glassBackground shadow-panelShadow",
         className,
       )}
       {...props}

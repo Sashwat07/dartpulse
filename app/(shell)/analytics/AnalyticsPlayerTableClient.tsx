@@ -5,9 +5,13 @@ import * as React from "react";
 import type { PlayerAnalytics } from "@/lib/analytics/types";
 import { GlassCard } from "@/components/GlassCard";
 import { formatScore } from "@/lib/utils/dartScore";
+import { cn } from "@/utils/cn";
 
 const PAGE_SIZE = 10;
 const PAGINATION_MIN = 10;
+
+/* Grid: player | matches | wins | total pts | best throw | avg/round | throws */
+const GRID = "grid-cols-[1fr_72px_64px_88px_88px_88px_72px]";
 
 type Props = { players: PlayerAnalytics[] };
 
@@ -19,7 +23,6 @@ export function AnalyticsPlayerTableClient({ players }: Props) {
   const slice = showPagination
     ? players.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
     : players;
-  const display = slice;
 
   if (players.length === 0) {
     return (
@@ -33,84 +36,94 @@ export function AnalyticsPlayerTableClient({ players }: Props) {
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
-        {showPagination && (
-          <nav
-            className="flex items-center gap-2"
-            aria-label="Analytics player table pagination"
+      {showPagination && (
+        <div className="flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0}
+            className="rounded-button bg-glassBackground px-3 py-1.5 text-sm font-medium text-foreground transition-all hover:text-primaryNeon disabled:opacity-50 disabled:cursor-not-allowed focus-ring"
+            style={{ boxShadow: "var(--panelShadow)" }}
           >
-            <button
-              type="button"
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
-              disabled={page === 0}
-              className="rounded-button border border-glassBorder bg-surfaceSubtle px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-surfaceHover disabled:opacity-50 disabled:cursor-not-allowed focus-ring"
-            >
-              Previous
-            </button>
-            <span className="text-sm text-mutedForeground tabular-nums">
-              {page + 1} / {totalPages}
-            </span>
-            <button
-              type="button"
-              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-              disabled={page >= totalPages - 1}
-              className="rounded-button border border-glassBorder bg-surfaceSubtle px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-surfaceHover disabled:opacity-50 disabled:cursor-not-allowed focus-ring"
-            >
-              Next
-            </button>
-          </nav>
-        )}
-      </div>
-      <GlassCard className="overflow-x-auto p-0">
-        <table className="w-full min-w-[640px] text-left text-sm">
-          <thead>
-            <tr className="border-b border-glassBorder">
-              <th className="table-th text-left font-semibold text-foreground">Player</th>
-              <th className="table-th text-right tabular-nums">Matches</th>
-              <th className="table-th text-right tabular-nums">Wins</th>
-              <th className="table-th text-right tabular-nums">Total pts</th>
-              <th className="table-th text-right tabular-nums">Best throw</th>
-              <th className="table-th text-right tabular-nums">Avg / round</th>
-              <th className="table-th text-right tabular-nums">Throws</th>
-            </tr>
-          </thead>
-          <tbody>
-            {display.map((p) => (
-              <tr
-                key={p.playerId}
-                className="border-b border-glassBorder/50 last:border-0 transition-colors hover:bg-surfaceSubtle"
+            Previous
+          </button>
+          <span className="text-sm text-mutedForeground tabular-nums px-1">
+            {page + 1} / {totalPages}
+          </span>
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            disabled={page >= totalPages - 1}
+            className="rounded-button bg-glassBackground px-3 py-1.5 text-sm font-medium text-foreground transition-all hover:text-primaryNeon disabled:opacity-50 disabled:cursor-not-allowed focus-ring"
+            style={{ boxShadow: "var(--panelShadow)" }}
+          >
+            Next
+          </button>
+        </div>
+      )}
+
+      {/* Scrollable wrapper for narrow viewports */}
+      <div className="overflow-x-auto pb-1">
+        <div className="min-w-[580px] space-y-2">
+
+          {/* Floating column header */}
+          <div className={cn("grid items-center gap-0 px-4 pb-1", GRID)}>
+            {[
+              { label: "Player",     align: "left" },
+              { label: "Matches",    align: "right" },
+              { label: "Wins",       align: "right" },
+              { label: "Total pts",  align: "right" },
+              { label: "Best throw", align: "right" },
+              { label: "Avg / round",align: "right" },
+              { label: "Throws",     align: "right" },
+            ].map(({ label, align }) => (
+              <span
+                key={label}
+                className={cn(
+                  "text-[10px] font-bold uppercase tracking-[0.16em] text-mutedForeground",
+                  align === "right" && "text-right",
+                )}
               >
-                <td className="table-td max-w-[12rem] truncate font-medium">
+                {label}
+              </span>
+            ))}
+          </div>
+
+          {/* Individual raised row-cards */}
+          {slice.map((p) => (
+            <div
+              key={p.playerId}
+              className="group rounded-card px-4 py-3 transition-all duration-200 hover:-translate-y-0.5"
+              style={{ background: "var(--glassBackground)", boxShadow: "var(--panelShadow)" }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.boxShadow =
+                  "var(--panelShadow), 0 0 0 1px color-mix(in srgb, var(--primaryNeon) 18%, transparent)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.boxShadow = "var(--panelShadow)";
+              }}
+            >
+              <div className={cn("grid items-center gap-0", GRID)}>
+                <span className="max-w-[14rem] truncate font-medium text-sm">
                   <Link
                     href={`/players/${p.playerId}`}
-                    className="text-foreground hover:text-primaryNeon focus-ring rounded"
+                    className="text-foreground hover:text-primaryNeon focus-ring rounded transition-colors"
                   >
                     {p.playerName}
                   </Link>
-                </td>
-                <td className="table-td text-right tabular-nums text-foreground/80">
-                  {p.matchesPlayed}
-                </td>
-                <td className="table-td text-right tabular-nums font-semibold text-foreground">
-                  {p.wins}
-                </td>
-                <td className="table-td text-right tabular-nums text-foreground/80">
-                  {formatScore(p.totalPoints)}
-                </td>
-                <td className="table-td text-right tabular-nums text-primaryNeon font-semibold">
-                  {formatScore(p.bestThrow)}
-                </td>
-                <td className="table-td text-right tabular-nums text-foreground/80">
-                  {formatScore(p.averageRoundScore)}
-                </td>
-                <td className="table-td text-right tabular-nums text-foreground/80">
-                  {p.totalThrows}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </GlassCard>
+                </span>
+                <span className="text-right tabular-nums text-sm text-foreground/80">{p.matchesPlayed}</span>
+                <span className="text-right tabular-nums text-sm font-semibold text-foreground">{p.wins}</span>
+                <span className="text-right tabular-nums text-sm text-foreground/80">{formatScore(p.totalPoints)}</span>
+                <span className="text-right tabular-nums text-sm font-semibold text-primaryNeon">{formatScore(p.bestThrow)}</span>
+                <span className="text-right tabular-nums text-sm text-foreground/80">{formatScore(p.averageRoundScore)}</span>
+                <span className="text-right tabular-nums text-sm text-foreground/80">{p.totalThrows}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <p className="text-xs text-mutedForeground">
         Same throw scope as Leaderboard (regular match + sudden death; no
         playoff throws).

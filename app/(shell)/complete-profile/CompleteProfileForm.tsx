@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import { LiquidButton } from "@/components/ui/LiquidButton";
 import { GlassCard } from "@/components/GlassCard";
 
 const inputCls =
@@ -77,9 +77,9 @@ export function CompleteProfileForm() {
           </div>
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
-        <Button type="submit" variant="primary" size="md" disabled={pending} className="w-full">
-          {pending ? "Saving…" : "Continue to app"}
-        </Button>
+        <LiquidButton type="submit" variant="brand" size="md" disabled={pending} className="w-full">
+          {pending ? "Saving…" : "Continue to app →"}
+        </LiquidButton>
       </form>
     </GlassCard>
   );

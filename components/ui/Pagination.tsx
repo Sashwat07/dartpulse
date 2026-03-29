@@ -12,19 +12,14 @@ type PaginationProps = {
   onPageChange: (page: number) => void;
 };
 
-/** Compute the page numbers to display, with -1 representing an ellipsis. */
 function getPageNumbers(current: number, total: number): (number | -1)[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-
   const pages: (number | -1)[] = [1];
-
   const left = Math.max(2, current - 1);
   const right = Math.min(total - 1, current + 1);
-
   if (left > 2) pages.push(-1);
   for (let i = left; i <= right; i++) pages.push(i);
   if (right < total - 1) pages.push(-1);
-
   pages.push(total);
   return pages;
 }
@@ -44,37 +39,29 @@ export function Pagination({
   const pages = getPageNumbers(currentPage, totalPages);
   const multiPage = totalPages > 1;
 
-  const btnBase =
-    "flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-all duration-150 focus-ring select-none";
-
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 border-t border-glassBorder/60 pt-4 mt-1">
-      {/* Showing X to Y of Z */}
+    <div className="flex flex-wrap items-center justify-between gap-4 pt-3 mt-1">
+      {/* Showing X–Y of Z */}
       <p className="text-sm text-mutedForeground">
         Showing{" "}
         <span className="font-bold text-foreground">{from}</span>
-        {" "}to{" "}
+        {" "}–{" "}
         <span className="font-bold text-foreground">{to}</span>
         {" "}of{" "}
         <span className="font-bold text-foreground">{totalItems}</span>
         {" "}{itemLabel}
       </p>
 
-      {/* Page controls — only rendered when there is more than one page */}
       {multiPage && (
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           {/* Prev */}
           <button
             type="button"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
             aria-label="Previous page"
-            className={cn(
-              btnBase,
-              "border border-glassBorder text-mutedForeground",
-              "hover:border-primaryNeon/40 hover:text-primaryNeon hover:bg-primaryNeon/8",
-              "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-glassBorder disabled:hover:text-mutedForeground disabled:hover:bg-transparent",
-            )}
+            className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-mutedForeground transition-all duration-150 focus-ring select-none hover:text-primaryNeon disabled:opacity-30 disabled:cursor-not-allowed"
+            style={{ background: "var(--glassBackground)", boxShadow: "var(--panelShadow)" }}
           >
             <ChevronLeft size={14} />
           </button>
@@ -96,11 +83,16 @@ export function Pagination({
                 aria-label={`Page ${p}`}
                 aria-current={p === currentPage ? "page" : undefined}
                 className={cn(
-                  btnBase,
+                  "flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-all duration-150 focus-ring select-none",
                   p === currentPage
-                    ? "bg-primaryNeon text-black border border-primaryNeon shadow-[0_0_12px_rgba(0,229,255,0.35)]"
-                    : "border border-glassBorder text-mutedForeground hover:border-primaryNeon/40 hover:text-primaryNeon hover:bg-primaryNeon/8",
+                    ? "bg-primaryNeon text-primaryForeground shadow-glowShadow"
+                    : "text-mutedForeground hover:text-primaryNeon",
                 )}
+                style={
+                  p !== currentPage
+                    ? { background: "var(--glassBackground)", boxShadow: "var(--panelShadow)" }
+                    : undefined
+                }
               >
                 {p}
               </button>
@@ -113,12 +105,8 @@ export function Pagination({
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
             aria-label="Next page"
-            className={cn(
-              btnBase,
-              "border border-glassBorder text-mutedForeground",
-              "hover:border-primaryNeon/40 hover:text-primaryNeon hover:bg-primaryNeon/8",
-              "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-glassBorder disabled:hover:text-mutedForeground disabled:hover:bg-transparent",
-            )}
+            className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-mutedForeground transition-all duration-150 focus-ring select-none hover:text-primaryNeon disabled:opacity-30 disabled:cursor-not-allowed"
+            style={{ background: "var(--glassBackground)", boxShadow: "var(--panelShadow)" }}
           >
             <ChevronRight size={14} />
           </button>

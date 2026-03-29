@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LiquidButton } from "@/components/ui/LiquidButton";
 import { GlassCard } from "@/components/GlassCard";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { PageHeader } from "@/components/PageHeader";
@@ -52,24 +53,20 @@ export default async function AppHomePage() {
           description="Track every throw. Own every match."
           rightSlot={
             <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
-                <Link
-                  href="/match/new"
-                  className="btn-outline-primary focus-ring"
-                >
-                  <span aria-hidden>＋</span>
-                  <span>New Match</span>
-                </Link>
+                <LiquidButton asChild variant="brand" size="sm">
+                  <Link href="/match/new">
+                    <span aria-hidden>＋</span>
+                    <span>New Match</span>
+                  </Link>
+                </LiquidButton>
               {resumeHref != null && (
-                <Link href={resumeHref} className="btn-secondary focus-ring">
-                  Resume
-                </Link>
+                <LiquidButton asChild variant="light" size="sm">
+                  <Link href={resumeHref}>Resume</Link>
+                </LiquidButton>
               )}
-              <Link
-                href="/leaderboard"
-                className="btn-secondary focus-ring"
-              >
-                Leaderboard
-              </Link>
+              <LiquidButton asChild variant="light" size="sm">
+                <Link href="/leaderboard">Leaderboard</Link>
+              </LiquidButton>
             </div>
           }
         />
@@ -129,12 +126,9 @@ export default async function AppHomePage() {
                 title="No matches in progress"
                 description="Start a new match to begin. In-progress matches appear here until completed."
                 action={
-                  <Link
-                    href="/match/new"
-                    className="btn-outline-primary focus-ring"
-                  >
-                    New Match
-                  </Link>
+                  <LiquidButton asChild variant="brand" size="sm">
+                    <Link href="/match/new">New Match</Link>
+                  </LiquidButton>
                 }
               />
             ) : (
@@ -203,38 +197,33 @@ export default async function AppHomePage() {
                   </p>
                 </GlassCard>
               ) : (
-                <GlassCard className="overflow-hidden p-0">
-                  <ul className="divide-y divide-glassBorder">
-                    {topThree.map((entry, i) => (
-                      <li key={entry.playerId}>
-                        <Link
-                          href={`/players/${entry.playerId}`}
-                          className="flex items-center justify-between gap-3 px-4 py-2.5 transition-colors hover:bg-surfaceSubtle"
+                <ul className="space-y-2">
+                  {topThree.map((entry, i) => (
+                    <li key={entry.playerId}>
+                      <Link
+                        href={`/players/${entry.playerId}`}
+                        className="group flex items-center justify-between gap-3 rounded-card px-4 py-3 transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon"
+                        style={{ background: "var(--glassBackground)", boxShadow: "var(--panelShadow)" }}
+                      >
+                        <span
+                          className={`w-5 shrink-0 text-center text-sm font-bold tabular-nums ${
+                            i === 0 ? "text-championGold" :
+                            i === 1 ? "text-rankSilver" :
+                            "text-rankBronze"
+                          }`}
                         >
-                          <span
-                            className={`w-5 shrink-0 text-center text-sm font-bold tabular-nums ${
-                              i === 0
-                                ? "text-championGold"
-                                : i === 1
-                                  ? "text-rankSilver"
-                                  : i === 2
-                                    ? "text-rankBronze"
-                                    : "text-mutedForeground"
-                            }`}
-                          >
-                            {i + 1}
-                          </span>
-                          <span className="min-w-0 flex-1 truncate font-medium text-foreground text-sm">
-                            {entry.playerName}
-                          </span>
-                          <span className="shrink-0 text-sm font-semibold tabular-nums text-mutedForeground">
-                            {entry.wins}W
-                          </span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </GlassCard>
+                          {i + 1}
+                        </span>
+                        <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground group-hover:text-primaryNeon transition-colors">
+                          {entry.playerName}
+                        </span>
+                        <span className="shrink-0 text-sm font-semibold tabular-nums text-mutedForeground">
+                          {entry.wins}W
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               )}
             </section>
 

@@ -4,13 +4,15 @@ import Link from "next/link";
 import * as React from "react";
 import { ChevronRight, Search, Trophy, Users, Calendar } from "lucide-react";
 import type { HistoryListItem } from "@/types/match";
-import { GlassCard } from "@/components/GlassCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { StaggerChild, StaggerChildren } from "@/components/motion/StaggerChildren";
 import { Pagination } from "@/components/ui/Pagination";
 import { cn } from "@/utils/cn";
 
 const PAGE_SIZE = 10;
+
+/* Grid column definition — shared between header and each row-card */
+const GRID = "grid-cols-[1fr_160px_148px_108px_64px]";
 
 type HistoryCardListProps = {
   items: HistoryListItem[];
@@ -45,7 +47,7 @@ export function HistoryCardList({ items }: HistoryCardListProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Search */}
       <div className="relative max-w-xs">
         <Search
@@ -60,44 +62,57 @@ export function HistoryCardList({ items }: HistoryCardListProps) {
             setSearchQuery(e.target.value);
             setCurrentPage(1);
           }}
-          className="w-full rounded-button border border-glassBorder bg-glassBackground py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-mutedForeground focus:border-primaryNeon/60 focus:outline-none focus:ring-2 focus:ring-primaryNeon/20"
+          className="w-full rounded-button border border-glassBorder bg-glassBackground py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-mutedForeground focus:outline-none focus:ring-2 focus:ring-primaryNeon/20"
           aria-label="Search history by match name"
         />
       </div>
 
-      <GlassCard className="overflow-hidden p-0">
-        {/* Column headers — desktop only, pinned inside the card */}
-        <div className="hidden sm:grid grid-cols-[1fr_160px_148px_108px_64px] gap-0 border-b border-glassBorder bg-surfaceMuted px-5 py-2.5">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-mutedForeground">Match</span>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-mutedForeground">Winner</span>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-mutedForeground">Date</span>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-mutedForeground">Players</span>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-mutedForeground text-right">Action</span>
-        </div>
+      {/* Column header row — desktop, sits above the card stack */}
+      <div className={cn("hidden sm:grid gap-0 px-5 pb-1", GRID)}>
+        {["Match", "Winner", "Date", "Players", "Action"].map((col, i) => (
+          <span
+            key={col}
+            className={cn(
+              "text-[10px] font-bold uppercase tracking-[0.16em] text-mutedForeground",
+              i === 4 && "text-right",
+            )}
+          >
+            {col}
+          </span>
+        ))}
+      </div>
 
-        <StaggerChildren staggerDelay={0.035}>
-          {visible.map((item, idx) => {
-            const date = item.completedAt ?? item.createdAt;
-            const dateLabel = date
-              ? new Date(date).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
-              : "—";
-            const timeLabel = date
-              ? new Date(date).toLocaleTimeString(undefined, { timeStyle: "short" })
-              : null;
-            const showWinner = item.isFullyComplete && item.championPlayerName;
-            const isLast = idx === visible.length - 1;
+      {/* Individual raised row-cards */}
+      <StaggerChildren className="space-y-2.5" staggerDelay={0.04}>
+        {visible.map((item) => {
+          const date = item.completedAt ?? item.createdAt;
+          const dateLabel = date
+            ? new Date(date).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
+            : "—";
+          const timeLabel = date
+            ? new Date(date).toLocaleTimeString(undefined, { timeStyle: "short" })
+            : null;
+          const showWinner = item.isFullyComplete && item.championPlayerName;
 
-            return (
-              <StaggerChild key={item.matchId}>
-                <Link
-                  href={`/history/${item.matchId}`}
-                  className={cn(
-                    "group block px-5 py-3.5 transition-colors hover:bg-surfaceHover",
-                    !isLast && "border-b border-glassBorder/50",
-                  )}
+          return (
+            <StaggerChild key={item.matchId}>
+              <Link href={`/history/${item.matchId}`} className="group block">
+                <div
+                  className="rounded-card px-5 py-4 transition-all duration-200 group-hover:-translate-y-0.5"
+                  style={{
+                    background: "var(--glassBackground)",
+                    boxShadow: "var(--panelShadow)",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.boxShadow =
+                      "var(--panelShadow), 0 0 0 1px color-mix(in srgb, var(--primaryNeon) 18%, transparent)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.boxShadow = "var(--panelShadow)";
+                  }}
                 >
-                  {/* Desktop: grid row aligned to header columns */}
-                  <div className="hidden sm:grid grid-cols-[1fr_160px_148px_108px_64px] items-center gap-0">
+                  {/* Desktop: aligned grid row */}
+                  <div className={cn("hidden sm:grid items-center gap-0", GRID)}>
                     {/* Match name + badges */}
                     <div className="flex flex-wrap items-center gap-2 min-w-0 pr-3">
                       <span className="text-sm font-semibold text-foreground truncate">
@@ -115,6 +130,7 @@ export function HistoryCardList({ items }: HistoryCardListProps) {
                         </span>
                       )}
                     </div>
+
                     {/* Winner */}
                     <div className="flex items-center gap-1.5 pr-3">
                       {showWinner ? (
@@ -128,6 +144,7 @@ export function HistoryCardList({ items }: HistoryCardListProps) {
                         <span className="text-xs text-mutedForeground/35">—</span>
                       )}
                     </div>
+
                     {/* Date */}
                     <div className="flex flex-col pr-3">
                       <span className="text-xs text-foreground/80 tabular-nums">{dateLabel}</span>
@@ -135,11 +152,13 @@ export function HistoryCardList({ items }: HistoryCardListProps) {
                         <span className="text-[11px] text-mutedForeground tabular-nums">{timeLabel}</span>
                       )}
                     </div>
+
                     {/* Players */}
                     <div className="flex items-center gap-1.5 pr-3">
                       <Users size={11} className="text-mutedForeground shrink-0" aria-hidden />
                       <span className="text-xs text-foreground/80">{item.playerCount} players</span>
                     </div>
+
                     {/* Action */}
                     <div className="flex justify-end">
                       <span className="flex items-center gap-0.5 text-xs font-semibold text-mutedForeground transition-colors group-hover:text-primaryNeon">
@@ -192,12 +211,12 @@ export function HistoryCardList({ items }: HistoryCardListProps) {
                       </span>
                     </div>
                   </div>
-                </Link>
-              </StaggerChild>
-            );
-          })}
-        </StaggerChildren>
-      </GlassCard>
+                </div>
+              </Link>
+            </StaggerChild>
+          );
+        })}
+      </StaggerChildren>
 
       <Pagination
         currentPage={safePage}

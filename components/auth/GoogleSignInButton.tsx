@@ -2,25 +2,30 @@
 
 import { signIn } from "next-auth/react";
 
+import { LiquidButton } from "@/components/ui/LiquidButton";
+
 type GoogleSignInButtonProps = {
   label?: string;
 };
 
 export function GoogleSignInButton({ label = "Continue with Google" }: GoogleSignInButtonProps) {
   return (
-    <button
+    <LiquidButton
       type="button"
+      variant="brand"
+      size="md"
+      className="w-full"
       onClick={() => signIn("google", { callbackUrl: "/app" })}
-      className="flex w-full items-center justify-center gap-2.5 rounded-button border border-primaryNeon/50 bg-primaryNeon/10 px-4 py-3 text-sm font-semibold text-primaryNeon shadow-[0_0_16px_rgba(0,229,255,0.15)] transition-all hover:bg-primaryNeon/18 hover:shadow-[0_0_24px_rgba(0,229,255,0.25)] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
     >
       {/* Google "G" icon */}
       <svg
-        width="18"
-        height="18"
+        width="17"
+        height="17"
         viewBox="0 0 18 18"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
+        className="shrink-0"
       >
         <path
           d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"
@@ -44,6 +49,6 @@ export function GoogleSignInButton({ label = "Continue with Google" }: GoogleSig
         />
       </svg>
       <span>{label}</span>
-    </button>
+    </LiquidButton>
   );
 }

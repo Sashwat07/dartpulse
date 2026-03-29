@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
+import { LiquidButton } from "@/components/ui/LiquidButton";
 import { Trophy } from "lucide-react";
 
 import { MatchEnergyMeter } from "@/components/analytics/MatchEnergyMeter";
@@ -72,12 +74,11 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
                 <p className="text-sm text-mutedForeground">
                   This match is not fully complete until you confirm the final result.
                 </p>
-                <Link
-                  href={`/playoffs/${matchId}`}
-                  className="btn-outline-primary focus-ring"
-                >
-                  {isOwner ? "Continue playoffs" : "View playoffs"}
-                </Link>
+                <LiquidButton asChild variant="brand" size="sm">
+                  <Link href={`/playoffs/${matchId}`}>
+                    {isOwner ? "Continue playoffs" : "View playoffs"}
+                  </Link>
+                </LiquidButton>
               </div>
             </GlassCard>
           </div>

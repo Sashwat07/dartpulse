@@ -52,35 +52,31 @@ export default async function AnalyticsPage() {
             <h2 className="section-heading">Top by wins</h2>
             {overview.topPlayersByWins.length === 0 ? (
               <GlassCard className="p-4">
-                <p className="text-sm text-mutedForeground">
-                  No completed matches yet.
-                </p>
+                <p className="text-sm text-mutedForeground">No completed matches yet.</p>
               </GlassCard>
             ) : (
-              <GlassCard className="overflow-hidden p-0">
-                <ul className="divide-y divide-glassBorder">
-                  {overview.topPlayersByWins.map((p, i) => (
-                    <li
-                      key={p.playerId}
-                      className="flex items-center justify-between gap-3 px-4 py-2.5 transition-colors hover:bg-surfaceSubtle"
+              <ul className="space-y-2">
+                {overview.topPlayersByWins.map((p, i) => (
+                  <li key={p.playerId}>
+                    <Link
+                      href={`/players/${p.playerId}`}
+                      className="group flex items-center justify-between gap-3 rounded-card px-4 py-3 transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon"
+                      style={{ background: "var(--glassBackground)", boxShadow: "var(--panelShadow)" }}
                     >
                       <span className={`w-5 shrink-0 text-center text-sm font-bold tabular-nums ${i === 0 ? "text-championGold" : i === 1 ? "text-rankSilver" : i === 2 ? "text-rankBronze" : "text-mutedForeground"}`}>
                         {i + 1}
                       </span>
-                      <Link
-                        href={`/players/${p.playerId}`}
-                        className="min-w-0 flex-1 truncate font-medium text-foreground hover:text-primaryNeon focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded -mx-2 px-2 py-1 cursor-pointer transition-colors"
-                      >
+                      <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground group-hover:text-primaryNeon transition-colors">
                         {p.playerName}
-                      </Link>
-                      <span className="shrink-0 tabular-nums font-bold text-foreground">
+                      </span>
+                      <span className="shrink-0 tabular-nums text-sm font-bold text-foreground">
                         {p.wins}
                         <span className="ml-0.5 text-xs font-medium text-mutedForeground">W</span>
                       </span>
-                    </li>
-                  ))}
-                </ul>
-              </GlassCard>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             )}
           </section>
 
@@ -89,34 +85,30 @@ export default async function AnalyticsPage() {
             <h2 className="section-heading">Top by total points</h2>
             {overview.topPlayersByTotalPoints.length === 0 ? (
               <GlassCard className="p-4">
-                <p className="text-sm text-mutedForeground">
-                  No completed matches yet.
-                </p>
+                <p className="text-sm text-mutedForeground">No completed matches yet.</p>
               </GlassCard>
             ) : (
-              <GlassCard className="overflow-hidden p-0">
-                <ul className="divide-y divide-glassBorder">
-                  {overview.topPlayersByTotalPoints.map((p, i) => (
-                    <li
-                      key={p.playerId}
-                      className="flex items-center justify-between gap-3 px-4 py-2.5 transition-colors hover:bg-surfaceSubtle"
+              <ul className="space-y-2">
+                {overview.topPlayersByTotalPoints.map((p, i) => (
+                  <li key={p.playerId}>
+                    <Link
+                      href={`/players/${p.playerId}`}
+                      className="group flex items-center justify-between gap-3 rounded-card px-4 py-3 transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon"
+                      style={{ background: "var(--glassBackground)", boxShadow: "var(--panelShadow)" }}
                     >
                       <span className={`w-5 shrink-0 text-center text-sm font-bold tabular-nums ${i === 0 ? "text-championGold" : i === 1 ? "text-rankSilver" : i === 2 ? "text-rankBronze" : "text-mutedForeground"}`}>
                         {i + 1}
                       </span>
-                      <Link
-                        href={`/players/${p.playerId}`}
-                        className="min-w-0 flex-1 truncate font-medium text-foreground hover:text-primaryNeon focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded -mx-2 px-2 py-1 cursor-pointer transition-colors"
-                      >
+                      <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground group-hover:text-primaryNeon transition-colors">
                         {p.playerName}
-                      </Link>
-                      <span className="shrink-0 tabular-nums font-bold text-foreground">
+                      </span>
+                      <span className="shrink-0 tabular-nums text-sm font-bold text-foreground">
                         {formatScore(p.totalPoints)}
                       </span>
-                    </li>
-                  ))}
-                </ul>
-              </GlassCard>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             )}
           </section>
 

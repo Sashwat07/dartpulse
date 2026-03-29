@@ -28,12 +28,13 @@ export default {
       },
       boxShadow: {
         panelShadow: "var(--panelShadow)",
+        insetShadow: "var(--insetShadow)",
         glowShadow: "var(--glowShadow)",
         glowStrong: "0 0 30px rgba(0, 229, 255, 0.35)",
       },
       borderRadius: {
-        card: "16px",
-        button: "10px",
+        card: "var(--radius-card, 20px)",
+        button: "var(--radius-button, 999px)",
       },
       maxWidth: {
         mainContent: "1440px",

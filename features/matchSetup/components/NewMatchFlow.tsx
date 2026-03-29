@@ -7,6 +7,7 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import type { ListPlayersResponse } from "@/types/dto";
 import { Button } from "@/components/ui/button";
+import { LiquidButton } from "@/components/ui/LiquidButton";
 import { GlassCard } from "@/components/GlassCard";
 import { LoadingCard } from "@/components/ui/LoadingCard";
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -384,14 +385,14 @@ export function NewMatchFlow({
               </span>
             </div>
           </div>
-          <Button
+          <LiquidButton
             type="submit"
-            variant="secondary"
+            variant="light"
             size="md"
             disabled={!canAddPlayer}
           >
             {createPlayerMutation.isPending ? "Adding…" : "Add player"}
-          </Button>
+          </LiquidButton>
         </form>
         {createPlayerMutation.isError && (
           <p className="mt-2 text-sm text-destructive">
@@ -480,15 +481,15 @@ export function NewMatchFlow({
           </div>
 
           <div className="pt-1">
-            <Button
+            <LiquidButton
               type="submit"
-              variant="primary"
+              variant="brand"
               size="lg"
               disabled={!canCreate || createMatchMutation.isPending}
               className="w-full sm:w-auto"
             >
               {createMatchMutation.isPending ? "Creating…" : "Create match"}
-            </Button>
+            </LiquidButton>
             {!canCreate && selectedOrder.length > 0 && selectedOrder.length < 2 && (
               <p className="mt-2 text-sm text-mutedForeground">
                 Select at least 2 players.

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import { LiquidButton } from "@/components/ui/LiquidButton";
 import { GlassCard } from "@/components/GlassCard";
 
 type Props = {
@@ -52,9 +52,9 @@ export function ProfileColorClient({ initialColor }: Props) {
           className="h-10 w-14 cursor-pointer rounded-button border border-glassBorder bg-glassBackground p-0.5 [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-0 [&::-webkit-color-swatch]:rounded"
         />
         <span className="text-xs text-mutedForeground tabular-nums">{avatarColor}</span>
-        <Button type="button" variant="secondary" size="sm" onClick={save} disabled={pending}>
+        <LiquidButton type="button" variant="light" size="sm" onClick={save} disabled={pending}>
           {pending ? "Saving…" : "Save color"}
-        </Button>
+        </LiquidButton>
       </div>
       {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
     </GlassCard>
