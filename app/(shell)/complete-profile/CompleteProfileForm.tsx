@@ -7,7 +7,7 @@ import { LiquidButton } from "@/components/ui/LiquidButton";
 import { GlassCard } from "@/components/GlassCard";
 
 const inputCls =
-  "w-full rounded-button border border-glassBorder bg-glassBackground px-3 py-2.5 text-sm text-foreground placeholder:text-mutedForeground transition-colors focus:border-primaryNeon/60 focus:outline-none focus:ring-2 focus:ring-primaryNeon/20";
+  "input-form w-full px-3.5 py-2.5 text-sm text-foreground placeholder:text-mutedForeground";
 
 export function CompleteProfileForm() {
   const router = useRouter();

@@ -71,11 +71,7 @@ export function ResumeCardList({ items }: ResumeCardListProps) {
 
   return (
     <div className="space-y-3">
-      <div className="relative">
-        <Search
-          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mutedForeground"
-          aria-hidden
-        />
+      <div className="relative sm:max-w-xs">
         <input
           type="search"
           placeholder="Search by match name"
@@ -84,8 +80,12 @@ export function ResumeCardList({ items }: ResumeCardListProps) {
             setSearchQuery(e.target.value);
             setVisibleCount(CHUNK_SIZE);
           }}
-          className="w-full rounded-button border border-glassBorder bg-glassBackground py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-mutedForeground focus:border-primaryNeon/60 focus:outline-none focus:ring-2 focus:ring-primaryNeon/20 sm:max-w-xs"
+          className="input-inset w-full py-2.5 pl-4 pr-10 text-sm text-foreground placeholder:text-mutedForeground"
           aria-label="Search resume by match name"
+        />
+        <Search
+          className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-mutedForeground"
+          aria-hidden
         />
       </div>
       <StaggerChildren className="space-y-2" staggerDelay={0.04}>

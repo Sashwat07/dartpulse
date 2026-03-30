@@ -1,17 +1,20 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
   Clock,
   LayoutDashboard,
+  LogOut,
   PanelLeft,
   Play,
   Target,
   Trophy,
   Users,
 } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 
 import { cn } from "@/utils/cn";
 
@@ -33,6 +36,9 @@ const navItems: NavItem[] = [
   { href: "/analytics", label: "Analytics", exact: true, icon: BarChart3 },
 ];
 
+const primaryNav = navItems.slice(0, 3);
+const secondaryNav = navItems.slice(3);
+
 function isActive(
   pathname: string,
   href: string,
@@ -47,91 +53,219 @@ function isActive(
 
 type SidebarNavProps = {
   collapsed?: boolean;
-  /** When set (desktop sidebar only), shows collapse/expand to the right of the brand (below when collapsed). */
   onDesktopSidebarToggle?: () => void;
 };
+
+function NavItem({
+  item,
+  collapsed,
+  active,
+}: {
+  item: NavItem;
+  collapsed: boolean;
+  active: boolean;
+}) {
+  const Icon = item.icon;
+  return (
+    <li>
+      <Link
+        href={item.href}
+        title={collapsed ? item.label : undefined}
+        className={cn(
+          "sidebar-nav-item group",
+          collapsed ? "justify-center px-1 py-3" : "gap-3.5 px-3.5 py-3",
+          active ? "sidebar-nav-item-active" : "sidebar-nav-item-inactive"
+        )}
+        aria-current={active ? "page" : undefined}
+      >
+        <Icon
+          size={19}
+          className={cn(
+            "shrink-0 transition-colors duration-150",
+            active ? "text-primaryNeon" : "text-mutedForeground group-hover:text-foreground"
+          )}
+          aria-hidden
+        />
+        {!collapsed && (
+          <span
+            className={cn(
+              "text-[14.5px] font-medium leading-none transition-colors duration-150",
+              active ? "text-primaryNeon" : "text-mutedForeground group-hover:text-foreground"
+            )}
+          >
+            {item.label}
+          </span>
+        )}
+      </Link>
+    </li>
+  );
+}
 
 export function SidebarNav({ collapsed = false, onDesktopSidebarToggle }: SidebarNavProps) {
   const pathname = usePathname();
   const showDesktopToggle = Boolean(onDesktopSidebarToggle);
+  const { data: session, status } = useSession();
+
+  const userInitial =
+    session?.user?.name?.slice(0, 1) ??
+    session?.user?.email?.slice(0, 1) ??
+    "?";
+  const userName = session?.user?.name ?? session?.user?.email ?? "";
+  const userEmail = session?.user?.email ?? "";
 
   return (
-    <nav aria-label="Primary" className="flex h-full flex-col p-3 pt-4">
-      {/* Brand + desktop collapse */}
-      <div
-        className={cn(
-          "mb-4 flex px-1",
-          showDesktopToggle && collapsed && "flex-col items-center gap-2",
-          showDesktopToggle && !collapsed && "items-center gap-1.5",
-          !showDesktopToggle && "items-center gap-2.5"
-        )}
-      >
-        <Link
-          href="/app"
-          title="DartPulse — Home"
-          className={cn(
-            "flex items-center rounded-lg text-foreground outline-none transition-colors",
-            "hover:text-primaryNeon focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-            showDesktopToggle && !collapsed && "min-w-0 flex-1 gap-2.5",
-            showDesktopToggle && collapsed && "justify-center",
-            !showDesktopToggle && "gap-2.5"
-          )}
-        >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primaryNeon/15 border border-primaryNeon/30">
-            <Target size={16} className="text-primaryNeon" aria-hidden />
-          </span>
-          {!collapsed && (
-            <span className="font-display text-base font-bold tracking-wide whitespace-nowrap">
-              DartPulse
-            </span>
-          )}
-        </Link>
-        {onDesktopSidebarToggle ? (
+    <nav aria-label="Primary" className="flex h-full flex-col px-4 py-3">
+
+      {/* ── Collapsed: expand button only (desktop) ───────────────────── */}
+      {onDesktopSidebarToggle && collapsed && (
+        <div className="mb-3 flex justify-center">
           <button
             type="button"
             onClick={onDesktopSidebarToggle}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-button border border-glassBorder text-mutedForeground hover:border-primaryNeon/40 hover:bg-surfaceSubtle hover:text-primaryNeon focus-ring transition-colors"
+            aria-label="Expand sidebar"
+            className="sidebar-collapse-btn focus-ring flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-mutedForeground hover:text-primaryNeon"
           >
-            <PanelLeft size={16} />
+            <PanelLeft size={14} />
           </button>
-        ) : null}
+        </div>
+      )}
+
+      {/* ── Menu: label + collapse on one row (expanded desktop); label only (drawer) ── */}
+      {!collapsed && (
+        <>
+          {showDesktopToggle ? (
+            <div className="mb-2 flex min-h-7 items-center justify-between gap-2 px-3.5">
+              <p className="sidebar-section-label mb-0 min-w-0 shrink">Menu</p>
+              <button
+                type="button"
+                onClick={onDesktopSidebarToggle}
+                aria-label="Collapse sidebar"
+                className={cn(
+                  "sidebar-collapse-btn focus-ring flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-mutedForeground hover:text-primaryNeon",
+                  "transition-opacity duration-200",
+                  "opacity-0 pointer-events-none",
+                  "group-hover:opacity-100 group-hover:pointer-events-auto",
+                  "focus-visible:opacity-100 focus-visible:pointer-events-auto",
+                )}
+              >
+                <PanelLeft size={14} />
+              </button>
+            </div>
+          ) : (
+            <p className="sidebar-section-label mb-2 px-3.5">Menu</p>
+          )}
+        </>
+      )}
+
+      {/* ── Menu: Home, New Match, Resume ─────────────────────────────── */}
+      <div>
+        <ul className="flex flex-col gap-0.5">
+          {primaryNav.map((item) => (
+            <NavItem
+              key={item.href}
+              item={item}
+              collapsed={collapsed}
+              active={isActive(pathname, item.href, item.exact, item.pathPrefix)}
+            />
+          ))}
+        </ul>
       </div>
 
-      {/* Nav items */}
-      <ul className="flex flex-col gap-0.5">
-        {navItems.map((item) => {
-          const active = isActive(pathname, item.href, item.exact, item.pathPrefix);
-          const Icon = item.icon;
-          return (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                title={collapsed ? item.label : undefined}
-                className={cn(
-                  "flex items-center rounded-button py-2 text-sm font-medium transition-all duration-150",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                  collapsed ? "justify-center px-0" : "gap-3 px-3",
-                  active
-                    ? "bg-primaryNeon/10 text-primaryNeon ring-1 ring-inset ring-primaryNeon/25"
-                    : "text-mutedForeground hover:bg-surfaceHover hover:text-foreground"
+      {/* Group divider */}
+      <div
+        className={cn("sidebar-group-divider my-4", collapsed ? "mx-auto w-6" : "mx-1")}
+        aria-hidden
+      />
+
+      {/* ── Explore: Leaderboard, Players, History, Analytics ─────────── */}
+      <div>
+        {!collapsed && (
+          <p className="sidebar-section-label mb-2 px-3.5">Explore</p>
+        )}
+        <ul className="flex flex-col gap-0.5">
+          {secondaryNav.map((item) => (
+            <NavItem
+              key={item.href}
+              item={item}
+              collapsed={collapsed}
+              active={isActive(pathname, item.href, item.exact, item.pathPrefix)}
+            />
+          ))}
+        </ul>
+      </div>
+
+      {/* ── User profile card (pinned to bottom) ───────────────────────── */}
+      <div className="mt-auto pt-4">
+        <div className={cn("sidebar-divider mb-3", collapsed ? "mx-auto w-8" : "mx-1")} aria-hidden />
+
+        {status === "authenticated" && session?.user ? (
+          <div
+            className={cn(
+              "sidebar-user-card group flex items-center rounded-xl border border-transparent px-2 py-2.5 transition-all duration-180",
+              collapsed ? "justify-center" : "gap-3"
+            )}
+          >
+            {/* Avatar */}
+            {session.user.image ? (
+              <Image
+                src={session.user.image}
+                alt=""
+                width={34}
+                height={34}
+                className="rounded-full ring-1 ring-primaryNeon/25 shrink-0"
+              />
+            ) : (
+              <span className="sidebar-user-avatar flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full text-[13px] font-black">
+                {userInitial.toUpperCase()}
+              </span>
+            )}
+
+            {/* Name + email */}
+            {!collapsed && (
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[13px] font-semibold text-foreground leading-tight">
+                  {userName}
+                </p>
+                {userEmail && (
+                  <p className="truncate text-[11px] text-mutedForeground leading-tight mt-0.5">
+                    {userEmail}
+                  </p>
                 )}
-                aria-current={active ? "page" : undefined}
+              </div>
+            )}
+
+            {/* Sign out button */}
+            {!collapsed && (
+              <button
+                type="button"
+                onClick={() => signOut({ callbackUrl: "/" })}
+                aria-label="Sign out"
+                title="Sign out"
+                className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-mutedForeground opacity-0 transition-all duration-150 hover:bg-red-500/10 hover:text-red-400 group-hover:opacity-100 focus-ring"
               >
-                <Icon
-                  size={16}
-                  className={cn(
-                    "shrink-0 transition-colors",
-                    active ? "text-primaryNeon" : "text-mutedForeground"
-                  )}
-                  aria-hidden
-                />
-                {!collapsed && item.label}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+                <LogOut size={13} />
+              </button>
+            )}
+          </div>
+        ) : status === "unauthenticated" ? (
+          <Link
+            href="/login"
+            className={cn(
+              "sidebar-nav-item sidebar-nav-item-inactive gap-3.5 px-3.5 py-3",
+              collapsed && "justify-center px-1"
+            )}
+          >
+            <span className="sidebar-user-avatar flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-mutedForeground" aria-hidden>
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+              </svg>
+            </span>
+            {!collapsed && (
+              <span className="text-[14.5px] font-medium text-mutedForeground">Sign in</span>
+            )}
+          </Link>
+        ) : null}
+      </div>
     </nav>
   );
 }

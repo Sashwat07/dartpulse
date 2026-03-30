@@ -130,7 +130,7 @@ export const LiquidButton = React.forwardRef<HTMLButtonElement, LiquidButtonProp
             aria-hidden
             className={cn(
               "absolute inset-0 z-[1] rounded-[inherit]",
-              "shadow-[0_0_6px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3px_rgba(0,0,0,0.9),inset_-3px_-3px_0.5px_-3px_rgba(0,0,0,0.85),inset_1px_1px_1px_-0.5px_rgba(0,0,0,0.6),inset_-1px_-1px_1px_-0.5px_rgba(0,0,0,0.6),inset_0_0_6px_6px_rgba(0,0,0,0.12),inset_0_0_2px_2px_rgba(0,0,0,0.06),0_0_12px_rgba(255,255,255,0.15)]",
+              "shadow-[0_0_6px_rgba(0,0,0,0.03),0_2px_8px_rgba(163,177,198,0.5),inset_3px_3px_0.5px_-3px_rgba(255,255,255,0.95),inset_-3px_-3px_0.5px_-3px_rgba(184,200,218,0.70),inset_1px_1px_1px_-0.5px_rgba(255,255,255,0.85),inset_-1px_-1px_1px_-0.5px_rgba(163,177,198,0.45),inset_0_0_6px_6px_rgba(255,255,255,0.35),inset_0_0_2px_2px_rgba(255,255,255,0.20)]",
               "dark:shadow-[0_0_8px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3.5px_rgba(255,255,255,0.14),inset_-3px_-3px_0.5px_-3.5px_rgba(255,255,255,0.9),inset_1px_1px_1px_-0.5px_rgba(255,255,255,0.65),inset_-1px_-1px_1px_-0.5px_rgba(255,255,255,0.65),inset_0_0_6px_6px_rgba(255,255,255,0.10),inset_0_0_2px_2px_rgba(255,255,255,0.06),0_0_16px_rgba(0,229,255,0.12)]",
             )}
           />

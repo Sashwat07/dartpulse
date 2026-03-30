@@ -30,27 +30,34 @@
   --rankSilver: #5f6872;
   --rankBronze: #8c5e28;
 
-  /* Premium frosted glass: readable on gradient; blur still visible; clearer border. */
-  --glassBackground: rgba(255, 255, 255, 0.86);
-  --glassBorder: rgba(0, 0, 0, 0.14);
+  /* Crisp white card surface — stands clearly above the blue-gray background */
+  --glassBackground: rgba(255, 255, 255, 0.96);
+  --glassBorder: rgba(0, 0, 0, 0.09);
 
-  --surface1: rgba(255, 255, 255, 0.95);
-  --surface2: rgba(248, 250, 254, 0.92);
+  --surface1: rgba(255, 255, 255, 1);
+  --surface2: rgba(248, 250, 254, 0.96);
 
-  /* Stronger surface hierarchy so cards/hovers read clearly against page. */
-  --surfaceSubtle: rgba(0, 0, 0, 0.06);
-  --surfaceHover: rgba(0, 0, 0, 0.10);
-  --surfaceMuted: rgba(0, 0, 0, 0.05);
+  --surfaceSubtle: rgba(0, 0, 0, 0.05);
+  --surfaceHover: rgba(0, 0, 0, 0.08);
+  --surfaceMuted: rgba(0, 0, 0, 0.04);
 
   --overlay: rgba(15, 23, 42, 0.5);
 
-  /* Stronger elevation: clear edge + deeper shadow = premium layered glass. */
+  /* True neumorphic dual-shadow: dark drop bottom-right (bg-derived) + white lift top-left */
   --panelShadow:
-    0 0 0 1px rgba(0, 0, 0, 0.10),
-    0 2px 6px rgba(0, 0, 0, 0.06),
-    0 12px 40px rgba(0, 0, 0, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85);
-  --glowShadow: 0 0 24px rgba(0, 106, 130, 0.35);
+    8px 8px 20px rgba(184, 200, 218, 0.70),
+    -5px -5px 14px rgba(255, 255, 255, 0.90),
+    0 0 0 1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+
+  /* Inset / pressed shadow for active secondary buttons */
+  --insetShadow:
+    inset 4px 4px 10px rgba(184, 200, 218, 0.65),
+    inset -2px -2px 8px rgba(255, 255, 255, 0.92);
+
+  --glowShadow: 0 0 20px rgba(0, 106, 130, 0.30), 0 4px 12px rgba(0, 106, 130, 0.15);
+
+  --topBarShadow: 0 2px 12px rgba(184, 200, 218, 0.50), 0 1px 0 rgba(255, 255, 255, 0.80) inset;
 
   --destructive: #dc2626;
   --focusRing: var(--primaryNeon);
@@ -58,9 +65,9 @@
   --inputBorderHover: rgba(0, 0, 0, 0.22);
   --inputInsetHighlight: rgba(0, 0, 0, 0.03);
 
-  /* Sidebar: distinct from content; teal text keeps contrast. */
-  --sidebarBg: rgba(220, 230, 248, 0.92);
-  --sidebarBorder: rgba(0, 0, 0, 0.12);
+  /* Sidebar: slightly richer blue so it reads as a distinct raised panel */
+  --sidebarBg: rgba(210, 222, 244, 0.97);
+  --sidebarBorder: rgba(0, 0, 0, 0.10);
 
   --radius-button: 10px;
   --radius-card: 16px;
@@ -70,7 +77,7 @@
    Dark mode (when .dark is set on html by next-themes)
    ========================================================================== */
 .dark {
-  --background: #080c15;
+  --background: #111520;
   --foreground: #e6e9f2;
   --mutedForeground: rgba(230, 233, 242, 0.5);
 
@@ -78,19 +85,30 @@
   --championGold: #ffd700;
   --primaryForeground: #000000;
 
-  --glassBackground: rgba(255, 255, 255, 0.04);
-  --glassBorder: rgba(255, 255, 255, 0.09);
+  /* More opaque surface so cards read as a raised layer above the background */
+  --glassBackground: rgba(255, 255, 255, 0.075);
+  --glassBorder: rgba(255, 255, 255, 0.08);
 
-  --surface1: rgba(255, 255, 255, 0.06);
-  --surface2: rgba(255, 255, 255, 0.04);
+  --surface1: rgba(255, 255, 255, 0.08);
+  --surface2: rgba(255, 255, 255, 0.055);
 
-  --surfaceSubtle: rgba(255, 255, 255, 0.04);
-  --surfaceHover: rgba(255, 255, 255, 0.065);
-  --surfaceMuted: rgba(255, 255, 255, 0.025);
+  --surfaceSubtle: rgba(255, 255, 255, 0.055);
+  --surfaceHover: rgba(255, 255, 255, 0.09);
+  --surfaceMuted: rgba(255, 255, 255, 0.03);
 
   --overlay: rgba(0, 0, 0, 0.65);
-  --panelShadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  /* Strong neumorphic dual-shadow: deep dark drop bottom-right + visible light lift top-left */
+  --panelShadow:
+    10px 10px 28px rgba(0, 0, 0, 0.85),
+    -5px -5px 14px rgba(255, 255, 255, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
   --glowShadow: 0 0 20px rgba(0, 229, 255, 0.45);
+
+  --topBarShadow: 0 4px 16px rgba(0, 0, 0, 0.55);
+
+  --insetShadow:
+    inset 4px 4px 10px rgba(0, 0, 0, 0.55),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.05);
 
   --destructive: #ef4444;
   --inputBorderHover: rgba(255, 255, 255, 0.2);
@@ -303,15 +321,49 @@ html:not(.dark) body {
   background-image: var(--backgroundGradientLight);
 }
 .dark .app-shell-bg {
-  background-image: radial-gradient(ellipse at top left, #0d1525 0%, #080c15 55%, #060a12 100%);
+  background-image: radial-gradient(ellipse at top left, #181d2e 0%, #111520 55%, #0d1020 100%);
 }
 
 /* Inputs: tinted off-white background so they read as editable fields
    against the pure white card surface. bg-glassBackground on inputs
-   blends into the card — this overrides that for text inputs only. */
-html:not(.dark) input:not([type="color"]):not([type="checkbox"]):not([type="radio"]),
-html:not(.dark) textarea {
+   blends into the card — this overrides that for text inputs only.
+   .input-inset and .input-form have their own !important overrides. */
+html:not(.dark) input:not([type="color"]):not([type="checkbox"]):not([type="radio"]):not(.input-inset):not(.input-form),
+html:not(.dark) textarea:not(.input-form) {
   background-color: rgba(238, 243, 252, 0.9) !important;
+}
+
+/* Neumorphic form input — inset depth, rounded-button radius (for text/number fields) */
+.input-form {
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-button, 10px);
+  box-shadow:
+    inset 3px 3px 8px rgba(0, 0, 0, 0.50),
+    inset -1px -1px 4px rgba(255, 255, 255, 0.04);
+  outline: none;
+  transition: box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.input-form:focus {
+  border-color: rgba(0, 229, 255, 0.22);
+  box-shadow:
+    inset 3px 3px 8px rgba(0, 0, 0, 0.50),
+    inset -1px -1px 4px rgba(255, 255, 255, 0.04),
+    0 0 0 2px rgba(0, 229, 255, 0.14);
+}
+html:not(.dark) .input-form {
+  background: rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.10);
+  box-shadow:
+    inset 3px 3px 8px rgba(0, 0, 0, 0.09),
+    inset -1px -1px 4px rgba(255, 255, 255, 0.70);
+}
+html:not(.dark) .input-form:focus {
+  border-color: rgba(0, 106, 130, 0.22);
+  box-shadow:
+    inset 3px 3px 8px rgba(0, 0, 0, 0.09),
+    inset -1px -1px 4px rgba(255, 255, 255, 0.70),
+    0 0 0 2px rgba(0, 106, 130, 0.14);
 }
 
 /* Checkboxes and toggles — keep native styling, accent with brand color */
@@ -323,4 +375,217 @@ html:not(.dark) input[type="radio"] {
 /* Table surfaces: thead distinct from tbody so headers don’t blend (light mode only) */
 html:not(.dark) thead th {
   background-color: var(--surfaceMuted);
+}
+
+/* Neumorphic inset search input — pressed/sunken pill */
+.input-inset {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  box-shadow:
+    inset 4px 4px 10px rgba(0, 0, 0, 0.60),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
+  outline: none;
+  transition: box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.input-inset:focus {
+  border-color: rgba(0, 229, 255, 0.22);
+  box-shadow:
+    inset 4px 4px 10px rgba(0, 0, 0, 0.60),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.04),
+    0 0 0 2px rgba(0, 229, 255, 0.14);
+}
+html:not(.dark) .input-inset {
+  background: rgba(0, 0, 0, 0.07) !important;
+  border-color: rgba(0, 0, 0, 0.09);
+  box-shadow:
+    inset 4px 4px 10px rgba(0, 0, 0, 0.10),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.72);
+}
+html:not(.dark) .input-inset:focus {
+  border-color: rgba(0, 106, 130, 0.22);
+  box-shadow:
+    inset 4px 4px 10px rgba(0, 0, 0, 0.10),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.72),
+    0 0 0 2px rgba(0, 106, 130, 0.14);
+}
+
+/* ==========================================================================
+   Sidebar — sculpted neumorphic nav system
+   ========================================================================== */
+
+/* Shell: casts a depth shadow rightward so it reads as a raised panel */
+.sidebar-shell {
+  box-shadow:
+    4px 0 24px rgba(0, 0, 0, 0.50),
+    inset -1px 0 0 rgba(255, 255, 255, 0.04);
+}
+html:not(.dark) .sidebar-shell {
+  box-shadow:
+    4px 0 18px rgba(0, 0, 0, 0.09),
+    inset -1px 0 0 rgba(255, 255, 255, 0.65);
+}
+
+/* Brand logo icon — raised neumorphic container */
+.sidebar-logo-icon {
+  background: rgba(0, 229, 255, 0.10);
+  border: 1px solid rgba(0, 229, 255, 0.24);
+  box-shadow:
+    4px 4px 10px rgba(0, 0, 0, 0.55),
+    -2px -2px 6px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 10px rgba(0, 229, 255, 0.12);
+}
+html:not(.dark) .sidebar-logo-icon {
+  background: rgba(0, 106, 130, 0.10);
+  border: 1px solid rgba(0, 106, 130, 0.22);
+  box-shadow:
+    4px 4px 10px rgba(0, 0, 0, 0.13),
+    -2px -2px 6px rgba(255, 255, 255, 0.72),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 0 8px rgba(0, 106, 130, 0.10);
+}
+
+/* Collapse toggle button */
+.sidebar-collapse-btn {
+  background: var(--surfaceSubtle);
+  border: 1px solid var(--glassBorder);
+  box-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0.45),
+    -1px -1px 4px rgba(255, 255, 255, 0.04);
+  transition: all 0.18s ease;
+}
+.sidebar-collapse-btn:hover {
+  background: var(--surfaceHover);
+  border-color: rgba(0, 229, 255, 0.28);
+  box-shadow:
+    3px 3px 8px rgba(0, 0, 0, 0.55),
+    -1px -1px 5px rgba(255, 255, 255, 0.05),
+    0 0 8px rgba(0, 229, 255, 0.12);
+}
+html:not(.dark) .sidebar-collapse-btn {
+  box-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0.12),
+    -1px -1px 4px rgba(255, 255, 255, 0.72);
+}
+html:not(.dark) .sidebar-collapse-btn:hover {
+  box-shadow:
+    3px 3px 8px rgba(0, 0, 0, 0.15),
+    -1px -1px 5px rgba(255, 255, 255, 0.82);
+}
+
+/* Section dividers */
+.sidebar-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--glassBorder) 25%,
+    var(--glassBorder) 75%,
+    transparent
+  );
+}
+.sidebar-group-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--glassBorder) 20%,
+    var(--glassBorder) 80%,
+    transparent
+  );
+}
+
+/* Section label (inspired by "MENU" in reference) */
+.sidebar-section-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mutedForeground);
+  opacity: 0.6;
+}
+
+/* Nav item — base */
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  transition: background 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  outline: none;
+  position: relative;
+  width: 100%;
+  text-decoration: none;
+}
+.sidebar-nav-item:focus-visible {
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--primaryNeon);
+}
+
+/* Active — neumorphic RAISED floating card (like reference: elevated, not pressed) */
+.sidebar-nav-item-active {
+  background: rgba(255, 255, 255, 0.075);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow:
+    6px 6px 18px rgba(0, 0, 0, 0.65),
+    -2px -2px 8px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 0 16px rgba(0, 229, 255, 0.07);
+}
+html:not(.dark) .sidebar-nav-item-active {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(0, 0, 0, 0.06);
+  box-shadow:
+    4px 4px 14px rgba(0, 0, 0, 0.12),
+    -2px -2px 8px rgba(255, 255, 255, 0.82),
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 0 12px rgba(0, 106, 130, 0.06);
+}
+
+/* User profile card at sidebar bottom */
+.sidebar-user-card {
+  cursor: default;
+}
+.sidebar-user-card:hover {
+  background: var(--surfaceSubtle);
+  border-color: var(--glassBorder);
+  box-shadow:
+    2px 2px 8px rgba(0, 0, 0, 0.35),
+    -1px -1px 4px rgba(255, 255, 255, 0.04);
+}
+html:not(.dark) .sidebar-user-card:hover {
+  box-shadow:
+    2px 2px 8px rgba(0, 0, 0, 0.08),
+    -1px -1px 4px rgba(255, 255, 255, 0.72);
+}
+
+/* User avatar — neumorphic pill with neon tint */
+.sidebar-user-avatar {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.22), rgba(0, 229, 255, 0.08));
+  border: 1px solid rgba(0, 229, 255, 0.28);
+  color: var(--primaryNeon);
+  box-shadow:
+    3px 3px 8px rgba(0, 0, 0, 0.50),
+    -1px -1px 4px rgba(255, 255, 255, 0.05);
+}
+html:not(.dark) .sidebar-user-avatar {
+  background: linear-gradient(135deg, rgba(0, 106, 130, 0.18), rgba(0, 106, 130, 0.07));
+  border: 1px solid rgba(0, 106, 130, 0.26);
+  box-shadow:
+    3px 3px 8px rgba(0, 0, 0, 0.12),
+    -1px -1px 4px rgba(255, 255, 255, 0.74);
+}
+
+/* Inactive hover — gentle raise */
+.sidebar-nav-item-inactive:hover {
+  background: var(--surfaceSubtle);
+  border-color: var(--glassBorder);
+  box-shadow:
+    2px 2px 8px rgba(0, 0, 0, 0.35),
+    -1px -1px 4px rgba(255, 255, 255, 0.04);
+}
+html:not(.dark) .sidebar-nav-item-inactive:hover {
+  box-shadow:
+    2px 2px 8px rgba(0, 0, 0, 0.08),
+    -1px -1px 4px rgba(255, 255, 255, 0.72);
 }

@@ -3,6 +3,7 @@
 import { selectActiveMatch, selectCurrentPlayer, selectMatchPlayers, selectThrowEvents } from "@/store/selectors";
 import { useMatchStore } from "@/store/useMatchStore";
 import { GlassCard } from "@/components/GlassCard";
+import { Button } from "@/components/ui/button";
 import { DartScoreInput } from "@/components/DartScoreInput";
 import { LastThrowIndicator } from "@/components/DartScoreInput/LastThrowIndicator";
 
@@ -130,14 +131,15 @@ export function CurrentPlayerPanel() {
         disabled={Boolean(matchComplete) || !sessionWriteEnabled}
       />
 
-      <button
-        type="button"
+      <Button
+        variant="secondary"
+        size="sm"
         onClick={() => undoLastThrow()}
         disabled={!canUndo}
-        className="mt-2 w-full rounded-button border border-glassBorder bg-glassBackground px-3 py-1.5 text-xs font-medium text-mutedForeground hover:border-primaryNeon/30 hover:bg-surfaceSubtle hover:text-foreground transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="mt-2 w-full"
       >
         Undo last throw
-      </button>
+      </Button>
     </GlassCard>
   );
 }

@@ -3,14 +3,15 @@ import Link from "next/link";
 import { LiquidButton } from "@/components/ui/LiquidButton";
 import { GlassCard } from "@/components/GlassCard";
 import { PageTransition } from "@/components/motion/PageTransition";
-import { PageHeader } from "@/components/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ResumeCardList } from "@/components/resume/ResumeCardList";
 import { HistoryCardList } from "@/components/history/HistoryCardList";
 import { getAnalyticsOverview } from "@/lib/analytics";
 import { getGlobalLeaderboardStandings } from "@/lib/leaderboard/globalStandings";
+import { getChampionsByMatchIds } from "@/lib/matchHistory";
 import {
   getLinkedPlayerByUserId,
+  listPlayers,
   listVisibleCompletedMatches,
   listVisibleResumableMatches,
 } from "@/lib/repositories";
@@ -22,18 +23,29 @@ export default async function AppHomePage() {
   const linked = await getLinkedPlayerByUserId(user.id);
   const linkedPlayerId = linked?.playerId ?? null;
 
-  const [resumable, completed, overview, leaderboard] = await Promise.all([
+  const [resumable, completed, overview, leaderboard, players] = await Promise.all([
     listVisibleResumableMatches(user.id, linkedPlayerId),
     listVisibleCompletedMatches(user.id, linkedPlayerId),
     getAnalyticsOverview(),
     getGlobalLeaderboardStandings(),
+    listPlayers(),
   ]);
 
-  const recentCompleted = completed.slice(0, 5).map((m) => ({
-    ...m,
-    displayStatus: "complete" as const,
-    isFullyComplete: true,
-  }));
+  const recentCompletedRaw = completed.slice(0, 5);
+  const championsByMatchId = await getChampionsByMatchIds(
+    recentCompletedRaw.map((m) => m.matchId),
+  );
+  const playerNames = new Map(players.map((p) => [p.playerId, p.name]));
+  const recentCompleted = recentCompletedRaw.map((m) => {
+    const championId = championsByMatchId.get(m.matchId) ?? null;
+    return {
+      ...m,
+      displayStatus: "complete" as const,
+      isFullyComplete: true,
+      championPlayerId: championId ?? undefined,
+      championPlayerName: championId ? playerNames.get(championId) : undefined,
+    };
+  });
   const resumePreview = resumable.slice(0, 3);
   const resumeHref =
     resumable.length > 1
@@ -48,30 +60,24 @@ export default async function AppHomePage() {
 
   return (
     <PageTransition>
-        <PageHeader
-          title="DartPulse"
-          description="Track every throw. Own every match."
-          rightSlot={
-            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
-                <LiquidButton asChild variant="brand" size="sm">
-                  <Link href="/match/new">
-                    <span aria-hidden>＋</span>
-                    <span>New Match</span>
-                  </Link>
-                </LiquidButton>
-              {resumeHref != null && (
-                <LiquidButton asChild variant="light" size="sm">
-                  <Link href={resumeHref}>Resume</Link>
-                </LiquidButton>
-              )}
-              <LiquidButton asChild variant="light" size="sm">
-                <Link href="/leaderboard">Leaderboard</Link>
-              </LiquidButton>
-            </div>
-          }
-        />
+        {/* Mobile-only quick actions (desktop uses TopBar) */}
+        <div className="flex flex-wrap items-center gap-2 lg:hidden mb-4">
+          <LiquidButton asChild variant="brand" size="sm">
+            <Link href="/match/new">
+              <span aria-hidden>＋</span>New Match
+            </Link>
+          </LiquidButton>
+          {resumeHref != null && (
+            <LiquidButton asChild variant="light" size="sm">
+              <Link href={resumeHref}>Resume</Link>
+            </LiquidButton>
+          )}
+          <LiquidButton asChild variant="light" size="sm">
+            <Link href="/leaderboard">Leaderboard</Link>
+          </LiquidButton>
+        </div>
 
-        <div className="mt-4 min-w-0 space-y-5">
+        <div className="min-w-0 space-y-5">
           {/* Overview stat cards */}
           <section className="space-y-2">
             <h2 className="section-heading">Overview</h2>

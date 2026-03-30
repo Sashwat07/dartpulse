@@ -59,10 +59,10 @@ type NewMatchFlowProps = {
 };
 
 const inputCls =
-  "w-full rounded-button border border-glassBorder bg-glassBackground px-3 py-2.5 text-sm text-foreground placeholder:text-mutedForeground transition-colors focus:border-primaryNeon/60 focus:outline-none focus:ring-2 focus:ring-primaryNeon/20";
+  "input-form w-full px-3.5 py-2.5 text-sm text-foreground placeholder:text-mutedForeground";
 
 const inputNarrowCls =
-  "rounded-button border border-glassBorder bg-glassBackground px-3 py-2.5 text-sm text-foreground tabular-nums transition-colors focus:border-primaryNeon/60 focus:outline-none focus:ring-2 focus:ring-primaryNeon/20 w-24";
+  "input-form px-3.5 py-2.5 text-sm text-foreground tabular-nums w-24";
 
 export function NewMatchFlow({
   defaultMatchName,
@@ -196,22 +196,25 @@ export function NewMatchFlow({
     <div className="mt-4 space-y-3">
       {/* Player selection */}
       <GlassCard className="p-4">
-        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-3">
+        <h3 className="section-heading mb-3">
           Select players <span className="text-mutedForeground/60 normal-case">(order = turn order)</span>
         </h3>
         <div className="mb-3">
           <label htmlFor="player-search" className="sr-only">
             Search players
           </label>
-          <input
-            id="player-search"
-            type="search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search to add players…"
-            className={inputCls}
-            aria-describedby="player-search-hint"
-          />
+          <div className="relative">
+            <input
+              id="player-search"
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search to add players…"
+              className="input-inset w-full py-2.5 pl-4 pr-10 text-sm text-foreground placeholder:text-mutedForeground"
+              aria-describedby="player-search-hint"
+            />
+            <svg className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-mutedForeground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </div>
           <p id="player-search-hint" className="mt-1.5 text-xs text-mutedForeground">
             {searchTrimmed.length === 0
               ? "Recent players from your last match are below. Search to find more."
@@ -249,7 +252,7 @@ export function NewMatchFlow({
                         )}
                         <span>{p.name}</span>
                         {isYou(p.playerId) && (
-                          <span className="text-[9px] font-bold uppercase tracking-wider text-primaryNeon border border-primaryNeon/35 rounded px-1.5 py-px shrink-0">
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-primaryNeon border border-primaryNeon/35 rounded-full px-2 py-0.5 shrink-0">
                             You
                           </span>
                         )}
@@ -350,7 +353,7 @@ export function NewMatchFlow({
 
       {/* Add player */}
       <GlassCard className="p-4">
-        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-3">
+        <h3 className="section-heading mb-3">
           Add new player
         </h3>
         <form onSubmit={handleAddPlayer} className="flex flex-wrap gap-3 items-end">
@@ -405,7 +408,7 @@ export function NewMatchFlow({
 
       {/* Match settings */}
       <GlassCard className="p-4">
-        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground mb-3">
+        <h3 className="section-heading mb-3">
           Match settings
         </h3>
         <form onSubmit={handleCreateMatch} className="space-y-3">

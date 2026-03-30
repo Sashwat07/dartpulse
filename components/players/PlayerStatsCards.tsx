@@ -40,12 +40,8 @@ export function PlayerStatsCards({ stats }: PlayerStatsCardsProps) {
           key={label}
           className="flex min-h-[72px] flex-col justify-between p-3"
         >
-          <p className="text-xs font-medium uppercase tracking-wider text-mutedForeground">
-            {label}
-          </p>
-          <p className="mt-1.5 text-xl font-bold tabular-nums text-foreground">
-            {value}
-          </p>
+          <p className="stat-label">{label}</p>
+          <p className="stat-value mt-1.5 text-foreground">{value}</p>
         </GlassCard>
       ))}
     </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import * as React from "react";
 import { ChevronRight, Search, Trophy, Users, Calendar } from "lucide-react";
 import type { HistoryListItem } from "@/types/match";
+import { GlassCard } from "@/components/GlassCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { StaggerChild, StaggerChildren } from "@/components/motion/StaggerChildren";
 import { Pagination } from "@/components/ui/Pagination";
@@ -50,10 +51,6 @@ export function HistoryCardList({ items }: HistoryCardListProps) {
     <div className="space-y-3">
       {/* Search */}
       <div className="relative max-w-xs">
-        <Search
-          className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-mutedForeground"
-          aria-hidden
-        />
         <input
           type="search"
           placeholder="Search by match name"
@@ -62,8 +59,12 @@ export function HistoryCardList({ items }: HistoryCardListProps) {
             setSearchQuery(e.target.value);
             setCurrentPage(1);
           }}
-          className="w-full rounded-button border border-glassBorder bg-glassBackground py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-mutedForeground focus:outline-none focus:ring-2 focus:ring-primaryNeon/20"
+          className="input-inset w-full py-2.5 pl-4 pr-10 text-sm text-foreground placeholder:text-mutedForeground"
           aria-label="Search history by match name"
+        />
+        <Search
+          className="pointer-events-none absolute right-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-mutedForeground"
+          aria-hidden
         />
       </div>
 
@@ -97,18 +98,14 @@ export function HistoryCardList({ items }: HistoryCardListProps) {
           return (
             <StaggerChild key={item.matchId}>
               <Link href={`/history/${item.matchId}`} className="group block">
-                <div
-                  className="rounded-card px-5 py-4 transition-all duration-200 group-hover:-translate-y-0.5"
-                  style={{
-                    background: "var(--glassBackground)",
-                    boxShadow: "var(--panelShadow)",
-                  }}
+                <GlassCard
+                  className="px-5 py-4 transition-all duration-200 group-hover:-translate-y-0.5"
                   onMouseEnter={(e) => {
                     (e.currentTarget as HTMLElement).style.boxShadow =
                       "var(--panelShadow), 0 0 0 1px color-mix(in srgb, var(--primaryNeon) 18%, transparent)";
                   }}
                   onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.boxShadow = "var(--panelShadow)";
+                    (e.currentTarget as HTMLElement).style.boxShadow = "";
                   }}
                 >
                   {/* Desktop: aligned grid row */}
@@ -211,7 +208,7 @@ export function HistoryCardList({ items }: HistoryCardListProps) {
                       </span>
                     </div>
                   </div>
-                </div>
+                </GlassCard>
               </Link>
             </StaggerChild>
           );

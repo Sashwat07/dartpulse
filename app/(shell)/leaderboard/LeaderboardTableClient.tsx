@@ -129,18 +129,18 @@ export function LeaderboardTableClient({ entries }: Props) {
     <div className="space-y-3">
       {/* Search + pagination controls */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative">
-          <Search
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mutedForeground"
-            aria-hidden
-          />
+        <div className="relative w-full sm:w-64">
           <input
             type="search"
             placeholder="Search by player name"
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setPage(0); }}
-            className="w-full rounded-button border border-glassBorder bg-glassBackground py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-mutedForeground focus:outline-none focus:ring-2 focus:ring-primaryNeon/20 sm:w-64"
+            className="input-inset w-full py-2.5 pl-4 pr-10 text-sm text-foreground placeholder:text-mutedForeground"
             aria-label="Search leaderboard by player name"
+          />
+          <Search
+            className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-mutedForeground"
+            aria-hidden
           />
         </div>
         {showPagination && (

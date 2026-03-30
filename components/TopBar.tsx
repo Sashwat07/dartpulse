@@ -4,6 +4,7 @@ import { BookOpen, ChevronDown, LogOut, Menu, Target, User } from "lucide-react"
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -19,6 +20,8 @@ export function TopBar({ onMenuClick }: TopBarProps) {
   const [rulebookOpen, setRulebookOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const isHome = pathname === "/app";
 
   const userInitial =
     session?.user?.name?.slice(0, 1) ??
@@ -54,22 +57,15 @@ export function TopBar({ onMenuClick }: TopBarProps) {
     <>
       {/* TopBar */}
       <div
-        className="relative z-30 flex h-14 items-center justify-between px-4"
+        className="relative z-30 flex h-14 items-center justify-between overflow-hidden rounded-2xl px-4"
         style={{
           background: "var(--sidebarBg)",
           borderBottom: "1px solid var(--glassBorder)",
-          boxShadow: "0 4px 12px rgba(4,4,8,0.5), 0 1px 0 rgba(255,255,255,0.05) inset",
+          borderLeft: "1px solid var(--glassBorder)",
+          borderRight: "1px solid var(--glassBorder)",
+          boxShadow: "var(--topBarShadow)",
         }}
       >
-        {/* Subtle cyan accent line at bottom */}
-        <div
-          className="pointer-events-none absolute bottom-0 left-0 h-px w-full"
-          style={{
-            background:
-              "linear-gradient(to right, transparent 10%, rgba(0,229,255,0.25) 40%, rgba(0,229,255,0.35) 50%, rgba(0,229,255,0.25) 60%, transparent 90%)",
-          }}
-          aria-hidden
-        />
 
         {/* ── Left: hamburger + brand ── */}
         <div className="flex items-center gap-2.5">
@@ -99,10 +95,65 @@ export function TopBar({ onMenuClick }: TopBarProps) {
               DartPulse
             </span>
           </Link>
+
+          {/* Desktop brand — always visible (sidebar no longer shows brand) */}
+          <Link
+            href="/app"
+            className="hidden lg:flex items-center gap-2.5 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primaryNeon/60"
+          >
+            <span
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-primaryNeon/30"
+              style={{ background: "rgba(0,229,255,0.10)" }}
+            >
+              <Target size={15} className="text-primaryNeon" aria-hidden />
+            </span>
+            <div>
+              <p className="font-display text-sm font-bold tracking-wider text-foreground leading-tight">DartPulse</p>
+              <p className="text-[11px] leading-tight" style={{ color: "var(--mutedForeground)" }}>
+                Track every throw. Own every match.
+              </p>
+            </div>
+          </Link>
         </div>
 
         {/* ── Right: actions ── */}
         <div className="flex items-center gap-2">
+
+          {/* Home page quick-nav — desktop only */}
+          {isHome && (
+            <>
+              <nav className="hidden lg:flex items-center gap-0.5" aria-label="Quick navigation">
+                <LiquidButton asChild variant="brand" size="sm">
+                  <Link href="/match/new">
+                    <span aria-hidden className="mr-0.5">＋</span>New Match
+                  </Link>
+                </LiquidButton>
+                <Link
+                  href="/resume"
+                  className="px-3.5 py-2 rounded-full text-[13px] font-medium transition-colors duration-150"
+                  style={{ color: "var(--mutedForeground)" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "var(--primaryNeon)")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "var(--mutedForeground)")}
+                >
+                  Resume
+                </Link>
+                <Link
+                  href="/leaderboard"
+                  className="px-3.5 py-2 rounded-full text-[13px] font-medium transition-colors duration-150"
+                  style={{ color: "var(--mutedForeground)" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "var(--primaryNeon)")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "var(--mutedForeground)")}
+                >
+                  Leaderboard
+                </Link>
+              </nav>
+              <div
+                className="hidden lg:block h-5 w-px mx-1"
+                style={{ background: "var(--glassBorder)" }}
+                aria-hidden
+              />
+            </>
+          )}
 
           {/* Rules button — liquid glass */}
           <LiquidButton
@@ -116,18 +167,18 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             <span className="hidden sm:inline">Rules</span>
           </LiquidButton>
 
-          {/* Thin separator */}
+          {/* Thin separator — hidden on desktop (user is in sidebar) */}
           <div
-            className="hidden sm:block h-5 w-px mx-0.5"
+            className="hidden sm:block lg:hidden h-5 w-px mx-0.5"
             style={{ background: "var(--glassBorder)" }}
             aria-hidden
           />
 
           {status === "loading" ? (
-            <span className="text-xs text-mutedForeground px-2">…</span>
+            <span className="text-xs text-mutedForeground px-2 lg:hidden">…</span>
           ) : session?.user ? (
-            /* ── User dropdown ── */
-            <div ref={userMenuRef} className="relative">
+            /* ── User dropdown — hidden on desktop (sidebar has it) ── */
+            <div ref={userMenuRef} className="relative lg:hidden">
               <button
                 type="button"
                 onClick={() => setUserMenuOpen((v) => !v)}
@@ -218,7 +269,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
               )}
             </div>
           ) : (
-            <LiquidButton asChild size="sm" variant="brand">
+            <LiquidButton asChild size="sm" variant="brand" className="lg:hidden">
               <Link href="/login">Sign in</Link>
             </LiquidButton>
           )}
