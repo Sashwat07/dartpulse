@@ -74,7 +74,10 @@ function NavItem({
         className={cn(
           "sidebar-nav-item group",
           collapsed ? "justify-center px-1 py-3" : "gap-3.5 px-3.5 py-3",
-          active ? "sidebar-nav-item-active" : "sidebar-nav-item-inactive"
+          /* Expanded: full neumorphic active pill. Collapsed: icon color only — no oval background. */
+          active && !collapsed && "sidebar-nav-item-active",
+          active && collapsed && "border-transparent bg-transparent shadow-none",
+          !active && "sidebar-nav-item-inactive",
         )}
         aria-current={active ? "page" : undefined}
       >
@@ -134,14 +137,14 @@ export function SidebarNav({ collapsed = false, onDesktopSidebarToggle }: Sideba
       {!collapsed && (
         <>
           {showDesktopToggle ? (
-            <div className="mb-2 flex min-h-7 items-center justify-between gap-2 px-3.5">
-              <p className="sidebar-section-label mb-0 min-w-0 shrink">Menu</p>
+            <div className="mb-2 flex min-h-7 items-center justify-between gap-1">
+              <p className="sidebar-section-label mb-0 min-w-0 shrink pl-3.5">Menu</p>
               <button
                 type="button"
                 onClick={onDesktopSidebarToggle}
                 aria-label="Collapse sidebar"
                 className={cn(
-                  "sidebar-collapse-btn focus-ring flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-mutedForeground hover:text-primaryNeon",
+                  "sidebar-collapse-btn focus-ring m-0 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg p-0 text-mutedForeground hover:text-primaryNeon",
                   "transition-opacity duration-200",
                   "opacity-0 pointer-events-none",
                   "group-hover:opacity-100 group-hover:pointer-events-auto",
