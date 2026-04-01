@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { LiquidButton } from "@/components/ui/LiquidButton";
-import { Trophy } from "lucide-react";
+import { ArrowLeft, Trophy, TrendingUp, Zap } from "lucide-react";
 
 import { MatchEnergyMeter } from "@/components/analytics/MatchEnergyMeter";
 import { MomentumTimeline } from "@/components/analytics/MomentumTimeline";
@@ -64,6 +64,13 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
             title={match.name}
             description="Playoffs in progress. Complete the final and confirm to mark this match complete."
           />
+          <Link
+            href="/history"
+            className="mt-2 inline-flex items-center gap-1.5 text-xs text-mutedForeground hover:text-primaryNeon transition-colors"
+          >
+            <ArrowLeft size={12} aria-hidden />
+            Back to History
+          </Link>
           <div className="mt-4">
             <GlassCard className="p-4">
               <div className="flex flex-col items-center gap-3 text-center">
@@ -129,12 +136,20 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
 
   return (
     <PageTransition>
-        <PageHeader
-          title={match.name}
-          description={`Completed ${dateLabel} · ${matchPlayers.length} players`}
-        />
+      <PageHeader
+        title={match.name}
+        description={`Completed ${dateLabel} · ${matchPlayers.length} players`}
+      />
 
-        <div className="mt-4 space-y-4">
+      <Link
+        href="/history"
+        className="mt-2 inline-flex items-center gap-1.5 text-xs text-mutedForeground hover:text-primaryNeon transition-colors"
+      >
+        <ArrowLeft size={12} aria-hidden />
+        Back to History
+      </Link>
+
+      <div className="mt-4 space-y-5">
         {/* Match info bar */}
         <div className="rounded-card border border-glassBorder overflow-hidden shadow-panelShadow bg-glassBackground backdrop-blur-[20px]">
           {/* Winner hero — only when there's a champion */}
@@ -149,10 +164,19 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
               <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-amber-500/40 bg-amber-500/15">
                 <Trophy size={16} className="text-championGold" aria-hidden />
               </span>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="text-[9px] font-black uppercase tracking-[0.2em] text-championGold/60 mb-0.5">Champion</p>
                 <p className="text-base font-black tracking-tight text-championGold truncate">{championName}</p>
               </div>
+              {isOwner && (
+                <div className="relative shrink-0">
+                  <PlayAgainButton
+                    sourceMatchId={matchId}
+                    label="Play again"
+                    variant="button"
+                  />
+                </div>
+              )}
             </div>
           )}
 
@@ -184,16 +208,6 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
         {/* Outcome summary (final ranking + winner/qualification) */}
         <MatchOutcomeSummary summary={matchOutcomeSummary} />
 
-        {isOwner && (
-          <div>
-            <PlayAgainButton
-              sourceMatchId={matchId}
-              label="Play again"
-              variant="button"
-            />
-          </div>
-        )}
-
         {/* Scoreboard (expandable rows show shot history inline) */}
         <HistoryScoreTable
           table={roundScoreTable}
@@ -205,16 +219,18 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
         {suddenDeathDisplay !== null && (
           <GlassCard className="overflow-x-auto p-0">
             <div className="px-5 pt-4 pb-3 border-b border-glassBorder">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">Sudden Death</h2>
+              <h2 className="section-heading">Sudden Death</h2>
             </div>
             <table className="w-full min-w-[200px] border-collapse">
               <thead>
-                <tr className="border-b border-glassBorder text-left text-xs text-mutedForeground">
-                  <th className="px-5 py-2.5 font-semibold">Player</th>
+                <tr className="border-b border-glassBorder text-left">
+                  <th className="px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">
+                    Player
+                  </th>
                   {suddenDeathDisplay.sdRoundNumbers.map((r, i) => (
                     <th
                       key={r}
-                      className="px-3 py-2.5 text-right font-semibold"
+                      className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground"
                     >
                       SD{i + 1}
                     </th>
@@ -225,9 +241,9 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
                 {suddenDeathDisplay.rows.map((row) => (
                   <tr
                     key={row.playerId}
-                    className="border-b border-glassBorder"
+                    className="border-b border-glassBorder last:border-b-0"
                   >
-                    <td className="px-5 py-3 text-left text-sm font-medium">
+                    <td className="px-5 py-3 text-left text-sm font-medium text-foreground">
                       {row.playerName}
                     </td>
                     {suddenDeathDisplay.sdRoundNumbers.map((r, i) => {
@@ -235,7 +251,7 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
                       return (
                         <td
                           key={r}
-                          className="px-3 py-3 text-right text-sm tabular-nums"
+                          className="px-3 py-3 text-right text-sm tabular-nums text-foreground"
                         >
                           {score > 0 ? score : "—"}
                         </td>
@@ -248,9 +264,9 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
           </GlassCard>
         )}
 
-        {/* Match analytics (reuses same components as analytics page polish) */}
-        <section className="space-y-2">
-          <h2 className="section-heading">Match analytics</h2>
+        {/* Match analytics */}
+        <section className="space-y-3">
+          <h2 className="section-heading mb-2">Match analytics</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <MomentumTimeline timeline={momentum} playerNames={playerNames} />
             <MatchEnergyMeter
@@ -265,23 +281,41 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
             rounds={heatmap.rounds}
           />
         </section>
+
+        {/* Comeback insight callout */}
         {comeback.isComeback && (
-          <GlassCard className="p-4 border-amber-500/20">
-            <p className="text-sm font-medium text-amber-400/90">
-              Comeback win — winner was last at some point in the match.
-            </p>
+          <GlassCard className="p-4 border-l-2 border-l-primaryNeon border-glassBorder">
+            <div className="flex items-start gap-3">
+              <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primaryNeon/10 border border-primaryNeon/25">
+                <TrendingUp size={14} className="text-primaryNeon" aria-hidden />
+              </span>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primaryNeon mb-0.5">
+                  Comeback win
+                </p>
+                <p className="text-sm text-mutedForeground">
+                  The winner came from behind — they were last at some point in the match.
+                </p>
+              </div>
+            </div>
           </GlassCard>
         )}
+
+        {/* Clutch — Final Round */}
         {clutch.length > 0 && (
           <GlassCard className="p-0 overflow-hidden">
-            <div className="px-5 pt-4 pb-3 border-b border-glassBorder">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-mutedForeground">Clutch — Final Round</h2>
+            <div className="px-5 pt-4 pb-3 border-b border-glassBorder flex items-center gap-2">
+              <Zap size={13} className="text-primaryNeon shrink-0" aria-hidden />
+              <h2 className="section-heading">Clutch — Final Round</h2>
             </div>
-            <ul className="divide-y divide-glassBorder/50">
+            <ul className="divide-y divide-glassBorder">
               {clutch.map((c) => (
-                <li key={c.playerId} className="flex items-center justify-between px-5 py-2.5 text-sm">
-                  <span className="text-foreground/85 font-medium">{c.playerName}</span>
-                  <span className="tabular-nums text-foreground/60">{c.averageFinalRoundScore} avg</span>
+                <li key={c.playerId} className="flex items-center justify-between px-5 py-3 text-sm">
+                  <span className="font-medium text-foreground">{c.playerName}</span>
+                  <span className="inline-flex items-center gap-1 rounded-full border border-primaryNeon/25 bg-primaryNeon/8 px-2.5 py-0.5 text-xs font-semibold tabular-nums text-primaryNeon">
+                    {c.averageFinalRoundScore}
+                    <span className="font-normal opacity-70">avg</span>
+                  </span>
                 </li>
               ))}
             </ul>
@@ -297,7 +331,7 @@ export default async function MatchHistoryDetailPage({ params }: PageProps) {
             stageOrder={stageOrder}
           />
         )}
-        </div>
+      </div>
     </PageTransition>
   );
 }
