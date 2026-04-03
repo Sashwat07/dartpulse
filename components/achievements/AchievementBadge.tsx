@@ -5,6 +5,8 @@ type AchievementBadgeProps = {
   sourceMatchId?: string;
   awardedAt?: string;
   className?: string;
+  /** When greater than 1, shows ×N on the right; "· match" only when count is 1. */
+  count?: number;
 };
 
 /** Display label for achievement type (user-facing). */
@@ -34,9 +36,19 @@ export function AchievementBadge({
   sourceMatchId,
   awardedAt,
   className,
+  count = 1,
 }: AchievementBadgeProps) {
   const label = ACHIEVEMENT_LABELS[type] ?? type;
   const isChampion = type === "champion";
+  const showMatchSuffix = count === 1 && Boolean(sourceMatchId);
+  const showCount = count > 1;
+
+  const title =
+    count > 1
+      ? `Earned ${count} times`
+      : awardedAt
+        ? `Awarded ${awardedAt}`
+        : undefined;
 
   return (
     <span
@@ -47,11 +59,22 @@ export function AchievementBadge({
           : "border-glassBorder bg-surfaceSubtle text-foreground",
         className,
       )}
-      title={awardedAt ? `Awarded ${awardedAt}` : undefined}
+      title={title}
     >
       {label}
-      {sourceMatchId && (
+      {showMatchSuffix && (
         <span className="font-normal text-mutedForeground">· match</span>
+      )}
+      {showCount && (
+        <span
+          className={cn(
+            "ml-0.5 tabular-nums font-semibold",
+            isChampion ? "text-championGold/90" : "text-mutedForeground",
+          )}
+          aria-label={`${count} times`}
+        >
+          ×{count}
+        </span>
       )}
     </span>
   );

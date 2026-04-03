@@ -50,7 +50,8 @@ export function PlayerProfileHero({
             <span className="rounded-full border border-primaryNeon/40 bg-primaryNeon/10 px-2.5 py-0.5 text-xs font-semibold text-primaryNeon">
               {archetype}
             </span>
-            {showChampionBadge && (
+            {/* Achievement badge only when it adds info (archetype is not already "Champion") */}
+            {showChampionBadge && archetype !== "Champion" && (
               <span className="rounded-full border border-championGold/50 bg-championGold/10 px-2.5 py-0.5 text-xs font-semibold text-championGold">
                 Champion
               </span>
