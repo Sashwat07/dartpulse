@@ -101,7 +101,10 @@ export function DartScoreInput({
   const handleNumberDrop = useCallback(
     (e: React.DragEvent, n: number) => {
       e.preventDefault();
-      const dropped = (e.dataTransfer.getData("text/plain") as DraggableMultiplier) || dragMultiplier;
+      const raw = e.dataTransfer.getData("text/plain");
+      const dropped: DartMultiplier | null = raw
+        ? (raw as DartMultiplier)
+        : dragMultiplier;
       if (dropped && dropped !== "bull") {
         const score = computeScore(dropped, n);
         onScore(score);
