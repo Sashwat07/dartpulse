@@ -43,8 +43,14 @@ export function AppShell({ children }: AppShellProps) {
             />
           </aside>
 
-          <div className="min-w-0 flex-1">
-            <main className="p-3 lg:p-5">{children}</main>
+          <div
+            className="min-w-0 flex-1 overflow-hidden rounded-2xl border border-glassBorder backdrop-blur-[20px]"
+            style={{
+              background: "var(--sidebarBg)",
+              boxShadow: "var(--topBarShadow)",
+            }}
+          >
+            <main className="h-full overflow-y-auto p-3 lg:p-5">{children}</main>
           </div>
         </div>
       </div>
